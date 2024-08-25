@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+import AspectRatio from "~/components/ui/aspect-ratio/AspectRatio.vue";
 interface Product {
   id: number;
   title: string;
@@ -39,13 +39,13 @@ const products = ref<Product[]>(productsResponse.value?.products ?? []);
         class="overflow-hidden"
       >
         <CardHeader class="p-0">
-          <div class="aspect-w-4 aspect-h-3">
+          <AspectRatio :ratio="16 / 9">
             <img
               :src="product.images[0]"
               :alt="product.title"
-              class="object-cover w-full h-full"
+              class="object-contain w-full h-full"
             />
-          </div>
+          </AspectRatio>
         </CardHeader>
         <CardContent class="p-4">
           <Badge class="mb-2">{{ product.category }}</Badge>

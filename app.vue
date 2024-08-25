@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="flex h-screen gap-4">
+  <div class="flex flex-col h-screen items-start justify-start">
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

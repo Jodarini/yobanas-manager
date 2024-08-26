@@ -1,27 +1,8 @@
 <script setup lang="ts">
-import AspectRatio from "~/components/ui/aspect-ratio/AspectRatio.vue";
-interface Product {
-  id: number;
-  title: string;
-  category: string;
-  price: number;
-  images: string[];
-}
+import ProductCard from "~/components/ProductCard.vue";
 
-interface ProductsResponse {
-  products: Product[];
-  total: number;
-  skip: number;
-  limit: number;
-}
-
-const {
-  data: productsResponse,
-  status,
-  error,
-} = await useFetch<ProductsResponse>("https://dummyjson.com/products");
-
-const products = ref<Product[]>(productsResponse.value?.products ?? []);
+const store = useProductsStore();
+const { status, error } = await store.fetchProducts();
 </script>
 
 <template>
@@ -31,32 +12,13 @@ const products = ref<Product[]>(productsResponse.value?.products ?? []);
     <p v-else-if="error">{{ error }}</p>
     <div
       v-else
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     >
-      <Card
-        v-for="product in products"
+      <ProductCard
+        v-for="product in store.products"
         :key="product.id"
-        class="overflow-hidden"
-      >
-        <CardHeader class="p-0">
-          <AspectRatio :ratio="16 / 9">
-            <img
-              :src="product.images[0]"
-              :alt="product.title"
-              class="object-contain w-full h-full"
-            />
-          </AspectRatio>
-        </CardHeader>
-        <CardContent class="p-4">
-          <Badge class="mb-2">{{ product.category }}</Badge>
-          <h3 class="text-lg font-semibold mb-2">{{ product.title }}</h3>
-          <!-- <p class="text-sm text-muted-foreground">{{ product.description }}</p> -->
-        </CardContent>
-        <CardFooter class="flex justify-between items-center p-4">
-          <span class="text-xl font-bold">${{ product.price.toFixed(2) }}</span>
-          <Button>Add to Cart</Button>
-        </CardFooter>
-      </Card>
+        :product="product"
+      />
     </div>
   </div>
 </template>

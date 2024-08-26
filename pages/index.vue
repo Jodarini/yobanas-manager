@@ -15,7 +15,7 @@ const { status, error } = await store.fetchProducts();
       class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     >
       <ProductCard
-        v-for="product in store.products"
+        v-for="product in store.filteredProducts"
         :key="product.id"
         :product="product"
       />

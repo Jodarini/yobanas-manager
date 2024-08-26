@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { Input } from "@/components/ui/input";
 const position = ref("bottom");
+
+const store = useProductsStore();
 </script>
 
 <template>
-  <Input placeholder="Search for your product" />
+  <Input placeholder="Search for your product" v-model="store.filterText" />
   <div class="flex gap-2">
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
@@ -13,14 +15,13 @@ const position = ref("bottom");
       <DropdownMenuContent class="w-56">
         <DropdownMenuLabel>Select category</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup v-model="position">
-          <DropdownMenuRadioItem value="bags"> Bags </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="dresses">
-            Dresses
+        <DropdownMenuRadioGroup
+          v-model="store.filterCategory"
+          v-for="category in store.productCategories"
+        >
+          <DropdownMenuRadioItem :value="category">
+            {{ category }}
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="shoes"> Shoes </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="shirts"> Shirts </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="jeans"> Jeans </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

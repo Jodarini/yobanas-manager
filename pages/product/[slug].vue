@@ -12,7 +12,9 @@ const {
   data: productResponse,
   status,
   error,
-} = useFetch<Product>(`https://dummyjson.com/products/${route.params.slug}`);
+} = await useFetch<Product>(
+  `https://dummyjson.com/products/${route.params.slug}`,
+);
 const product = productResponse.value;
 </script>
 

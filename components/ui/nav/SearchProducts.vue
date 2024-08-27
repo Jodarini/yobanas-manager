@@ -39,9 +39,7 @@ const store = useProductsStore();
             Category
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="new"> New </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="ammount">
-            Ammount
-          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="price"> Price </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

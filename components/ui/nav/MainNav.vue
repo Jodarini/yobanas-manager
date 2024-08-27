@@ -27,7 +27,11 @@ const colorMode = useColorMode();
         href="/"
         class="text-sm font-medium transition-colors hover:text-primary"
       >
-        <img src="/Logo YC Principal sobre claro.png" class="w-44" alt="" />
+        <img
+          src="/Logo YC Principal sobre claro.png"
+          class="w-44"
+          alt="Yobanas Closet Logo"
+        />
       </a>
       <SearchProducts></SearchProducts>
 

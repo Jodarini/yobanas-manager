@@ -1,9 +1,11 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="flex flex-col h-screen items-start justify-start">
+  <div class="flex h-screen flex-col items-start justify-start">
     <NuxtLayout>
-      <NuxtPage />
+      <div class="flex flex-col gap-4 p-4">
+        <NuxtPage />
+      </div>
     </NuxtLayout>
   </div>
 </template>

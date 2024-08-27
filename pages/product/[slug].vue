@@ -24,11 +24,18 @@ const product = productResponse.value;
       </AspectRatio>
     </CardHeader>
     <CardContent class="p-4">
-      <Badge class="mb-2">{{ product.category }}</Badge>
+      <template v-for="tag in product.tags">
+        <Badge class="mb-2">{{ tag }}</Badge>
+      </template>
       <h3 class="mb-2 text-lg font-semibold">{{ product.title }}</h3>
+      <p>{{ product.description }}</p>
+      <p><b>Marca: </b>{{ product.brand }}</p>
+      <p><b>En stock: </b>{{ product.stock }}</p>
     </CardContent>
     <CardFooter class="flex items-center justify-between p-4">
-      <span class="text-xl font-bold">${{ product.price.toFixed(2) }}</span>
+      <span class="text-xl font-bold"
+        >Precio: ${{ product.price.toFixed(2) }}</span
+      >
     </CardFooter>
   </Card>
 </template>

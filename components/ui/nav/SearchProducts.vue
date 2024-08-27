@@ -6,14 +6,14 @@ const store = useProductsStore();
 </script>
 
 <template>
-  <Input placeholder="Search by title" v-model="store.filterText" />
+  <Input placeholder="Busca por titulo" v-model="store.filterText" />
   <div class="flex gap-2">
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
-        <Button variant="outline"> Filter </Button>
+        <Button variant="outline"> Filtro </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent class="w-56">
-        <DropdownMenuLabel>Select category</DropdownMenuLabel>
+        <DropdownMenuLabel>Selecciona categoria</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup
           v-model="store.filterCategory"
@@ -28,18 +28,18 @@ const store = useProductsStore();
 
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
-        <Button variant="outline"> Sort </Button>
+        <Button variant="outline"> Ordenar </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent class="w-56">
-        <DropdownMenuLabel>Select order</DropdownMenuLabel>
+        <DropdownMenuLabel>Selecciona orden</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup v-model="position">
-          <DropdownMenuRadioItem value="bags"> Name </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="bags"> Nombre </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="category">
-            Category
+            Categoria
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="new"> New </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="price"> Price </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="new"> Mas nuevo </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="price"> Precio </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

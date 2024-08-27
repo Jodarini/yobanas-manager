@@ -4,7 +4,7 @@ import type { Product, ProductsResponse } from "~/types/types";
 export const useProductsStore = defineStore("products", () => {
   const products = ref<Product[]>();
   const filterText = ref("");
-  const filterCategory = ref("All");
+  const filterCategory = ref("Todos");
 
   async function fetchProducts() {
     const {
@@ -19,7 +19,7 @@ export const useProductsStore = defineStore("products", () => {
   const filteredProducts = computed(() => {
     if (!filterText) return products.value;
     return products.value?.filter((product) =>
-      filterCategory.value === "All"
+      filterCategory.value === "Todos"
         ? product.title.toLowerCase().includes(filterText.value.toLowerCase())
         : product.title
             .toLowerCase()
@@ -29,7 +29,7 @@ export const useProductsStore = defineStore("products", () => {
   });
 
   const productCategories = computed(() => {
-    let categories = new Set<string>(["All"]);
+    let categories = new Set<string>(["Todos"]);
     products.value?.forEach((product) => {
       categories.add(product.category);
     });

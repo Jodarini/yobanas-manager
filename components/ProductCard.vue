@@ -10,7 +10,7 @@ defineProps<{ product: Product }>();
       <CardHeader class="p-0">
         <AspectRatio :ratio="16 / 9">
           <img
-            :src="product.images[0]"
+            :src="product.thumbnail"
             :alt="product.title"
             class="h-full w-full object-contain"
           />

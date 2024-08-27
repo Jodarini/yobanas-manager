@@ -6,7 +6,7 @@ const store = useProductsStore();
 </script>
 
 <template>
-  <Input placeholder="Search for your product" v-model="store.filterText" />
+  <Input placeholder="Search by title" v-model="store.filterText" />
   <div class="flex gap-2">
     <DropdownMenu>
       <DropdownMenuTrigger as-child>

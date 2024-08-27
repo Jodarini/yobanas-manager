@@ -24,10 +24,10 @@ const colorMode = useColorMode();
   >
     <div class="flex items-center space-x-4 lg:space-x-6">
       <a
-        href="/examples/dashboard"
+        href="/"
         class="text-sm font-medium transition-colors hover:text-primary"
       >
-        Overview
+        Home
       </a>
       <SearchProducts></SearchProducts>
 

@@ -1,17 +1,12 @@
 <script setup lang="ts">
-interface Product {
-  id: number;
-  title: string;
-  category: string;
-  price: number;
-  images: string[];
-}
+import type { Product } from "~/types/types";
+
 defineProps<{ product: Product }>();
 </script>
 
 <template>
   <NuxtLink :to="`/product/${product.id}`">
-    <Card class="overflow-hidden">
+    <Card class="min-h-96 overflow-hidden">
       <CardHeader class="p-0">
         <AspectRatio :ratio="16 / 9">
           <img

@@ -1,11 +1,5 @@
 <script setup lang="ts">
-interface Product {
-  id: number;
-  title: string;
-  category: string;
-  price: number;
-  images: string[];
-}
+import type { Product } from "~/types/types";
 
 const route = useRoute();
 const {
@@ -19,7 +13,7 @@ const product = productResponse.value;
 </script>
 
 <template>
-  <Card class="overflow-hidden" v-if="product">
+  <Card class="min-h-96 min-w-96 overflow-hidden" v-if="product">
     <CardHeader class="p-0">
       <AspectRatio :ratio="16 / 9">
         <img
@@ -37,5 +31,4 @@ const product = productResponse.value;
       <span class="text-xl font-bold">${{ product.price.toFixed(2) }}</span>
     </CardFooter>
   </Card>
-  <div>{{ route.params.slug }}</div>
 </template>

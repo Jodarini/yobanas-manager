@@ -27,7 +27,7 @@ const colorMode = useColorMode();
         href="/"
         class="text-sm font-medium transition-colors hover:text-primary"
       >
-        Home
+        <img src="/Logo YC Principal sobre claro.png" class="w-44" alt="" />
       </a>
       <SearchProducts></SearchProducts>
 

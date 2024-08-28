@@ -7,13 +7,16 @@ export const useProductsStore = defineStore("products", () => {
   const filterCategory = ref("Todos");
 
   async function fetchProducts() {
-    const {
-      data: productsResponse,
-      status,
-      error,
-    } = await useFetch<ProductsResponse>("https://dummyjson.com/products");
-    products.value = productsResponse.value?.products;
+    const { data, status, error } = await useFetch<Product[]>("/api/products");
+    products.value = data.value!;
     return { status, error };
+  }
+
+  async function fetchProduct(productId: number) {
+    const { data, status, error } = await useFetch<Product>(
+      `/api/product/${productId}`,
+    );
+    return { data, status, error };
   }
 
   const filteredProducts = computed(() => {
@@ -39,6 +42,7 @@ export const useProductsStore = defineStore("products", () => {
   return {
     products,
     fetchProducts,
+    fetchProduct,
     filteredProducts,
     filterText,
     productCategories,

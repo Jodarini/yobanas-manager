@@ -1,16 +1,4 @@
-<script setup lang="ts">
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import { products } from "./db/schema";
-
-const connectionString = process.env.TEST_SUPABASE_URL!;
-
-const client = postgres(connectionString);
-const db = drizzle(client);
-
-const allUsers = await db.select().from(products);
-console.log({ allUsers });
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="flex h-screen flex-col items-start justify-start">

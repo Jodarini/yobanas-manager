@@ -1,15 +1,8 @@
 <script setup lang="ts">
-import type { Product } from "~/types/types";
-
 const route = useRoute();
-const {
-  data: productResponse,
-  status,
-  error,
-} = await useFetch<Product>(
-  `https://dummyjson.com/products/${route.params.slug}`,
-);
-const product = productResponse.value;
+const store = useProductsStore();
+const prod = await store.fetchProduct(+route.params.slug[0]);
+const product = prod.data.value;
 </script>
 
 <template>
@@ -17,7 +10,7 @@ const product = productResponse.value;
     <CardHeader class="p-0">
       <AspectRatio :ratio="16 / 9">
         <img
-          :src="product.images[0]"
+          :src="product.thumbnail"
           :alt="product.title"
           class="h-full w-full object-contain"
         />
@@ -33,9 +26,7 @@ const product = productResponse.value;
       <p><b>En stock: </b>{{ product.stock }}</p>
     </CardContent>
     <CardFooter class="flex items-center justify-between p-4">
-      <span class="text-xl font-bold"
-        >Precio: ${{ product.price.toFixed(2) }}</span
-      >
+      <span class="text-xl font-bold"> Precio: ${{ product.price }}</span>
     </CardFooter>
   </Card>
 </template>

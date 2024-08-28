@@ -8,6 +8,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import SearchProducts from "./SearchProducts.vue";
 
 const colorMode = useColorMode();
@@ -34,7 +42,7 @@ const colorMode = useColorMode();
         />
       </a>
       <SearchProducts></SearchProducts>
-
+      <AddProduct />
       <!-- <a -->
       <!--   href="/examples/dashboard" -->
       <!--   class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary" -->

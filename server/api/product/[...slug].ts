@@ -15,6 +15,5 @@ export default defineEventHandler(async (event) => {
     .from(products)
     .where(eq(products.id, productId))
     .limit(1);
-  console.log({ product });
   return product;
 });

@@ -2,23 +2,20 @@
 import { cn } from "~/lib/utils";
 import { Icon } from "@iconify/vue";
 import { Button } from "@/components/ui/button";
+import { h } from "vue";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import SearchProducts from "./SearchProducts.vue";
 
 const colorMode = useColorMode();
+
+const clicked = () => {
+  console.log("clicked");
+};
 </script>
 
 <template>
@@ -43,24 +40,7 @@ const colorMode = useColorMode();
       </a>
       <SearchProducts></SearchProducts>
       <AddProduct />
-      <!-- <a -->
-      <!--   href="/examples/dashboard" -->
-      <!--   class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary" -->
-      <!-- > -->
-      <!--   Customers -->
-      <!-- </a> -->
-      <!-- <a -->
-      <!--   href="/examples/dashboard" -->
-      <!--   class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary" -->
-      <!-- > -->
-      <!--   Products -->
-      <!-- </a> -->
-      <!-- <a -->
-      <!--   href="/examples/dashboard" -->
-      <!--   class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary" -->
-      <!-- > -->
-      <!--   Settings -->
-      <!-- </a> -->
+      <Button @click="clicked"></Button>
     </div>
 
     <DropdownMenu>

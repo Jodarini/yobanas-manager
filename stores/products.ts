@@ -18,6 +18,13 @@ export const useProductsStore = defineStore("products", () => {
     );
     return { data, status, error };
   }
+  async function addProduct() {
+    const body = await useFetch("/api/product/add", {
+      method: "post",
+      body: { test: 123 },
+    });
+    return body;
+  }
 
   const filteredProducts = computed(() => {
     if (!filterText) return products.value;
@@ -43,6 +50,7 @@ export const useProductsStore = defineStore("products", () => {
     products,
     fetchProducts,
     fetchProduct,
+    addProduct,
     filteredProducts,
     filterText,
     productCategories,

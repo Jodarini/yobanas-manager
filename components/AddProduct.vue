@@ -22,7 +22,7 @@ import { useForm } from "vee-validate";
 
 const formSchema = toTypedSchema(
   z.object({
-    nombre: z
+    title: z
       .string()
       .min(2, { message: "El nombre es requerido" })
       .max(50, { message: "Debe tener maximo 50 caracteres" }),
@@ -47,9 +47,9 @@ const { handleSubmit, resetForm } = useForm({
 const store = useProductsStore();
 
 const onSubmit = handleSubmit((values) => {
+  store.submit(values);
   alert(JSON.stringify(values));
   resetForm();
-  console.log(store.addProduct());
 });
 </script>
 <template>
@@ -65,7 +65,7 @@ const onSubmit = handleSubmit((values) => {
           termines.
         </SheetDescription>
         <form @submit.prevent="onSubmit">
-          <FormField v-slot="{ componentField }" name="nombre">
+          <FormField v-slot="{ componentField }" name="title">
             <FormItem>
               <FormLabel>Nombre</FormLabel>
               <FormControl>

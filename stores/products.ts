@@ -26,6 +26,14 @@ export const useProductsStore = defineStore("products", () => {
     return body;
   }
 
+  async function submit(product: Product) {
+    const { body } = await $fetch("/api/product/add", {
+      method: "post",
+      body: { product },
+    });
+    return body;
+  }
+
   const filteredProducts = computed(() => {
     if (!filterText) return products.value;
     return products.value?.filter((product) =>
@@ -55,5 +63,6 @@ export const useProductsStore = defineStore("products", () => {
     filterText,
     productCategories,
     filterCategory,
+    submit,
   };
 });

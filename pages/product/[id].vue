@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const route = useRoute();
 const store = useProductsStore();
-const prod = await store.fetchProduct(+route.params.slug[0]);
+const prod = await store.fetchProduct(+route.params.id);
 const product = prod.data.value;
 </script>
 

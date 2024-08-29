@@ -13,6 +13,7 @@ export const useProductsStore = defineStore("products", () => {
   }
 
   async function fetchProduct(productId: number) {
+    console.log("FETCHED");
     const { data, status, error } = await useFetch<Product>(
       `/api/product/${productId}`,
     );

@@ -19,38 +19,67 @@ import { Button } from "@/components/ui/button";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useForm } from "vee-validate";
+import type { Product } from "~/db/schema";
 
 const formSchema = toTypedSchema(
   z.object({
-    title: z
+    title: z.string().min(1, "Product title is required"),
+    description: z.string().optional().nullable(),
+    price: z.number().positive("Price must be positive"),
+    category: z.string().min(1, "At least one category is required"),
+    thumbnail: z
       .string()
-      .min(2, { message: "El nombre es requerido" })
-      .max(50, { message: "Debe tener maximo 50 caracteres" }),
-    description: z.string().max(100, { message: "Maximo 100 caracteres" }),
-    price: z.number().min(1, { message: "El precio es requerido" }),
-    brand: z
-      .string()
-      .min(2, { message: "La marca es requerida" })
-      .max(50, { message: "Debe tener maximo 50 caracteres" }),
-    category: z
-      .string()
-      .min(2, { message: "La marca es requerida" })
-      .max(50, { message: "Debe tener maximo 50 caracteres" }),
-    thumbnail: z.string().url({ message: "Enlace invalido" }),
+      .url("Thumbnail must be a valid URL")
+      .optional()
+      .nullable(),
+    brand: z.string().min(1, "La marca debe tener al menos un caracter"),
+    tags: z.string().optional().nullable(),
+    stock: z.number().int().nonnegative("Stock must be a non-negative integer"),
   }),
 );
 
-const { handleSubmit, resetForm } = useForm({
+const { handleSubmit, resetForm, values } = useForm({
   validationSchema: formSchema,
+  initialValues: {
+    title: "test",
+    category: "test",
+    description: "test",
+    tags: "test",
+    stock: 1,
+    brand: "test",
+    price: 2,
+    thumbnail: "https://placehold.co/600x400@2x.png",
+  },
 });
+
+console.log(values.category);
 
 const store = useProductsStore();
 
-const onSubmit = handleSubmit((values) => {
-  store.submit(values);
+const onSubmit = handleSubmit(async (values) => {
+  const newTags = values.tags?.split(",");
+  const newCategories = values.category?.split(",");
+  const prod = await store.addProduct({
+    ...values,
+    tags: newTags,
+    category: newCategories,
+  });
+  alert({ prod });
   alert(JSON.stringify(values));
   resetForm();
 });
+
+const newCategory = ref();
+const product = ref<Product>({ price: "", stock: "", title: "" });
+const addCategory = () => {
+  // if (
+  //   newCategory.value &&
+  //   !product.value.category.includes(newCategory.value)
+  // ) {
+  //   product.value.category.push(newCategory.value);
+  //   newCategory.value = "";
+  // }
+};
 </script>
 <template>
   <Sheet>
@@ -109,6 +138,21 @@ const onSubmit = handleSubmit((values) => {
             </FormItem>
           </FormField>
 
+          <FormField v-slot="{ componentField }" name="stock">
+            <FormItem>
+              <FormLabel>Cantidad</FormLabel>
+              <FormControl>
+                <Input
+                  required
+                  type="number"
+                  placeholder="0"
+                  v-bind="componentField"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
           <FormField v-slot="{ componentField }" name="brand">
             <FormItem>
               <FormLabel>Marca</FormLabel>
@@ -133,7 +177,10 @@ const onSubmit = handleSubmit((values) => {
                   type="text"
                   placeholder="Categoria"
                   v-bind="componentField"
+                  @keyup.enter.prevent="addCategory"
                 />
+                <Button type="button" @click="addCategory">Add</Button>
+                {{ newCategory }}
               </FormControl>
               <FormMessage />
             </FormItem>

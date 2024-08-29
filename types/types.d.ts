@@ -6,13 +6,13 @@ export interface ProductsResponse {
 }
 
 export interface Product {
-  id: number;
+  id?: number;
   title: string;
   description: string;
-  category: string;
+  category: string[];
   price: number;
   stock: number;
-  tags: string[];
+  tags?: string[];
   brand: string;
   thumbnail: string;
 }

@@ -8,11 +8,13 @@ export const users = pgTable("users", {
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
-  title: text("title"),
+  title: text("title").notNull(),
   description: text("description"),
-  price: numeric("price"),
+  price: numeric("price", { precision: 10, scale: 2 }).notNull(),
   thumbnail: text("thumbnail"),
   tags: text("tags").array(),
   category: text("category").array(),
-  stock: numeric("stock"),
+  stock: numeric("stock", { precision: 10, scale: 0 }).notNull(),
 });
+
+export type Product = typeof products.$inferInsert;

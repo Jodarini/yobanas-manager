@@ -2,7 +2,6 @@
 import type { Product } from "~/types/types";
 
 const props = defineProps<{ product: Product }>();
-console.log(props.product.category);
 </script>
 
 <template>

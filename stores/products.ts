@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { Product } from "~/types/types";
+import type { Product } from "~/db/schema";
 
 export const useProductsStore = defineStore("products", () => {
   const products = ref<Product[]>();
@@ -18,20 +18,18 @@ export const useProductsStore = defineStore("products", () => {
     );
     return { data, status, error };
   }
-  async function addProduct() {
-    const body = await useFetch("/api/product/add", {
-      method: "post",
-      body: { test: 123 },
-    });
-    return body;
+
+  interface AddProduct extends Omit<Product, "price" | "stock"> {
+    price: number;
+    stock: number;
   }
 
-  async function submit(product: Product) {
-    const { body } = await $fetch("/api/product/add", {
+  async function addProduct(product: AddProduct) {
+    const prod = await $fetch("/api/product/add", {
       method: "post",
       body: { product },
     });
-    return body;
+    return prod;
   }
 
   const filteredProducts = computed(() => {
@@ -42,14 +40,14 @@ export const useProductsStore = defineStore("products", () => {
         : product.title
             .toLowerCase()
             .includes(filterText.value.toLowerCase()) &&
-          product.category === filterCategory.value,
+          product.category?.includes(filterCategory.value),
     );
   });
 
   const productCategories = computed(() => {
     let categories = new Set<string>(["Todos"]);
     products.value?.forEach((product) => {
-      categories.add(product.category);
+      product.category?.forEach((cat) => categories.add(cat));
     });
     return Array.from(categories);
   });
@@ -63,6 +61,5 @@ export const useProductsStore = defineStore("products", () => {
     filterText,
     productCategories,
     filterCategory,
-    submit,
   };
 });

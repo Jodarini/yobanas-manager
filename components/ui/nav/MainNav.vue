@@ -2,7 +2,6 @@
 import { cn } from "~/lib/utils";
 import { Icon } from "@iconify/vue";
 import { Button } from "@/components/ui/button";
-import { h } from "vue";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,10 +11,6 @@ import {
 import SearchProducts from "./SearchProducts.vue";
 
 const colorMode = useColorMode();
-
-const clicked = () => {
-  console.log("clicked");
-};
 </script>
 
 <template>
@@ -40,7 +35,6 @@ const clicked = () => {
       </a>
       <SearchProducts></SearchProducts>
       <AddProduct />
-      <Button @click="clicked"></Button>
     </div>
 
     <DropdownMenu>

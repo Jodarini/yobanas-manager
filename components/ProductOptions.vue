@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import DialogClose from "./ui/dialog/DialogClose.vue";
 
 defineProps<{
   id: number;
@@ -47,33 +48,36 @@ const deleteProduct = (productId: number) => {
       </svg>
     </DropdownMenuTrigger>
     <DropdownMenuContent>
-      <DropdownMenuItem>Profile</DropdownMenuItem>
-      <Dialog>
-        <DialogTrigger
-          class="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-        >
-          Delete
-        </DialogTrigger>
-        <DialogContent class="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              ¿Está seguro de que desea eliminar este elemento?
-            </DialogTitle>
-            <DialogDescription>
-              Esta acción es irreversible.
-            </DialogDescription>
-          </DialogHeader>
-          <div class="flex items-center justify-between space-x-2">
-            <Button size="sm" class="px-3">
-              <span class="sr-only">Copy</span>
-              Cancelar
-            </Button>
-            <Button variant="destructive" size="sm" @click="deleteProduct(id)">
-              Confirmar
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DropdownMenuItem>Editar</DropdownMenuItem>
+      <DropdownMenuItem>
+        <Dialog>
+          <DialogTrigger @click.stop> Borrar </DialogTrigger>
+          <DialogContent class="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>
+                ¿Está seguro de que desea eliminar este elemento?
+              </DialogTitle>
+              <DialogDescription>
+                Esta acción es irreversible.
+              </DialogDescription>
+            </DialogHeader>
+            <div class="flex items-center justify-between space-x-2">
+              <DialogClose as-child>
+                <Button size="sm" class="px-3"> Cancelar </Button>
+              </DialogClose>
+              <DialogClose as-child>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  @click="deleteProduct(id)"
+                >
+                  Confirmar
+                </Button>
+              </DialogClose>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>

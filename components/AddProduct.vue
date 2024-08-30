@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useForm } from "vee-validate";
-import type { Product } from "~/db/schema";
 
 const formSchema = toTypedSchema(
   z.object({
@@ -59,27 +58,13 @@ const store = useProductsStore();
 const onSubmit = handleSubmit(async (values) => {
   const newTags = values.tags?.split(",");
   const newCategories = values.category?.split(",");
-  const prod = await store.addProduct({
+  await store.addProduct({
     ...values,
     tags: newTags,
     category: newCategories,
   });
-  alert({ prod });
-  alert(JSON.stringify(values));
   resetForm();
 });
-
-const newCategory = ref();
-const product = ref<Product>({ price: "", stock: "", title: "" });
-const addCategory = () => {
-  // if (
-  //   newCategory.value &&
-  //   !product.value.category.includes(newCategory.value)
-  // ) {
-  //   product.value.category.push(newCategory.value);
-  //   newCategory.value = "";
-  // }
-};
 </script>
 <template>
   <Sheet>
@@ -177,10 +162,8 @@ const addCategory = () => {
                   type="text"
                   placeholder="Categoria"
                   v-bind="componentField"
-                  @keyup.enter.prevent="addCategory"
                 />
-                <Button type="button" @click="addCategory">Add</Button>
-                {{ newCategory }}
+                <Button type="button">Add</Button>
               </FormControl>
               <FormMessage />
             </FormItem>

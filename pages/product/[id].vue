@@ -23,6 +23,8 @@ const product = prod.data.value;
       <h3 class="mb-2 text-lg font-semibold">{{ product.title }}</h3>
       <p>{{ product.description }}</p>
       <p><b>Marca: </b>{{ product.brand }}</p>
+      {{ product.doesntevenexist }}
+      {{ product.doestnkjakdslfjasdf }}
       <p><b>En stock: </b>{{ product.stock }}</p>
     </CardContent>
     <CardFooter class="flex items-center justify-between p-4">

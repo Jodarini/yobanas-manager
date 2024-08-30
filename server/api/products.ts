@@ -8,6 +8,6 @@ export default defineEventHandler(async (event) => {
   const client = postgres(connectionString);
   const db = drizzle(client);
 
-  const allUsers = await db.select().from(products);
-  return allUsers;
+  const allProducts = await db.select().from(products);
+  return allProducts;
 });

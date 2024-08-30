@@ -12,6 +12,7 @@ export const products = pgTable("products", {
   description: text("description"),
   price: numeric("price", { precision: 10, scale: 2 }).notNull(),
   thumbnail: text("thumbnail"),
+  brand: text("brand").notNull(),
   tags: text("tags").array(),
   category: text("category").array(),
   stock: numeric("stock", { precision: 10, scale: 0 }).notNull(),

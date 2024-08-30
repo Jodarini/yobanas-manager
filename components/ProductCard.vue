@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Product } from "~/types/types";
+import type { Product } from "~/db/schema";
 
 const props = defineProps<{ product: Product }>();
+const price = parseInt(props.product.price);
 </script>
 
 <template>
@@ -10,9 +11,9 @@ const props = defineProps<{ product: Product }>();
       <CardHeader class="p-0">
         <AspectRatio :ratio="16 / 9">
           <img
-            :src="product.thumbnail"
+            :src="product.thumbnail!"
             :alt="product.title"
-            class="h-full w-full object-cover"
+            class="h-full w-full object-contain"
           />
         </AspectRatio>
       </CardHeader>
@@ -26,9 +27,7 @@ const props = defineProps<{ product: Product }>();
       <CardFooter class="flex items-center justify-between p-4">
         <span class="text-xl font-bold"
           >${{
-            product.price.toLocaleString("es-CO", {
-              style: "currency",
-              currency: "COP",
+            price.toLocaleString("es-CO", {
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
             })

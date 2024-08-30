@@ -1,21 +1,6 @@
 <script setup lang="ts">
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { Input } from "./ui/input";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useForm } from "vee-validate";
@@ -37,7 +22,7 @@ const formSchema = toTypedSchema(
   }),
 );
 
-const { handleSubmit, resetForm, values } = useForm({
+const { handleSubmit, resetForm } = useForm({
   validationSchema: formSchema,
   initialValues: {
     title: "test",
@@ -50,8 +35,6 @@ const { handleSubmit, resetForm, values } = useForm({
     thumbnail: "https://placehold.co/600x400@2x.png",
   },
 });
-
-console.log(values.category);
 
 const store = useProductsStore();
 
@@ -191,7 +174,7 @@ const onSubmit = handleSubmit(async (values) => {
         </form>
       </SheetHeader>
       <SheetFooter>
-        <SheetClose as-child> </SheetClose>
+        <SheetClose as-child />
       </SheetFooter>
     </SheetContent>
   </Sheet>

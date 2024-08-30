@@ -8,7 +8,9 @@ export default defineNuxtConfig({
     "shadcn-nuxt",
     "@nuxtjs/color-mode",
     "@pinia/nuxt",
+    "@nuxt/eslint",
   ],
+  eslint: {},
   colorMode: {
     classSuffix: "",
   },

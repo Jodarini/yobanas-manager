@@ -13,7 +13,6 @@ export const useProductsStore = defineStore("products", () => {
   }
 
   async function fetchProduct(productId: number) {
-    console.log("FETCHED");
     const { data, status, error } = await useFetch<Product>(
       `/api/product/${productId}`,
     );
@@ -46,7 +45,7 @@ export const useProductsStore = defineStore("products", () => {
   });
 
   const productCategories = computed(() => {
-    let categories = new Set<string>(["Todos"]);
+    const categories = new Set<string>(["Todos"]);
     products.value?.forEach((product) => {
       product.category?.forEach((cat) => categories.add(cat));
     });

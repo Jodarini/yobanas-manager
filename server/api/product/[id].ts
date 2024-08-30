@@ -4,7 +4,6 @@ import postgres from "postgres";
 import { products } from "~/db/schema";
 
 export default defineEventHandler(async (event) => {
-  console.log("ID: ", event.context.params!.id);
   const connectionString = process.env.TEST_SUPABASE_URL!;
 
   const client = postgres(connectionString);
@@ -17,6 +16,5 @@ export default defineEventHandler(async (event) => {
     .where(eq(products.id, productId))
     .limit(1);
 
-  console.log(product);
   return product;
 });

@@ -6,7 +6,7 @@ const store = useProductsStore();
 </script>
 
 <template>
-  <Input placeholder="Busca por titulo" v-model="store.filterText" />
+  <Input v-model="store.filterText" placeholder="Busca por titulo" />
   <div class="flex gap-2">
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
@@ -16,8 +16,9 @@ const store = useProductsStore();
         <DropdownMenuLabel>Selecciona categoria</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup
-          v-model="store.filterCategory"
           v-for="category in store.productCategories"
+          :key="category"
+          v-model="store.filterCategory"
         >
           <DropdownMenuRadioItem :value="category">
             {{ category }}
@@ -46,5 +47,3 @@ const store = useProductsStore();
   </div>
   <slot />
 </template>
-
-<style scoped></style>

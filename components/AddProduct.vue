@@ -137,6 +137,7 @@ const onSubmit = handleSubmit(async (values) => {
           </FormField>
 
           <FormField v-slot="{ componentField }" name="category">
+            <!-- TODO: Add Tags Input from shadcn-vue -->
             <FormItem>
               <FormLabel>Categoria</FormLabel>
               <FormControl>

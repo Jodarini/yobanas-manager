@@ -32,6 +32,13 @@ export const useProductsStore = defineStore("products", () => {
     return prod;
   }
 
+  async function deleteProduct(id: number) {
+    await $fetch("/api/product/delete", {
+      method: "delete",
+      body: { id },
+    });
+  }
+
   const filteredProducts = computed(() => {
     if (!filterText) return products.value;
     return products.value?.filter((product) =>
@@ -57,6 +64,7 @@ export const useProductsStore = defineStore("products", () => {
     fetchProducts,
     fetchProduct,
     addProduct,
+    deleteProduct,
     filteredProducts,
     filterText,
     productCategories,

@@ -18,13 +18,17 @@ const price = parseInt(props.product.price);
         </AspectRatio>
       </CardHeader>
       <CardContent class="p-4">
-        <Badge
-          v-for="category of product.category"
-          :key="category"
-          class="mb-2"
-        >
-          {{ category }}
-        </Badge>
+        <div class="flex justify-between">
+          <Badge
+            v-for="category of product.category"
+            :key="category"
+            class="mb-2"
+          >
+            {{ category }}
+          </Badge>
+
+          <ProductOptions :id="product.id!" />
+        </div>
         <h3 class="mb-2 text-lg font-semibold">{{ product.title }}</h3>
         <p class="text-sm text-muted-foreground">{{ product.description }}</p>
       </CardContent>

@@ -8,6 +8,21 @@ export default defineEventHandler(async (event) => {
   const connectionString = process.env.TEST_SUPABASE_URL!;
   const client = postgres(connectionString);
   const db = drizzle(client);
-  await db.delete(products).where(eq(products.id, body.id));
-  await client.end();
+  try {
+    const result = await db.delete(products).where(eq(products.id, body.id));
+    if (result.count === 0) {
+      return createError({
+        statusCode: 404,
+        statusMessage: "Product not found",
+      });
+    }
+    return { message: "Product deleted successfully" };
+  } catch (err) {
+    console.error("Error deleting the product", err);
+    if (err.statusCode === 404) {
+      throw err;
+    }
+  } finally {
+    await client.end();
+  }
 });

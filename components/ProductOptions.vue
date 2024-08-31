@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Loader2 } from "lucide-vue-next";
 import DialogClose from "./ui/dialog/DialogClose.vue";
 
 defineProps<{
@@ -20,8 +21,8 @@ defineProps<{
 }>();
 
 const store = useProductsStore();
-const deleteProduct = (productId: number) => {
-  store.deleteProduct(productId);
+const deleteProduct = async (productId: number) => {
+  await store.deleteProduct(999);
 };
 </script>
 
@@ -58,22 +59,32 @@ const deleteProduct = (productId: number) => {
                 ¿Está seguro de que desea eliminar este elemento?
               </DialogTitle>
               <DialogDescription>
-                Esta acción es irreversible.
+                <span> Esta acción es irreversible. </span>
+
+                <span v-if="store.storeError" class="text-red-400">
+                  {{ store.storeError }}
+                </span>
               </DialogDescription>
             </DialogHeader>
+
             <div class="flex items-center justify-between space-x-2">
               <DialogClose as-child>
                 <Button size="sm" class="px-3"> Cancelar </Button>
               </DialogClose>
-              <DialogClose as-child>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  @click="deleteProduct(id)"
-                >
-                  Confirmar
-                </Button>
-              </DialogClose>
+              <Button
+                variant="destructive"
+                size="sm"
+                class="w-[10ch]"
+                :disabled="store.isPending"
+                @click="deleteProduct(id)"
+              >
+                <div v-if="store.isPending">
+                  <span>
+                    <Loader2 class="mr-2 h-4 w-4 animate-spin" />
+                  </span>
+                </div>
+                <template v-else> Confirmar </template>
+              </Button>
             </div>
           </DialogContent>
         </Dialog>

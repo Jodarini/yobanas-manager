@@ -22,7 +22,7 @@ defineProps<{
 
 const store = useProductsStore();
 const deleteProduct = async (productId: number) => {
-  await store.deleteProduct(999);
+  await store.deleteProduct(productId);
 };
 </script>
 

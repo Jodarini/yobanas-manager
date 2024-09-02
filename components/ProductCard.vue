@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import type { Product } from "~/db/schema";
-
-const props = defineProps<{ product: Product }>();
-const price = parseInt(props.product.price);
+defineProps<{ product: IProduct }>();
 </script>
 
 <template>
@@ -10,7 +7,7 @@ const price = parseInt(props.product.price);
     <Card class="min-h-96 min-w-60 overflow-hidden">
       <CardHeader class="p-0">
         <AspectRatio :ratio="16 / 9">
-          <img
+          <NuxtImg
             :src="product.thumbnail!"
             :alt="product.title"
             class="h-full w-full object-contain"
@@ -35,7 +32,7 @@ const price = parseInt(props.product.price);
       <CardFooter class="flex items-center justify-between p-4">
         <span class="text-xl font-bold">
           ${{
-            price.toLocaleString("es-CO", {
+            product.price.toLocaleString("es-CO", {
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
             })

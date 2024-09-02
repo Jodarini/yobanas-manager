@@ -9,7 +9,7 @@ const product = prod.data.value;
   <Card v-if="product" class="min-h-96 min-w-96 overflow-hidden">
     <CardHeader class="p-0">
       <AspectRatio :ratio="16 / 9">
-        <img
+        <NuxtImg
           :src="product.thumbnail!"
           :alt="product.title"
           class="h-full w-full object-contain"

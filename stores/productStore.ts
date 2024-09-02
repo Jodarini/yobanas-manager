@@ -1,14 +1,27 @@
 import { defineStore } from "pinia";
 import type { Product } from "~/db/schema";
 
+export interface IProduct extends Omit<Product, "price" | "stock"> {
+  price: number;
+  stock: number;
+}
 export const useProductsStore = defineStore("products", () => {
-  const products = ref<Product[]>();
+  const products = ref<IProduct[]>();
   const filterText = ref("");
   const filterCategory = ref("Todos");
 
   async function fetchProducts() {
     const { data, status, error } = await useFetch<Product[]>("/api/products");
-    products.value = data.value!;
+
+    if (data.value) {
+      products.value = data.value.map((product) => ({
+        ...product,
+        price: parseInt(product.price) as number,
+        stock: parseInt(product.stock) as number,
+      }));
+    }
+    // data.value = { ...data.value, price: parseInt(price) };
+    // products.value = data.value;
     return { status, error };
   }
 
@@ -19,40 +32,14 @@ export const useProductsStore = defineStore("products", () => {
     return { data, status, error };
   }
 
-  interface AddProduct extends Omit<Product, "price" | "stock"> {
-    price: number;
-    stock: number;
+  async function addProduct(product: Product) {
+    const prod = {
+      ...product,
+      price: parseInt(product.price),
+      stock: parseInt(product.stock),
+    };
+    products.value?.push(prod);
   }
-
-  async function addProduct(product: AddProduct) {
-    const prod = await $fetch("/api/product/add", {
-      method: "post",
-      body: { product },
-    });
-    return prod;
-  }
-
-  // async function deleteProduct(id: number) {
-  //   isPending.value = true;
-  //   storeError.value = "";
-  //   try {
-  //     await new Promise((resolve) => setTimeout(resolve, 2000));
-  //     await $fetch("/api/product/delete", {
-  //       method: "delete",
-  //       body: { id },
-  //     });
-  //
-  //     products.value = products.value!.filter((product) => product.id !== id);
-  //   } catch (err) {
-  //     if (err.statusCode === 404) {
-  //       storeError.value = "Producto no encontrado";
-  //     } else {
-  //       storeError.value = "Ocurrio un error";
-  //     }
-  //   } finally {
-  //     isPending.value = false;
-  //   }
-  // }
 
   const filteredProducts = computed(() => {
     if (!filterText) return products.value;

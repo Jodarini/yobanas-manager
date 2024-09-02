@@ -4,6 +4,10 @@ import { Input } from "./ui/input";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useForm } from "vee-validate";
+import { useToast } from "./ui/toast/use-toast";
+
+const { toast } = useToast();
+const isOpen = ref<boolean | undefined>();
 
 const formSchema = toTypedSchema(
   z.object({
@@ -25,14 +29,16 @@ const formSchema = toTypedSchema(
 const { handleSubmit, resetForm } = useForm({
   validationSchema: formSchema,
   initialValues: {
-    title: "test",
-    category: "test",
-    description: "test",
-    tags: "test",
+    title: "Colby Extra-Small Burnished Leather Shoulder Bag ",
+    category: "Handbags",
+    description:
+      "100% leather from tanneries meeting the highest standards of environmental performance",
+    tags: "women",
     stock: 1,
-    brand: "test",
-    price: 2,
-    thumbnail: "https://placehold.co/600x400@2x.png",
+    brand: "Michael Kors",
+    price: 228,
+    thumbnail:
+      "https://michaelkors.scene7.com/is/image/MichaelKors/32F4ABAU0T-0201_1?$zoom$",
   },
 });
 
@@ -41,16 +47,42 @@ const store = useProductsStore();
 const onSubmit = handleSubmit(async (values) => {
   const newTags = values.tags?.split(",");
   const newCategories = values.category?.split(",");
-  await store.addProduct({
+
+  const product = {
     ...values,
     tags: newTags,
     category: newCategories,
-  });
-  resetForm();
+  };
+
+  try {
+    const { data, error } = await useFetch("/api/product/add", {
+      method: "post",
+      body: { product },
+    });
+
+    if (error.value) {
+      throw new Error(error.value.message);
+    }
+    if (data.value) {
+      store.addProduct(data.value);
+      toast({
+        title: `Producto agregado: ${data.value.title}`,
+      });
+    }
+  } catch (err) {
+    toast({
+      variant: "destructive",
+      title: `${err}`,
+    });
+    console.error(err);
+  } finally {
+    isOpen.value = false;
+    resetForm();
+  }
 });
 </script>
 <template>
-  <Sheet>
+  <Sheet :open="isOpen">
     <SheetTrigger as-child>
       <Button variant="outline"> Agregar producto </Button>
     </SheetTrigger>

@@ -1,16 +1,9 @@
 <script setup lang="ts">
 import { cn } from "~/lib/utils";
 import { Icon } from "@iconify/vue";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import SearchProducts from "./SearchProducts.vue";
 
-const colorMode = useColorMode();
+// const colorMode = useColorMode();
 </script>
 
 <template>
@@ -27,7 +20,7 @@ const colorMode = useColorMode();
         href="/"
         class="text-sm font-medium transition-colors hover:text-primary"
       >
-        <img
+        <NuxtImg
           src="/Logo YC Principal sobre claro.png"
           class="w-44"
           alt="Yobanas Closet Logo"
@@ -51,17 +44,17 @@ const colorMode = useColorMode();
           <span class="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem @click="colorMode.preference = 'light'">
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem @click="colorMode.preference = 'dark'">
-          Dark
-        </DropdownMenuItem>
-        <DropdownMenuItem @click="colorMode.preference = 'system'">
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
+      <!-- <DropdownMenuContent align="end"> -->
+      <!--   <DropdownMenuItem @click="colorMode.preference = 'light'"> -->
+      <!--     Light -->
+      <!--   </DropdownMenuItem> -->
+      <!--   <DropdownMenuItem @click="colorMode.preference = 'dark'"> -->
+      <!--     Dark -->
+      <!--   </DropdownMenuItem> -->
+      <!--   <DropdownMenuItem @click="colorMode.preference = 'system'"> -->
+      <!--     System -->
+      <!--   </DropdownMenuItem> -->
+      <!-- </DropdownMenuContent> -->
     </DropdownMenu>
   </nav>
 </template>

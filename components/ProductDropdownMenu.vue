@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import DialogClose from "./ui/dialog/DialogClose.vue";
 import { useToast } from "@/components/ui/toast/use-toast";
+import { Loader2 } from "lucide-vue-next";
 
 const props = defineProps<{
   id: number;
@@ -43,9 +44,6 @@ const isOpen = ref(false);
 </script>
 
 <template>
-  <ClientOnly>
-    <Toaster />
-  </ClientOnly>
   <DropdownMenu>
     <DropdownMenuTrigger
       ><svg

@@ -6,6 +6,9 @@ const { status, error } = await store.fetchProducts();
 </script>
 
 <template>
+  <ClientOnly>
+    <Toaster />
+  </ClientOnly>
   <h1 class="text-2xl">Tus productos</h1>
   <p v-if="status === 'pending'">{{ status }}</p>
   <p v-else-if="error">{{ error }}</p>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import DialogClose from "./ui/dialog/DialogClose.vue";
 import { useToast } from "@/components/ui/toast/use-toast";
 import { Loader2 } from "lucide-vue-next";
 

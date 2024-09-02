@@ -1,6 +1,4 @@
-<script setup lang="ts">
-import MainNav from "../components/ui/nav/MainNav.vue";
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="w-full border-b p-2">

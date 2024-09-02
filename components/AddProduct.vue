@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Button } from "@/components/ui/button";
-import { Input } from "./ui/input";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useForm } from "vee-validate";

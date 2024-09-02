@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import ProductCard from "~/components/ProductCard.vue";
-
 const store = useProductsStore();
 const { status, error } = await store.fetchProducts();
 </script>

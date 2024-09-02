@@ -1,4 +1,3 @@
-import type { AsyncDataRequestStatus } from "#app";
 import { defineStore } from "pinia";
 import type { Product } from "~/db/schema";
 
@@ -6,9 +5,6 @@ export const useProductsStore = defineStore("products", () => {
   const products = ref<Product[]>();
   const filterText = ref("");
   const filterCategory = ref("Todos");
-  const isPending = ref(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const storeError = ref<FetchError<any> | null>(null);
 
   async function fetchProducts() {
     const { data, status, error } = await useFetch<Product[]>("/api/products");
@@ -36,27 +32,27 @@ export const useProductsStore = defineStore("products", () => {
     return prod;
   }
 
-  async function deleteProduct(id: number) {
-    isPending.value = true;
-    storeError.value = "";
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      await $fetch("/api/product/delete", {
-        method: "delete",
-        body: { id },
-      });
-
-      products.value = products.value!.filter((product) => product.id !== id);
-    } catch (err) {
-      if (err.statusCode === 404) {
-        storeError.value = "Producto no encontrado";
-      } else {
-        storeError.value = "Ocurrio un error";
-      }
-    } finally {
-      isPending.value = false;
-    }
-  }
+  // async function deleteProduct(id: number) {
+  //   isPending.value = true;
+  //   storeError.value = "";
+  //   try {
+  //     await new Promise((resolve) => setTimeout(resolve, 2000));
+  //     await $fetch("/api/product/delete", {
+  //       method: "delete",
+  //       body: { id },
+  //     });
+  //
+  //     products.value = products.value!.filter((product) => product.id !== id);
+  //   } catch (err) {
+  //     if (err.statusCode === 404) {
+  //       storeError.value = "Producto no encontrado";
+  //     } else {
+  //       storeError.value = "Ocurrio un error";
+  //     }
+  //   } finally {
+  //     isPending.value = false;
+  //   }
+  // }
 
   const filteredProducts = computed(() => {
     if (!filterText) return products.value;
@@ -83,12 +79,9 @@ export const useProductsStore = defineStore("products", () => {
     fetchProducts,
     fetchProduct,
     addProduct,
-    deleteProduct,
     filteredProducts,
     filterText,
     productCategories,
     filterCategory,
-    isPending,
-    storeError,
   };
 });

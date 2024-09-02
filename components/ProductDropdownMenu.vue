@@ -1,32 +1,52 @@
 <script setup lang="ts">
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Loader2 } from "lucide-vue-next";
 import DialogClose from "./ui/dialog/DialogClose.vue";
+import { useToast } from "@/components/ui/toast/use-toast";
 
-defineProps<{
+const props = defineProps<{
   id: number;
+  title: string;
 }>();
 
-const store = useProductsStore();
+const isDeleting = ref(false);
+const error = ref<string | null>(null);
+const { toast } = useToast();
+
 const deleteProduct = async (productId: number) => {
-  await store.deleteProduct(productId);
+  isDeleting.value = true;
+  error.value = null;
+  try {
+    const { error } = await useFetch("/api/product/delete", {
+      method: "delete",
+      body: { id: productId },
+    });
+    closeDialog();
+    if (error.value) {
+      throw new Error(fetchError.value || "Error borrando producto");
+    }
+    toast({
+      title: `Producto eliminado: ${props.title}`,
+    });
+  } catch (err) {
+    console.error(err);
+    error.value =
+      err instanceof Error ? err.message : "An unexpected error occurred.";
+  } finally {
+    isDeleting.value = false;
+  }
+};
+
+const isOpen = ref(false);
+const fetchError = ref();
+
+const closeDialog = () => {
+  isOpen.value = true;
 };
 </script>
 
 <template>
+  <ClientOnly>
+    <Toaster />
+  </ClientOnly>
   <DropdownMenu>
     <DropdownMenuTrigger
       ><svg
@@ -49,9 +69,8 @@ const deleteProduct = async (productId: number) => {
       </svg>
     </DropdownMenuTrigger>
     <DropdownMenuContent>
-      <DropdownMenuItem>Editar</DropdownMenuItem>
       <DropdownMenuItem>
-        <Dialog>
+        <Dialog v-model:open="isOpen">
           <DialogTrigger @click.stop> Borrar </DialogTrigger>
           <DialogContent class="sm:max-w-md">
             <DialogHeader>
@@ -61,8 +80,9 @@ const deleteProduct = async (productId: number) => {
               <DialogDescription>
                 <span> Esta acción es irreversible. </span>
 
-                <span v-if="store.storeError" class="text-red-400">
-                  {{ store.storeError }}
+                <span v-if="error" class="text-red-400">
+                  <hr />
+                  {{ error }}
                 </span>
               </DialogDescription>
             </DialogHeader>
@@ -75,10 +95,10 @@ const deleteProduct = async (productId: number) => {
                 variant="destructive"
                 size="sm"
                 class="w-[10ch]"
-                :disabled="store.isPending"
+                :disabled="isDeleting"
                 @click="deleteProduct(id)"
               >
-                <div v-if="store.isPending">
+                <div v-if="isDeleting">
                   <span>
                     <Loader2 class="mr-2 h-4 w-4 animate-spin" />
                   </span>

@@ -3,7 +3,7 @@ import { cn } from "~/lib/utils";
 import { Icon } from "@iconify/vue";
 import SearchProducts from "./SearchProducts.vue";
 
-// const colorMode = useColorMode();
+const colorMode = useColorMode();
 </script>
 
 <template>
@@ -44,17 +44,17 @@ import SearchProducts from "./SearchProducts.vue";
           <span class="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <!-- <DropdownMenuContent align="end"> -->
-      <!--   <DropdownMenuItem @click="colorMode.preference = 'light'"> -->
-      <!--     Light -->
-      <!--   </DropdownMenuItem> -->
-      <!--   <DropdownMenuItem @click="colorMode.preference = 'dark'"> -->
-      <!--     Dark -->
-      <!--   </DropdownMenuItem> -->
-      <!--   <DropdownMenuItem @click="colorMode.preference = 'system'"> -->
-      <!--     System -->
-      <!--   </DropdownMenuItem> -->
-      <!-- </DropdownMenuContent> -->
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem @click="colorMode.preference = 'light'">
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem @click="colorMode.preference = 'dark'">
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem @click="colorMode.preference = 'system'">
+          System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
     </DropdownMenu>
   </nav>
 </template>

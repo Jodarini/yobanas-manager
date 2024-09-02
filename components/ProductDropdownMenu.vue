@@ -8,39 +8,38 @@ const props = defineProps<{
 }>();
 
 const isDeleting = ref(false);
-const error = ref<string | null>(null);
 const { toast } = useToast();
+const store = useProductsStore();
 
 const deleteProduct = async (productId: number) => {
   isDeleting.value = true;
-  error.value = null;
   try {
     const { error } = await useFetch("/api/product/delete", {
       method: "delete",
       body: { id: productId },
     });
-    closeDialog();
     if (error.value) {
-      throw new Error(fetchError.value || "Error borrando producto");
+      throw new Error(error.value.statusMessage || "Error borrando producto");
     }
     toast({
       title: `Producto eliminado: ${props.title}`,
     });
+    store.products = store.products!.filter(
+      (product) => product.id !== productId,
+    );
   } catch (err) {
     console.error(err);
-    error.value =
-      err instanceof Error ? err.message : "An unexpected error occurred.";
+
+    toast({
+      variant: "destructive",
+      title: `${err}`,
+    });
   } finally {
     isDeleting.value = false;
   }
 };
 
 const isOpen = ref(false);
-const fetchError = ref();
-
-const closeDialog = () => {
-  isOpen.value = true;
-};
 </script>
 
 <template>
@@ -71,7 +70,9 @@ const closeDialog = () => {
     <DropdownMenuContent>
       <DropdownMenuItem>
         <Dialog v-model:open="isOpen">
-          <DialogTrigger @click.stop> Borrar </DialogTrigger>
+          <DialogTrigger class="h-full w-full text-left" @click.stop>
+            Borrar
+          </DialogTrigger>
           <DialogContent class="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>
@@ -79,11 +80,6 @@ const closeDialog = () => {
               </DialogTitle>
               <DialogDescription>
                 <span> Esta acción es irreversible. </span>
-
-                <span v-if="error" class="text-red-400">
-                  <hr />
-                  {{ error }}
-                </span>
               </DialogDescription>
             </DialogHeader>
 

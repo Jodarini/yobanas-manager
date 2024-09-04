@@ -6,7 +6,6 @@ export default withNuxt(
     rules: {
       "vue/no-multiple-template-root": "off",
       "vue/html-self-closing": "off",
-      // "vue/no-undef-components": "warn",
     },
   },
   // Your custom configs here

@@ -44,25 +44,26 @@ const isOpen = ref(false);
 
 <template>
   <DropdownMenu>
-    <DropdownMenuTrigger
-      ><svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        stroke="currentColor"
-        fill="none"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        data-icon="SvgMoreVertical"
-        aria-hidden="true"
-      >
-        <path
-          d="M11 20a1 1 0 11.293.707A1 1 0 0111 20zm0-8a1 1 0 11.293.707A1 1 0 0111 12zm0-8a1 1 0 11.293.707A1 1 0 0111 4z"
-        ></path>
+    <DropdownMenuTrigger>
+      <Button variant="ghost" class="rounded-full p-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          stroke="currentColor"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          data-icon="SvgMoreVertical"
+          aria-hidden="true"
         >
-      </svg>
+          <path
+            d="M11 20a1 1 0 11.293.707A1 1 0 0111 20zm0-8a1 1 0 11.293.707A1 1 0 0111 12zm0-8a1 1 0 11.293.707A1 1 0 0111 4z"
+          ></path>
+        </svg>
+      </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent>
       <DropdownMenuItem>

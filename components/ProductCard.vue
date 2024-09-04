@@ -24,7 +24,9 @@ defineProps<{ product: IProduct }>();
             {{ category }}
           </Badge>
 
-          <ProductDropdownMenu :id="product.id!" :title="product.title" />
+          <ClientOnly>
+            <ProductDropdownMenu :id="product.id!" :title="product.title" />
+          </ClientOnly>
         </div>
         <h3 class="mb-2 text-lg font-semibold">{{ product.title }}</h3>
         <p class="text-sm text-muted-foreground">{{ product.description }}</p>

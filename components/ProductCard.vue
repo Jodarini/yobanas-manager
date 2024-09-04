@@ -16,13 +16,15 @@ defineProps<{ product: IProduct }>();
       </CardHeader>
       <CardContent class="p-4">
         <div class="flex justify-between">
-          <Badge
-            v-for="category of product.category"
-            :key="category"
-            class="mb-2"
-          >
-            {{ category }}
-          </Badge>
+          <div class="flex gap-1">
+            <Badge
+              v-for="category of product.category"
+              :key="category"
+              class="mb-2"
+            >
+              {{ category }}
+            </Badge>
+          </div>
 
           <ClientOnly>
             <ProductDropdownMenu :id="product.id!" :title="product.title" />

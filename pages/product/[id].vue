@@ -6,27 +6,23 @@ const product = prod.data.value;
 </script>
 
 <template>
-  <Card v-if="product" class="min-h-96 min-w-96 overflow-hidden">
-    <CardHeader class="p-0">
-      <AspectRatio :ratio="16 / 9">
-        <NuxtImg
-          :src="product.thumbnail!"
-          :alt="product.title"
-          class="h-full w-full object-contain"
-        />
-      </AspectRatio>
-    </CardHeader>
-    <CardContent class="p-4">
-      <template v-for="tag in product.tags" :key="`${tag}${product.id}`">
-        <Badge class="mb-2">{{ tag }}</Badge>
-      </template>
+  <div v-if="product" class="flex">
+    <AspectRatio :ratio="16 / 9">
+      <NuxtImg
+        :src="product.thumbnail!"
+        :alt="product.title"
+        class="h-full w-full object-contain"
+      />
+    </AspectRatio>
+    <div class="flex flex-col gap-4">
       <h3 class="mb-2 text-lg font-semibold">{{ product.title }}</h3>
+      <span class="">${{ product.price }}</span>
       <p>{{ product.description }}</p>
       <p><b>Marca: </b>{{ product.brand }}</p>
       <p><b>En stock: </b>{{ product.stock }}</p>
-    </CardContent>
-    <CardFooter class="flex items-center justify-between p-4">
-      <span class="text-xl font-bold"> Precio: ${{ product.price }}</span>
-    </CardFooter>
-  </Card>
+      <template v-for="tag in product.category" :key="`${tag}${product.id}`">
+        <Badge variant="secondary" class="mb-2 w-fit">{{ tag }}</Badge>
+      </template>
+    </div>
+  </div>
 </template>

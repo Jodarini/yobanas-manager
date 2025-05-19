@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { Product } from "~/db/schema";
+import type { Product, ProductWithVariant } from "~/db/schema";
 
 export interface IProduct extends Omit<Product, "price" | "stock"> {
   price: number;
@@ -26,7 +26,7 @@ export const useProductsStore = defineStore("products", () => {
   }
 
   async function fetchProduct(productId: number) {
-    const { data, status, error } = await useFetch<Product>(
+    const { data, status, error } = await useFetch<ProductWithVariant>(
       `/api/product/${productId}`,
     );
     return { data, status, error };

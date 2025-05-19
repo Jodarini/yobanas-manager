@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import { eq } from "drizzle-orm";
 import postgres from "postgres";
-import { products } from "~/db/schema";
+import { products, productVariants } from "~/db/schema";
 
 export default defineEventHandler(async (event) => {
   const connectionString = process.env.TEST_SUPABASE_URL!;
@@ -16,5 +16,12 @@ export default defineEventHandler(async (event) => {
     .where(eq(products.id, productId))
     .limit(1);
 
-  return product;
+  //selects the product with variants with a desired ID
+  const [otherProduct] = await db
+    .select()
+    .from(productVariants)
+    .innerJoin(products, eq(products.id, productId))
+    .where(eq(productVariants.productId, productId))
+
+  return otherProduct;
 });

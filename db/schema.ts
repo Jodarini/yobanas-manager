@@ -26,3 +26,6 @@ export const productVariants = pgTable("product_variants", {
 });
 
 export type Product = typeof products.$inferInsert;
+export type ProductVariants = typeof productVariants.$inferInsert;
+export type ProductWithVariant = { product_variants: ProductVariants, products: Product; }
+

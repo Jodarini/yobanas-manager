@@ -55,7 +55,7 @@ const formSchema = toTypedSchema(
       .nullable(),
     brand: z.string().min(1, "La marca debe tener al menos un caracter"),
     tags: z.string().optional().nullable(),
-    variants: z.array(
+    variants:
       z.object({
         size: z.string()
           .min(1, "Debe agregar al menos una talla"),
@@ -66,26 +66,29 @@ const formSchema = toTypedSchema(
           .int()
           .nonnegative("La cantidad debe ser positiva"),
       })
-    )
   }),
 );
 
 const { handleSubmit, resetForm } = useForm({
   validationSchema: formSchema,
   initialValues: {
-    title: "Colby Extra-Small Burnished Leather Shoulder Bag ",
+    // title: "Colby Extra-Small Burnished Leather Shoulder Bag ",
+    title: "1",
+    // description:
+    //   "100% leather from tanneries meeting the highest standards of environmental performance",
     description:
-      "100% leather from tanneries meeting the highest standards of environmental performance",
+      "1",
     category: [],
-    brand: "Michael Kors",
-    price: 228,
+    // brand: "Michael Kors",
+    brand: "1",
+    price: 1,
     thumbnail:
       "https://michaelkors.scene7.com/is/image/MichaelKors/32F4ABAU0T-0201_1?$zoom$",
-    variants: [{
-      size: 'xl',
-      color: 'blanco',
+    variants: {
+      size: '1',
+      color: '1',
       stock: 1,
-    }]
+    }
   },
 });
 
@@ -97,7 +100,6 @@ const onSubmit = handleSubmit(async (values) => {
     ...values,
     tags: newTags,
     variants: values.variants
-
   };
   try {
     const { data, error } = await useFetch("/api/product/add", {
@@ -255,7 +257,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="brand">
+          <FormField v-slot="{ componentField }" name="variants.brand">
             <FormItem>
               <FormLabel>Marca</FormLabel>
               <FormControl>
@@ -265,7 +267,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="size">
+          <FormField v-slot="{ componentField }" name="variants.size">
             <FormItem>
               <FormLabel>Talla</FormLabel>
               <FormControl>
@@ -275,7 +277,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="color">
+          <FormField v-slot="{ componentField }" name="variants.color">
             <FormItem>
               <FormLabel>Color</FormLabel>
               <FormControl>

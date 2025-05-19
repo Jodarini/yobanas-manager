@@ -165,12 +165,7 @@ const addNewCategory = (category: string) => {
             <FormItem>
               <FormLabel>Nombre</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="text"
-                  placeholder="Nombre"
-                  v-bind="componentField"
-                />
+                <Input required type="text" placeholder="Nombre" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -180,11 +175,7 @@ const addNewCategory = (category: string) => {
             <FormItem>
               <FormLabel>Descripcion</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Descripcion"
-                  v-bind="componentField"
-                />
+                <Input type="text" placeholder="Descripcion" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -194,12 +185,7 @@ const addNewCategory = (category: string) => {
             <FormItem>
               <FormLabel>Precio</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="number"
-                  placeholder="Precio"
-                  v-bind="componentField"
-                />
+                <Input required type="number" placeholder="Precio" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -209,12 +195,7 @@ const addNewCategory = (category: string) => {
             <FormItem>
               <FormLabel>Cantidad</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="number"
-                  placeholder="0"
-                  v-bind="componentField"
-                />
+                <Input required type="number" placeholder="0" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -226,44 +207,26 @@ const addNewCategory = (category: string) => {
               <FormControl>
                 <TagsInput class="gap-0 px-0" :model-value="modelValue">
                   <div class="flex flex-wrap items-center gap-2 px-3">
-                    <TagsInputItem
-                      v-for="item in modelValue"
-                      :key="item"
-                      :value="item"
-                    >
+                    <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
                       <TagsInputItemText />
                       <TagsInputItemDelete />
                     </TagsInputItem>
                   </div>
-                  <ComboboxRoot
-                    v-model="modelValue"
-                    v-model:open="open"
-                    v-model:searchTerm="searchTerm"
-                    class="w-full"
-                  >
+                  <ComboboxRoot v-model="modelValue" v-model:open="open" v-model:searchTerm="searchTerm" class="w-full">
                     <ComboboxAnchor as-child>
                       <ComboboxInput placeholder="Categoria..." as-child>
-                        <TagsInputInput
-                          class="w-full px-3"
-                          :class="modelValue.length > 0 ? 'mt-2' : ''"
-                          @keydown.enter.prevent
-                        />
+                        <TagsInputInput class="w-full px-3" :class="modelValue.length > 0 ? 'mt-2' : ''"
+                          @keydown.enter.prevent />
                       </ComboboxInput>
                     </ComboboxAnchor>
                     <ComboboxPortal>
                       <ComboboxContent>
-                        <CommandList
-                          position="popper"
-                          class="z-[50] mt-2 w-[--radix-popper-anchor-width] rounded-md border bg-popover text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
-                        >
+                        <CommandList position="popper"
+                          class="z-[50] mt-2 w-[--radix-popper-anchor-width] rounded-md border bg-popover text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2">
                           <CommandEmpty />
                           <CommandGroup>
-                            <CommandItem
-                              v-for="cat in filteredCategories"
-                              :key="cat"
-                              :value="cat"
-                              @select.prevent="addNewCategory(cat)"
-                            >
+                            <CommandItem v-for="cat in filteredCategories" :key="cat" :value="cat"
+                              @select.prevent="addNewCategory(cat)">
                               {{ cat }}
                             </CommandItem>
                           </CommandGroup>
@@ -282,12 +245,7 @@ const addNewCategory = (category: string) => {
             <FormItem>
               <FormLabel>Marca</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="text"
-                  placeholder="Marca"
-                  v-bind="componentField"
-                />
+                <Input required type="text" placeholder="Marca" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -297,12 +255,7 @@ const addNewCategory = (category: string) => {
             <FormItem>
               <FormLabel>Imagen</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="text"
-                  placeholder="Imagen"
-                  v-bind="componentField"
-                />
+                <Input required type="text" placeholder="Imagen" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>

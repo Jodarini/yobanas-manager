@@ -1,4 +1,4 @@
-import { pgTable, serial, text, varchar, numeric } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, varchar, numeric, integer } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -15,7 +15,14 @@ export const products = pgTable("products", {
   brand: text("brand").notNull(),
   tags: text("tags").array(),
   category: text("category").array(),
-  stock: numeric("stock", { precision: 10, scale: 0 }).notNull(),
+});
+
+export const productVariants = pgTable("product_variants", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
+  size: varchar("size", { length: 10 }).notNull(),   // e.g., 'L', '10', 'M'
+  color: varchar("color", { length: 50 }).notNull(), // e.g., 'red', 'blue'
+  stock: integer("stock").notNull().default(0),
 });
 
 export type Product = typeof products.$inferInsert;

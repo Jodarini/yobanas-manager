@@ -3,7 +3,7 @@ import type { Product } from "~/db/schema";
 
 export interface IProduct extends Omit<Product, "price" | "stock"> {
   price: number;
-  stock: number;
+  // stock: number;
 }
 export const useProductsStore = defineStore("products", () => {
   const products = ref<IProduct[]>();
@@ -17,7 +17,7 @@ export const useProductsStore = defineStore("products", () => {
       products.value = data.value.map((product) => ({
         ...product,
         price: parseInt(product.price) as number,
-        stock: parseInt(product.stock) as number,
+        // stock: parseInt(product.stock) as number,
       }));
     }
     // data.value = { ...data.value, price: parseInt(price) };
@@ -36,7 +36,7 @@ export const useProductsStore = defineStore("products", () => {
     const prod = {
       ...product,
       price: parseInt(product.price),
-      stock: parseInt(product.stock),
+      // stock: parseInt(product.stock),
     };
     products.value?.push(prod);
   }
@@ -47,9 +47,9 @@ export const useProductsStore = defineStore("products", () => {
       filterCategory.value === "Todos"
         ? product.title.toLowerCase().includes(filterText.value.toLowerCase())
         : product.title
-            .toLowerCase()
-            .includes(filterText.value.toLowerCase()) &&
-          product.category?.includes(filterCategory.value),
+          .toLowerCase()
+          .includes(filterText.value.toLowerCase()) &&
+        product.category?.includes(filterCategory.value),
     );
   });
 

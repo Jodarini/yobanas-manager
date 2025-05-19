@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
     title: product.title,
     description: product.description,
     price: product.price.toString(),
-    stock: product.stock.toString(),
+    // stock: product.stock.toString(),
     brand: product.brand,
     thumbnail: product.thumbnail,
     category: product.category,

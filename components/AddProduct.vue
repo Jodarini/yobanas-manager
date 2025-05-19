@@ -55,10 +55,18 @@ const formSchema = toTypedSchema(
       .nullable(),
     brand: z.string().min(1, "La marca debe tener al menos un caracter"),
     tags: z.string().optional().nullable(),
-    stock: z
-      .number({ message: "Debe ser un numero" })
-      .int()
-      .nonnegative("La cantidad debe ser positiva"),
+    variants: z.array(
+      z.object({
+        size: z.string()
+          .min(1, "Debe agregar al menos una talla"),
+        color: z.string()
+          .min(1, "Debe agregar al menos un color"),
+        stock: z
+          .number({ message: "Debe ser un numero" })
+          .int()
+          .nonnegative("La cantidad debe ser positiva"),
+      })
+    )
   }),
 );
 
@@ -69,11 +77,15 @@ const { handleSubmit, resetForm } = useForm({
     description:
       "100% leather from tanneries meeting the highest standards of environmental performance",
     category: [],
-    stock: 1,
     brand: "Michael Kors",
     price: 228,
     thumbnail:
       "https://michaelkors.scene7.com/is/image/MichaelKors/32F4ABAU0T-0201_1?$zoom$",
+    variants: [{
+      size: 'xl',
+      color: 'blanco',
+      stock: 1,
+    }]
   },
 });
 
@@ -84,6 +96,8 @@ const onSubmit = handleSubmit(async (values) => {
   const product = {
     ...values,
     tags: newTags,
+    variants: values.variants
+
   };
   try {
     const { data, error } = await useFetch("/api/product/add", {
@@ -246,6 +260,26 @@ const addNewCategory = (category: string) => {
               <FormLabel>Marca</FormLabel>
               <FormControl>
                 <Input required type="text" placeholder="Marca" v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField v-slot="{ componentField }" name="size">
+            <FormItem>
+              <FormLabel>Talla</FormLabel>
+              <FormControl>
+                <Input required type="text" placeholder="Talla" v-bind="componentField" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField v-slot="{ componentField }" name="color">
+            <FormItem>
+              <FormLabel>Color</FormLabel>
+              <FormControl>
+                <Input required type="text" placeholder="Color" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>

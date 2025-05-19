@@ -11,10 +11,17 @@ export interface Product {
   description: string;
   category: string[];
   price: number;
-  stock: number;
+  // stock: number;
   tags?: string[];
   brand: string;
   thumbnail: string;
+  variants: ProductVariant[]
+}
+
+export interface ProductVariant {
+  size: string;
+  color: string
+  stock: number
 }
 
 export interface Dimensions {

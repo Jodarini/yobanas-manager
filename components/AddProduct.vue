@@ -78,7 +78,7 @@ const { handleSubmit, resetForm } = useForm({
     //   "100% leather from tanneries meeting the highest standards of environmental performance",
     description:
       "1",
-    category: [],
+    category: ['test'],
     // brand: "Michael Kors",
     brand: "1",
     price: 1,
@@ -207,7 +207,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="stock">
+          <FormField v-slot="{ componentField }" name="variants.stock">
             <FormItem>
               <FormLabel>Cantidad</FormLabel>
               <FormControl>
@@ -257,7 +257,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="variants.brand">
+          <FormField v-slot="{ componentField }" name="brand">
             <FormItem>
               <FormLabel>Marca</FormLabel>
               <FormControl>

@@ -13,11 +13,12 @@
     "@nuxt/eslint": "^0.5.4",
     "@nuxt/image": "^1.8.0",
     "@nuxtjs/tailwindcss": "^6.12.1",
-    "@vee-validate/zod": "^4.13.2",
+    "@vee-validate/zod": "^4.15.0",
     "@vueuse/core": "^11.0.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "drizzle-orm": "^0.33.0",
+    "drizzle-orm": "^0.43.1",
+    "drizzle-zod": "^0.8.1",
     "lucide-vue-next": "^0.436.0",
     "nuxt": "^3.13.0",
     "postgres": "^3.4.4",
@@ -25,9 +26,9 @@
     "shadcn-nuxt": "^0.10.4",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
-    "vee-validate": "^4.13.2",
+    "vee-validate": "^4.15.0",
     "vue": "latest",
-    "zod": "^3.23.8"
+    "zod": "^3.25.20"
   },
   "devDependencies": {
     "@iconify-json/radix-icons": "^1.1.15",

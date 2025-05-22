@@ -13,13 +13,13 @@ importers:
         version: 0.5.7(eslint@9.27.0(jiti@2.4.2))(magicast@0.3.5)(rollup@4.40.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.18)(jiti@2.4.2)(terser@5.39.2)(yaml@2.8.0))
       '@nuxt/image':
         specifier: ^1.8.0
-        version: 1.10.0(db0@0.3.2(drizzle-orm@0.33.0(postgres@3.4.5)))(ioredis@5.6.1)(magicast@0.3.5)
+        version: 1.10.0(db0@0.3.2(drizzle-orm@0.43.1(postgres@3.4.5)))(ioredis@5.6.1)(magicast@0.3.5)
       '@nuxtjs/tailwindcss':
         specifier: ^6.12.1
         version: 6.14.0(magicast@0.3.5)
       '@vee-validate/zod':
-        specifier: ^4.13.2
-        version: 4.15.0(vue@3.5.14(typescript@5.8.3))(zod@3.24.4)
+        specifier: ^4.15.0
+        version: 4.15.0(vue@3.5.14(typescript@5.8.3))(zod@3.25.20)
       '@vueuse/core':
         specifier: ^11.0.3
         version: 11.3.0(vue@3.5.14(typescript@5.8.3))
@@ -30,14 +30,17 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       drizzle-orm:
-        specifier: ^0.33.0
-        version: 0.33.0(postgres@3.4.5)
+        specifier: ^0.43.1
+        version: 0.43.1(postgres@3.4.5)
+      drizzle-zod:
+        specifier: ^0.8.1
+        version: 0.8.1(drizzle-orm@0.43.1(postgres@3.4.5))(zod@3.25.20)
       lucide-vue-next:
         specifier: ^0.436.0
         version: 0.436.0(vue@3.5.14(typescript@5.8.3))
       nuxt:
         specifier: ^3.13.0
-        version: 3.17.3(@parcel/watcher@2.5.1)(@types/node@22.15.18)(db0@0.3.2(drizzle-orm@0.33.0(postgres@3.4.5)))(drizzle-orm@0.33.0(postgres@3.4.5))(eslint@9.27.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.40.2)(terser@5.39.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.18)(jiti@2.4.2)(terser@5.39.2)(yaml@2.8.0))(yaml@2.8.0)
+        version: 3.17.3(@parcel/watcher@2.5.1)(@types/node@22.15.18)(db0@0.3.2(drizzle-orm@0.43.1(postgres@3.4.5)))(drizzle-orm@0.43.1(postgres@3.4.5))(eslint@9.27.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.40.2)(terser@5.39.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.18)(jiti@2.4.2)(terser@5.39.2)(yaml@2.8.0))(yaml@2.8.0)
       postgres:
         specifier: ^3.4.4
         version: 3.4.5
@@ -54,14 +57,14 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17)
       vee-validate:
-        specifier: ^4.13.2
+        specifier: ^4.15.0
         version: 4.15.0(vue@3.5.14(typescript@5.8.3))
       vue:
         specifier: latest
         version: 3.5.14(typescript@5.8.3)
       zod:
-        specifier: ^3.23.8
-        version: 3.24.4
+        specifier: ^3.25.20
+        version: 3.25.20
     devDependencies:
       '@iconify-json/radix-icons':
         specifier: ^1.1.15
@@ -2644,35 +2647,35 @@ packages:
     resolution: {integrity: sha512-nXOaTSFiuIaTMhS8WJC2d4EBeIcN9OSt2A2cyFbQYBAZbi7lRsVGJNqDpEwPqYfJz38yxbY/UtbvBBahBfnExQ==}
     hasBin: true
 
-  drizzle-orm@0.33.0:
-    resolution: {integrity: sha512-SHy72R2Rdkz0LEq0PSG/IdvnT3nGiWuRk+2tXZQ90GVq/XQhpCzu/EFT3V2rox+w8MlkBQxifF8pCStNYnERfA==}
+  drizzle-orm@0.43.1:
+    resolution: {integrity: sha512-dUcDaZtE/zN4RV/xqGrVSMpnEczxd5cIaoDeor7Zst9wOe/HzC/7eAaulywWGYXdDEc9oBPMjayVEDg0ziTLJA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
-      '@cloudflare/workers-types': '>=3'
-      '@electric-sql/pglite': '>=0.1.1'
-      '@libsql/client': '*'
-      '@neondatabase/serverless': '>=0.1'
+      '@cloudflare/workers-types': '>=4'
+      '@electric-sql/pglite': '>=0.2.0'
+      '@libsql/client': '>=0.10.0'
+      '@libsql/client-wasm': '>=0.10.0'
+      '@neondatabase/serverless': '>=0.10.0'
       '@op-engineering/op-sqlite': '>=2'
       '@opentelemetry/api': ^1.4.1
-      '@planetscale/database': '>=1'
+      '@planetscale/database': '>=1.13'
       '@prisma/client': '*'
       '@tidbcloud/serverless': '*'
       '@types/better-sqlite3': '*'
       '@types/pg': '*'
-      '@types/react': '>=18'
       '@types/sql.js': '*'
       '@vercel/postgres': '>=0.8.0'
       '@xata.io/client': '*'
       better-sqlite3: '>=7'
       bun-types: '*'
-      expo-sqlite: '>=13.2.0'
+      expo-sqlite: '>=14.0.0'
+      gel: '>=2'
       knex: '*'
       kysely: '*'
       mysql2: '>=2'
       pg: '>=8'
       postgres: '>=3'
       prisma: '*'
-      react: '>=18'
       sql.js: '>=1'
       sqlite3: '>=5'
     peerDependenciesMeta:
@@ -2683,6 +2686,8 @@ packages:
       '@electric-sql/pglite':
         optional: true
       '@libsql/client':
+        optional: true
+      '@libsql/client-wasm':
         optional: true
       '@neondatabase/serverless':
         optional: true
@@ -2700,8 +2705,6 @@ packages:
         optional: true
       '@types/pg':
         optional: true
-      '@types/react':
-        optional: true
       '@types/sql.js':
         optional: true
       '@vercel/postgres':
@@ -2713,6 +2716,8 @@ packages:
       bun-types:
         optional: true
       expo-sqlite:
+        optional: true
+      gel:
         optional: true
       knex:
         optional: true
@@ -2726,12 +2731,16 @@ packages:
         optional: true
       prisma:
         optional: true
-      react:
-        optional: true
       sql.js:
         optional: true
       sqlite3:
         optional: true
+
+  drizzle-zod@0.8.1:
+    resolution: {integrity: sha512-k2/2cwBz3Vjb7CWPVCeMNajZpG43V7SqhNrZ8LsWJOz8TztQ5YtU2ifgnfnxqZXsxeHmdQnsl6eXm7GwDZnq/Q==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: ^3.25.1
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -5676,8 +5685,8 @@ packages:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
 
-  zod@3.24.4:
-    resolution: {integrity: sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==}
+  zod@3.25.20:
+    resolution: {integrity: sha512-z03fqpTMDF1G02VLKUMt6vyACE7rNWkh3gpXVHgPTw28NPtDFRGvcpTtPwn2kMKtQ0idtYJUTxchytmnqYswcw==}
 
 snapshots:
 
@@ -6516,7 +6525,7 @@ snapshots:
       unixify: 1.0.0
       urlpattern-polyfill: 8.0.2
       yargs: 17.7.2
-      zod: 3.24.4
+      zod: 3.25.20
     transitivePeerDependencies:
       - encoding
       - rollup
@@ -6704,7 +6713,7 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@nuxt/image@1.10.0(db0@0.3.2(drizzle-orm@0.33.0(postgres@3.4.5)))(ioredis@5.6.1)(magicast@0.3.5)':
+  '@nuxt/image@1.10.0(db0@0.3.2(drizzle-orm@0.43.1(postgres@3.4.5)))(ioredis@5.6.1)(magicast@0.3.5)':
     dependencies:
       '@nuxt/kit': 3.17.3(magicast@0.3.5)
       consola: 3.4.2
@@ -6717,7 +6726,7 @@ snapshots:
       std-env: 3.9.0
       ufo: 1.6.1
     optionalDependencies:
-      ipx: 2.1.0(db0@0.3.2(drizzle-orm@0.33.0(postgres@3.4.5)))(ioredis@5.6.1)
+      ipx: 2.1.0(db0@0.3.2(drizzle-orm@0.43.1(postgres@3.4.5)))(ioredis@5.6.1)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -7414,11 +7423,11 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.7.2':
     optional: true
 
-  '@vee-validate/zod@4.15.0(vue@3.5.14(typescript@5.8.3))(zod@3.24.4)':
+  '@vee-validate/zod@4.15.0(vue@3.5.14(typescript@5.8.3))(zod@3.25.20)':
     dependencies:
       type-fest: 4.41.0
       vee-validate: 4.15.0(vue@3.5.14(typescript@5.8.3))
-      zod: 3.24.4
+      zod: 3.25.20
     transitivePeerDependencies:
       - vue
 
@@ -8260,9 +8269,9 @@ snapshots:
 
   data-uri-to-buffer@4.0.1: {}
 
-  db0@0.3.2(drizzle-orm@0.33.0(postgres@3.4.5)):
+  db0@0.3.2(drizzle-orm@0.43.1(postgres@3.4.5)):
     optionalDependencies:
-      drizzle-orm: 0.33.0(postgres@3.4.5)
+      drizzle-orm: 0.43.1(postgres@3.4.5)
 
   debug@3.2.7:
     dependencies:
@@ -8407,9 +8416,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.33.0(postgres@3.4.5):
+  drizzle-orm@0.43.1(postgres@3.4.5):
     optionalDependencies:
       postgres: 3.4.5
+
+  drizzle-zod@0.8.1(drizzle-orm@0.43.1(postgres@3.4.5))(zod@3.25.20):
+    dependencies:
+      drizzle-orm: 0.43.1(postgres@3.4.5)
+      zod: 3.25.20
 
   dunder-proto@1.0.1:
     dependencies:
@@ -9252,7 +9266,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ipx@2.1.0(db0@0.3.2(drizzle-orm@0.33.0(postgres@3.4.5)))(ioredis@5.6.1):
+  ipx@2.1.0(db0@0.3.2(drizzle-orm@0.43.1(postgres@3.4.5)))(ioredis@5.6.1):
     dependencies:
       '@fastify/accept-negotiator': 1.1.0
       citty: 0.1.6
@@ -9268,7 +9282,7 @@ snapshots:
       sharp: 0.32.6
       svgo: 3.3.2
       ufo: 1.6.1
-      unstorage: 1.16.0(db0@0.3.2(drizzle-orm@0.33.0(postgres@3.4.5)))(ioredis@5.6.1)
+      unstorage: 1.16.0(db0@0.3.2(drizzle-orm@0.43.1(postgres@3.4.5)))(ioredis@5.6.1)
       xss: 1.0.15
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -9783,7 +9797,7 @@ snapshots:
       p-wait-for: 5.0.2
       qs: 6.14.0
 
-  nitropack@2.11.12(drizzle-orm@0.33.0(postgres@3.4.5)):
+  nitropack@2.11.12(drizzle-orm@0.43.1(postgres@3.4.5)):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@netlify/functions': 3.1.8(rollup@4.40.2)
@@ -9805,7 +9819,7 @@ snapshots:
       cookie-es: 2.0.0
       croner: 9.0.0
       crossws: 0.3.5
-      db0: 0.3.2(drizzle-orm@0.33.0(postgres@3.4.5))
+      db0: 0.3.2(drizzle-orm@0.43.1(postgres@3.4.5))
       defu: 6.1.4
       destr: 2.0.5
       dot-prop: 9.0.0
@@ -9851,7 +9865,7 @@ snapshots:
       unenv: 2.0.0-rc.17
       unimport: 5.0.1
       unplugin-utils: 0.2.4
-      unstorage: 1.16.0(db0@0.3.2(drizzle-orm@0.33.0(postgres@3.4.5)))(ioredis@5.6.1)
+      unstorage: 1.16.0(db0@0.3.2(drizzle-orm@0.43.1(postgres@3.4.5)))(ioredis@5.6.1)
       untyped: 2.0.0
       unwasm: 0.3.9
       youch: 4.1.0-beta.7
@@ -9968,7 +9982,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuxt@3.17.3(@parcel/watcher@2.5.1)(@types/node@22.15.18)(db0@0.3.2(drizzle-orm@0.33.0(postgres@3.4.5)))(drizzle-orm@0.33.0(postgres@3.4.5))(eslint@9.27.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.40.2)(terser@5.39.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.18)(jiti@2.4.2)(terser@5.39.2)(yaml@2.8.0))(yaml@2.8.0):
+  nuxt@3.17.3(@parcel/watcher@2.5.1)(@types/node@22.15.18)(db0@0.3.2(drizzle-orm@0.43.1(postgres@3.4.5)))(drizzle-orm@0.43.1(postgres@3.4.5))(eslint@9.27.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.40.2)(terser@5.39.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.18)(jiti@2.4.2)(terser@5.39.2)(yaml@2.8.0))(yaml@2.8.0):
     dependencies:
       '@nuxt/cli': 3.25.1(magicast@0.3.5)
       '@nuxt/devalue': 2.0.2
@@ -10004,7 +10018,7 @@ snapshots:
       mlly: 1.7.4
       mocked-exports: 0.1.1
       nanotar: 0.2.0
-      nitropack: 2.11.12(drizzle-orm@0.33.0(postgres@3.4.5))
+      nitropack: 2.11.12(drizzle-orm@0.43.1(postgres@3.4.5))
       nypm: 0.6.0
       ofetch: 1.4.1
       ohash: 2.0.11
@@ -10026,7 +10040,7 @@ snapshots:
       unimport: 5.0.1
       unplugin: 2.3.4
       unplugin-vue-router: 0.12.0(vue-router@4.5.1(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))
-      unstorage: 1.16.0(db0@0.3.2(drizzle-orm@0.33.0(postgres@3.4.5)))(ioredis@5.6.1)
+      unstorage: 1.16.0(db0@0.3.2(drizzle-orm@0.43.1(postgres@3.4.5)))(ioredis@5.6.1)
       untyped: 2.0.0
       vue: 3.5.14(typescript@5.8.3)
       vue-bundle-renderer: 2.1.1
@@ -11471,7 +11485,7 @@ snapshots:
       '@unrs/resolver-binding-win32-ia32-msvc': 1.7.2
       '@unrs/resolver-binding-win32-x64-msvc': 1.7.2
 
-  unstorage@1.16.0(db0@0.3.2(drizzle-orm@0.33.0(postgres@3.4.5)))(ioredis@5.6.1):
+  unstorage@1.16.0(db0@0.3.2(drizzle-orm@0.43.1(postgres@3.4.5)))(ioredis@5.6.1):
     dependencies:
       anymatch: 3.1.3
       chokidar: 4.0.3
@@ -11482,7 +11496,7 @@ snapshots:
       ofetch: 1.4.1
       ufo: 1.6.1
     optionalDependencies:
-      db0: 0.3.2(drizzle-orm@0.33.0(postgres@3.4.5))
+      db0: 0.3.2(drizzle-orm@0.43.1(postgres@3.4.5))
       ioredis: 5.6.1
 
   untun@0.1.3:
@@ -11802,4 +11816,4 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod@3.24.4: {}
+  zod@3.25.20: {}

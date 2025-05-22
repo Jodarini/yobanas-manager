@@ -1,5 +1,7 @@
 <script setup lang="ts">
-defineProps<{ product: IProduct }>();
+import type { Product } from '~/db/schema';
+
+defineProps<{ product: Product }>();
 </script>
 
 <template>
@@ -18,7 +20,7 @@ defineProps<{ product: IProduct }>();
           <div class="mt-auto flex items-center justify-between">
             <span class="text-lg font-semibold">
               ${{
-                product.price.toLocaleString("es-CO", {
+                parseInt(product.price).toLocaleString("es-CO", {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 0,
                 })

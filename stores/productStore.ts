@@ -1,12 +1,8 @@
 import { defineStore } from "pinia";
 import type { Product, ProductWithVariant } from "~/db/schema";
 
-export interface IProduct extends Omit<Product, "price" | "stock"> {
-  price: number;
-  // stock: number;
-}
 export const useProductsStore = defineStore("products", () => {
-  const products = ref<IProduct[]>();
+  const products = ref<Product[]>();
   const filterText = ref("");
   const filterCategory = ref("Todos");
 
@@ -14,14 +10,15 @@ export const useProductsStore = defineStore("products", () => {
     const { data, status, error } = await useFetch<Product[]>("/api/products");
 
     if (data.value) {
-      products.value = data.value.map((product) => ({
-        ...product,
-        price: parseInt(product.price) as number,
-        // stock: parseInt(product.stock) as number,
+      products.value = data.value.map((prod) => ({
+        id: prod.id,
+        title: prod.title,
+        brand: prod.brand,
+        price: prod.price,
+        category: prod.category,
+        thumbnail: prod.thumbnail
       }));
     }
-    // data.value = { ...data.value, price: parseInt(price) };
-    // products.value = data.value;
     return { status, error };
   }
 
@@ -32,31 +29,34 @@ export const useProductsStore = defineStore("products", () => {
     return { data, status, error };
   }
 
-  async function addProduct(product: Product) {
-    const prod = {
-      ...product,
-      price: parseInt(product.price),
-      // stock: parseInt(product.stock),
+  async function addProduct(prod: ProductWithVariant) {
+    const p = {
+      id: prod.productInfo.id,
+      title: prod.productInfo.title,
+      brand: prod.productInfo.brand,
+      price: prod.productInfo.price,
+      category: prod.productInfo.category,
+      thumbnail: prod.productInfo.thumbnail
     };
-    products.value?.push(prod);
+    products.value?.push(p);
   }
 
   const filteredProducts = computed(() => {
     if (!filterText) return products.value;
-    return products.value?.filter((product) =>
+    return products.value?.filter((prod) =>
       filterCategory.value === "Todos"
-        ? product.title.toLowerCase().includes(filterText.value.toLowerCase())
-        : product.title
+        ? prod.title.toLowerCase().includes(filterText.value.toLowerCase())
+        : prod.title
           .toLowerCase()
           .includes(filterText.value.toLowerCase()) &&
-        product.category?.includes(filterCategory.value),
+        prod.category?.includes(filterCategory.value),
     );
   });
 
   const productCategories = computed(() => {
     const categories = new Set<string>(["Todos"]);
-    products.value?.forEach((product) => {
-      product.category?.forEach((cat) => categories.add(cat));
+    products.value?.forEach((prod) => {
+      prod.category?.forEach((cat) => categories.add(cat));
     });
     return Array.from(categories);
   });

@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import type { Product } from "~/db/schema";
-import { products, productVariants } from "~/db/schema";
+import type { Product, ProductWithVariant } from "~/db/schema";
+import { productsTable, productVariants } from "~/db/schema";
 import { z } from "zod";
 import { eq, and } from "drizzle-orm";
 
@@ -17,105 +17,133 @@ const ProductSchema = z.object({
   description: z.string().optional(),
   price: z.number().positive("Price must be positive"),
   category: z.array(z.string()).min(1, "At least one category is required"),
-  brand: z.string().min(1, "La marca debe tener al menos un caracter"),
   thumbnail: z.string().url("Thumbnail must be a valid URL").optional(),
-  tags: z.array(z.string()).optional(),
-  variants: VariantSchema
-  // stock: z.number().int().nonnegative("Stock must be a non-negative integer"),
+  brand: z.string().min(1, "La marca debe tener al menos un caracter"),
 });
 
 const RequestSchema = z.object({
-  product: ProductSchema,
+  productInfo: ProductSchema,
+  variantInfo: VariantSchema,
 });
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
-  const { product } = RequestSchema.parse(body);
   const connectionString = process.env.TEST_SUPABASE_URL!;
   const client = postgres(connectionString);
   const db = drizzle(client);
 
-  // check if product title and color variant already exists
-  // TODO: Check if brand is the same aswell?
-  const productByTitleAndColor = await db
-    .select()
-    .from(products)
-    .innerJoin(
-      productVariants,
-      and(
-        eq(productVariants.productId, products.id),
-        eq(productVariants.color, product.variants.color)
-      )
-    )
-    .where(eq(products.title, product.title))
-    .limit(1);
+  const body = await readBody(event);
+  const product = RequestSchema.parse(body);
 
-  // Selects the products variants
-  if (productByTitleAndColor.length) {
-    const productVariantToUpdate = await db
-      .select()
-      .from(productVariants)
-      .where(eq(productVariants.productId, productByTitleAndColor[0].products.id)).limit(1)
+  try {
+    const insertData: Product = {
+      title: product.productInfo.title,
+      description: product.productInfo.description,
+      price: product.productInfo.price.toString(),
+      brand: product.productInfo.brand,
+      thumbnail: product.productInfo.thumbnail,
+      category: product.productInfo.category,
+    };
 
-    const currentStock = productVariantToUpdate[0].stock;
-    const newStock = currentStock + 1;
+    return await db.transaction(async (tx) => {
+      //check if exact variant exists
+      const queryResult = await tx
+        .select()
+        .from(productsTable)
+        .innerJoin(
+          productVariants,
+          and(
+            eq(productVariants.productId, productsTable.id),
+            eq(productVariants.color, product.variantInfo.color)
+          )
+        )
+        .where(eq(productsTable.title, product.productInfo.title))
+        .limit(1)
+      const existingProductVariant: ProductWithVariant[] = queryResult.map(row => ({
+        productInfo: row.products,
+        variantInfo: row.product_variants
+      }));
 
-    await db
-      .update(productVariants).set({ stock: newStock }).where(eq(productVariants.productId, productVariantToUpdate[0].productId))
-    return
-  }
+      //add to stock
+      if (existingProductVariant.length > 0) {
+        const foundItem = existingProductVariant[0]
+        const currentStock = foundItem.variantInfo.stock!
+        const newStock = currentStock + 1
 
-  // add new reference
-  const insertData: Product = {
-    title: product.title,
-    description: product.description,
-    price: product.price.toString(),
-    brand: product.brand,
-    thumbnail: product.thumbnail,
-    category: product.category,
-    tags: product.tags,
-  };
+        await tx.update(productVariants).set({ stock: newStock }).where(eq(productVariants.id, foundItem.variantInfo.id!))
 
-  // Selects a product to add new product variant
-  const productWithId = await db
-    .select()
-    .from(products)
-    .innerJoin(
-      productVariants,
-      and(
-        eq(productVariants.productId, products.id)
-      )
-    )
-    .where(eq(products.title, product.title))
-
-  if (productWithId.length) {
-    console.log('Adding new variant: ')
-    const foundProduct = productWithId[0]
-    console.log({ foundProduct })
-    const returnProduct = await db.insert(productVariants).values({
-      productId: foundProduct.products.id,
-      size: product.variants.size,
-      color: product.variants.color,
-      stock: product.variants.stock
-    })
-    return returnProduct
-  }
-
-  const result = await db.insert(products).values(insertData).returning();
-  const productId = result[0].id;
-
-
-  if (product.variants) {
-    await db.insert(productVariants).values(
-      {
-        productId,
-        size: product.variants.size,
-        color: product.variants.color,
-        stock: product.variants.stock,
+        return { message: 'Se agregó stock al producto', product: foundItem }
       }
-    );
-  }
 
-  await client.end();
-  return result[0];
+      //check if product exists with different color
+      const existingProduct = await tx
+        .select()
+        .from(productsTable)
+        .innerJoin(
+          productVariants,
+          and(
+            eq(productVariants.productId, productsTable.id)
+          )
+        )
+        .where(eq(productsTable.title, product.productInfo.title))
+        .limit(1)
+
+      // add new variant
+      if (existingProduct.length > 0) {
+        const productId = existingProduct[0].products.id
+
+        const newVariant = await tx
+          .insert(productVariants)
+          .values({
+            productId,
+            size: product.variantInfo.size,
+            color: product.variantInfo.color,
+            stock: product.variantInfo.stock
+          })
+          .returning()
+
+        return {
+          message: 'Agregó nueva variant al producto',
+          product: {
+            productInfo: existingProduct[0].products,
+            variantInfo: newVariant[0]
+          }
+        }
+      }
+
+      //add new product
+      const newProduct = await tx
+        .insert(productsTable)
+        .values(insertData)
+        .returning()
+
+      const productId = newProduct[0].id
+
+      const newVariant = await tx
+        .insert(productVariants)
+        .values({
+          productId,
+          size: product.variantInfo.size,
+          color: product.variantInfo.color,
+          stock: product.variantInfo.stock,
+        })
+        .returning()
+
+      const result: ProductWithVariant = {
+        productInfo: newProduct[0],
+        variantInfo: newVariant[0]
+      }
+
+      return {
+        message: 'Creo un nuevo producto',
+        product: result
+      }
+
+    })
+  } catch (error) {
+    console.error('Error adding product:', error)
+    throw createError({
+      statusCode: 500,
+      message: error instanceof Error ? error.message : 'Failed to add product'
+    })
+  }
 });

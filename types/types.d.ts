@@ -5,24 +5,28 @@ export interface ProductsResponse {
   limit: number;
 }
 
-export interface Product {
-  id?: number;
-  title: string;
-  description: string;
-  category: string[];
-  price: number;
-  // stock: number;
-  tags?: string[];
-  brand: string;
-  thumbnail: string;
-  variants: ProductVariant[]
+export interface NewProductWithVariant {
+  productInfo: Omit<Product, 'variants'>;
+  variantInfo: Omit<ProductVariants, 'id' | 'productId'>;
 }
-
-export interface ProductVariant {
-  size: string;
-  color: string
-  stock: number
-}
+// export interface Product {
+//   id?: number;
+//   title: string;
+//   description: string;
+//   category: string[];
+//   price: number;
+//   // stock: number;
+//   tags?: string[];
+//   brand: string;
+//   thumbnail: string;
+//   variants: Product_Variant
+// }
+//
+// export interface Product_Variant {
+//   size: string;
+//   color: string
+//   stock: number
+// }
 
 export interface Dimensions {
   width: number;

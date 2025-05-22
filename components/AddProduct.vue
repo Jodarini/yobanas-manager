@@ -34,28 +34,31 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import type { NewProductWithVariant } from "~/types/types";
+
 
 const { toast } = useToast();
-
 const formSchema = toTypedSchema(
   z.object({
-    title: z.string().min(1, "Debe ingresar un titulo"),
-    description: z.string().optional().nullable(),
-    price: z
-      .number({ message: "Debe ser un numero" })
-      .positive("El precio debe ser positivo"),
-    category: z
-      .array(z.string())
-      .min(1, "Debe agregar al menos una categoria")
-      .max(3, "El producto debe tener maximo 3 categorias"),
-    thumbnail: z
-      .string()
-      .url("Debe ingresar un enlace correcto")
-      .optional()
-      .nullable(),
-    brand: z.string().min(1, "La marca debe tener al menos un caracter"),
-    tags: z.string().optional().nullable(),
-    variants:
+    productInfo: z.object({
+      title: z.string().min(1, "Debe ingresar un titulo"),
+      description: z.string().optional().nullable(),
+      price: z
+        .number({ message: "Debe ser un numero" })
+        .positive("El precio debe ser positivo"),
+      category: z
+        .array(z.string())
+        .min(1, "Debe agregar al menos una categoria")
+        .max(3, "El producto debe tener maximo 3 categorias"),
+      thumbnail: z
+        .string()
+        .url("Debe ingresar un enlace correcto")
+        .optional()
+        .nullable(),
+      brand: z.string().min(1, "La marca debe tener al menos un caracter"),
+      tags: z.string().optional().nullable(),
+    }),
+    variantInfo:
       z.object({
         size: z.string()
           .min(1, "Debe agregar al menos una talla"),
@@ -73,18 +76,19 @@ const { handleSubmit, resetForm } = useForm({
   validationSchema: formSchema,
   initialValues: {
     // title: "Colby Extra-Small Burnished Leather Shoulder Bag ",
-    title: "1",
+    productInfo: {
+      title: "1",
+      description:
+        "1",
+      category: ['test'],
+      brand: "1",
+      price: 1,
+      thumbnail: "https://michaelkors.scene7.com/is/image/MichaelKors/32F4ABAU0T-0201_1?$zoom$",
+    },
     // description:
     //   "100% leather from tanneries meeting the highest standards of environmental performance",
-    description:
-      "1",
-    category: ['test'],
     // brand: "Michael Kors",
-    brand: "1",
-    price: 1,
-    thumbnail:
-      "https://michaelkors.scene7.com/is/image/MichaelKors/32F4ABAU0T-0201_1?$zoom$",
-    variants: {
+    variantInfo: {
       size: '1',
       color: '1',
       stock: 1,
@@ -95,24 +99,23 @@ const { handleSubmit, resetForm } = useForm({
 const store = useProductsStore();
 
 const onSubmit = handleSubmit(async (values) => {
-  const newTags = values.tags?.split(",");
-  const product = {
-    ...values,
-    tags: newTags,
-    variants: values.variants
+  // const newTags = values.productInfo.tags?.split(",");
+  const product: NewProductWithVariant = {
+    ...values
   };
   try {
     const { data, error } = await useFetch("/api/product/add", {
       method: "post",
-      body: { product },
+      body: product,
     });
     if (error.value) {
       throw new Error(error.value.message);
     }
     if (data.value) {
-      store.addProduct(data.value);
+      store.addProduct(data.value.product);
       toast({
-        title: `Producto agregado: ${data.value.title}`,
+        title: `${data.value.message}`,
+        description: `${data.value}`
       });
     }
     resetForm();
@@ -177,7 +180,7 @@ const addNewCategory = (category: string) => {
           termines.
         </SheetDescription>
         <form class="space-y-2" @submit.prevent="onSubmit">
-          <FormField v-slot="{ componentField }" name="title">
+          <FormField v-slot="{ componentField }" name="productInfo.title">
             <FormItem>
               <FormLabel>Nombre</FormLabel>
               <FormControl>
@@ -187,7 +190,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="description">
+          <FormField v-slot="{ componentField }" name="productInfo.description">
             <FormItem>
               <FormLabel>Descripcion</FormLabel>
               <FormControl>
@@ -197,7 +200,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="price">
+          <FormField v-slot="{ componentField }" name="productInfo.price">
             <FormItem>
               <FormLabel>Precio</FormLabel>
               <FormControl>
@@ -207,7 +210,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="variants.stock">
+          <FormField v-slot="{ componentField }" name="variantInfo.stock">
             <FormItem>
               <FormLabel>Cantidad</FormLabel>
               <FormControl>
@@ -217,7 +220,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField :model-value="modelValue" name="category">
+          <FormField :model-value="modelValue" name="productInfo.category">
             <FormItem>
               <FormLabel>Categorias</FormLabel>
               <FormControl>
@@ -257,7 +260,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="brand">
+          <FormField v-slot="{ componentField }" name="productInfo.brand">
             <FormItem>
               <FormLabel>Marca</FormLabel>
               <FormControl>
@@ -267,7 +270,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="variants.size">
+          <FormField v-slot="{ componentField }" name="variantInfo.size">
             <FormItem>
               <FormLabel>Talla</FormLabel>
               <FormControl>
@@ -277,7 +280,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="variants.color">
+          <FormField v-slot="{ componentField }" name="variantInfo.color">
             <FormItem>
               <FormLabel>Color</FormLabel>
               <FormControl>
@@ -287,7 +290,7 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="thumbnail">
+          <FormField v-slot="{ componentField }" name="productInfo.thumbnail">
             <FormItem>
               <FormLabel>Imagen</FormLabel>
               <FormControl>

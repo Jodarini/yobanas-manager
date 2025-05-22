@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { products } from "~/db/schema";
+import { productsTable } from "~/db/schema";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const client = postgres(connectionString);
   const db = drizzle(client);
   try {
-    const result = await db.delete(products).where(eq(products.id, body.id));
+    const result = await db.delete(productsTable).where(eq(productsTable.id, body.id));
     if (result.count === 0) {
       return createError({
         statusCode: 404,

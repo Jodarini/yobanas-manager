@@ -6,7 +6,7 @@ export const users = pgTable("users", {
   phone: varchar("phone", { length: 256 }),
 });
 
-export const products = pgTable("products", {
+export const productsTable = pgTable("products", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description"),
@@ -19,13 +19,13 @@ export const products = pgTable("products", {
 
 export const productVariants = pgTable("product_variants", {
   id: serial("id").primaryKey(),
-  productId: integer("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
+  productId: integer("product_id").notNull().references(() => productsTable.id, { onDelete: "cascade" }),
   size: varchar("size", { length: 10 }).notNull(),   // e.g., 'L', '10', 'M'
   color: varchar("color", { length: 50 }).notNull(), // e.g., 'red', 'blue'
   stock: integer("stock").notNull().default(0),
 });
 
-export type Product = typeof products.$inferInsert;
+export type Product = typeof productsTable.$inferInsert;
 export type ProductVariants = typeof productVariants.$inferInsert;
-export type ProductWithVariant = { product_variants: ProductVariants, products: Product; }
+export type ProductWithVariant = { variantInfo: ProductVariants, productInfo: Product; }
 

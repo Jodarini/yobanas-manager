@@ -10,11 +10,10 @@ export default defineEventHandler(async (event) => {
   const db = drizzle(client);
   const productId = parseInt(event.context.params!.id);
 
-  const [product] = await db
+  const product = await db
     .select()
-    .from(products)
-    .where(eq(products.id, productId))
-    .limit(1);
+    .from(productVariants)
+    .where(eq(productVariants.productId, productId))
 
   //selects the product with variants with a desired ID
   const [otherProduct] = await db
@@ -22,6 +21,13 @@ export default defineEventHandler(async (event) => {
     .from(productVariants)
     .innerJoin(products, eq(products.id, productId))
     .where(eq(productVariants.productId, productId))
+
+  const otherProducts = await db
+    .select()
+    .from(productVariants)
+    .innerJoin(products, eq(products.id, productId))
+    .where(eq(productVariants.productId, productId))
+  console.log(product)
 
   return otherProduct;
 });

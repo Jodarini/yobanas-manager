@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
 
   // check if product title and color variant already exists
   // TODO: Check if brand is the same aswell?
-  const productExists = await db
+  const productByTitleAndColor = await db
     .select()
     .from(products)
     .innerJoin(
@@ -51,12 +51,11 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   // Selects the products variants
-  if (productExists.length) {
-
+  if (productByTitleAndColor.length) {
     const productVariantToUpdate = await db
       .select()
       .from(productVariants)
-      .where(eq(productVariants.productId, productExists[0].products.id)).limit(1)
+      .where(eq(productVariants.productId, productByTitleAndColor[0].products.id)).limit(1)
 
     const currentStock = productVariantToUpdate[0].stock;
     const newStock = currentStock + 1;
@@ -77,8 +76,34 @@ export default defineEventHandler(async (event) => {
     tags: product.tags,
   };
 
+  // Selects a product to add new product variant
+  const productWithId = await db
+    .select()
+    .from(products)
+    .innerJoin(
+      productVariants,
+      and(
+        eq(productVariants.productId, products.id)
+      )
+    )
+    .where(eq(products.title, product.title))
+
+  if (productWithId.length) {
+    console.log('Adding new variant: ')
+    const foundProduct = productWithId[0]
+    console.log({ foundProduct })
+    const returnProduct = await db.insert(productVariants).values({
+      productId: foundProduct.products.id,
+      size: product.variants.size,
+      color: product.variants.color,
+      stock: product.variants.stock
+    })
+    return returnProduct
+  }
+
   const result = await db.insert(products).values(insertData).returning();
   const productId = result[0].id;
+
 
   if (product.variants) {
     await db.insert(productVariants).values(

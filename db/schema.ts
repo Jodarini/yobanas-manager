@@ -20,7 +20,7 @@ export const productsTable = pgTable("products", {
 export const productVariants = pgTable("product_variants", {
   id: serial("id").primaryKey(),
   productId: integer("product_id").notNull().references(() => productsTable.id, { onDelete: "cascade" }),
-  size: varchar("size", { length: 10 }).notNull(),   // e.g., 'L', '10', 'M'
+  size: varchar("size", { length: 10 }),   // e.g., 'L', '10', 'M'
   color: varchar("color", { length: 50 }).notNull(), // e.g., 'red', 'blue'
   stock: integer("stock").notNull().default(0),
 });

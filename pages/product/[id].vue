@@ -2,7 +2,9 @@
 const route = useRoute();
 const store = useProductsStore();
 const prod = await store.fetchProduct(+route.params.id);
-const product = prod.data.value;
+const product = prod.data.value.product;
+const variants = prod.data.value.variants;
+console.log({ variants })
 </script>
 
 <template>
@@ -18,10 +20,13 @@ const product = prod.data.value;
         <span v-if="product.variantInfo.stock! > 0" class="text-green-700 font-bold">In stock</span>
         <span v-else class="text-red-500">Out of stock</span>
       </div>
-      <div class="grid grid-cols-[auto_1fr_1fr] gap-6">
+      <div class="grid grid-cols-[auto_1fr_1fr] gap-2">
         <span class="font-bold">Colores</span>
-        <template v-for="color in product.variantInfo.color" :key="product.productInfo.id+product.variantInfo.color">{{
-          color }}</template>
+        <div class="flex gap-2">
+          <span v-for="color in variants" :key="product.productInfo.id + product.variantInfo.color">
+            {{ color }}
+          </span>
+        </div>
         <span class="font-bold text-right">
           ${{
             parseInt(product.productInfo.price)
@@ -52,7 +57,7 @@ const product = prod.data.value;
       <div class="grid grid-cols-[auto_1fr_1fr] gap-6">
         <span class="font-bold">Color</span>
         <div class="flex gap-2">
-          <Button v-for="color in product.variantInfo.color" :key="product.productInfo.id + product.variantInfo.color">
+          <Button v-for="color in variants" :key="product.productInfo.id + product.variantInfo.color">
             {{ color }}
           </Button>
           <Button variant="outline">
@@ -67,14 +72,16 @@ const product = prod.data.value;
         <!--   <Input type="text" name="color-input" class="bg-white" /> -->
         <!-- </form> -->
 
-        <span class="font-bold">Talla</span>
-        <div class="flex gap-1.5">
-          <Button v-for="size in product.variantInfo.size" :key="product.variantInfo.size">
-            {{ size.toLocaleUpperCase() }}
-          </Button>
-          <Button variant="outline">
-            +
-          </Button>
+        <div v-if="product.variantInfo.size">
+          <span class="font-bold">Talla</span>
+          <div class="flex gap-1.5">
+            <Button v-for="size in product.variantInfo.size" :key="product.variantInfo.size">
+              {{ size.toLocaleUpperCase() }}
+            </Button>
+            <Button variant="outline">
+              +
+            </Button>
+          </div>
         </div>
         <Button>Agregar</Button>
       </div>

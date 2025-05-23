@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { Product, ProductWithVariant } from "~/db/schema";
+import type { Product, ProductVariants, ProductWithVariant } from "~/db/schema";
 
 export const useProductsStore = defineStore("products", () => {
   const products = ref<Product[]>();
@@ -22,6 +22,10 @@ export const useProductsStore = defineStore("products", () => {
     return { status, error };
   }
 
+  interface ProductFetch {
+    product: ProductWithVariant,
+    variant: ProductVariants
+  }
   async function fetchProduct(productId: number) {
     const { data, status, error } = await useFetch<ProductWithVariant>(
       `/api/product/${productId}`,

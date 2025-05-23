@@ -60,8 +60,7 @@ const formSchema = toTypedSchema(
     }),
     variantInfo:
       z.object({
-        size: z.string()
-          .min(1, "Debe agregar al menos una talla"),
+        size: z.string(),
         color: z.string()
           .min(1, "Debe agregar al menos un color"),
         stock: z
@@ -75,22 +74,18 @@ const formSchema = toTypedSchema(
 const { handleSubmit, resetForm } = useForm({
   validationSchema: formSchema,
   initialValues: {
-    // title: "Colby Extra-Small Burnished Leather Shoulder Bag ",
     productInfo: {
-      title: "1",
+      title: "Colby Extra-Small Burnished Leather Shoulder Bag ",
       description:
-        "1",
+        "100% leather from tanneries meeting the highest standards of environmental performance",
       category: ['test'],
-      brand: "1",
-      price: 1,
+      brand: "Michael Kors",
+      price: 750000,
       thumbnail: "https://michaelkors.scene7.com/is/image/MichaelKors/32F4ABAU0T-0201_1?$zoom$",
     },
-    // description:
-    //   "100% leather from tanneries meeting the highest standards of environmental performance",
-    // brand: "Michael Kors",
     variantInfo: {
       size: '1',
-      color: '1',
+      color: 'Café',
       stock: 1,
     }
   },

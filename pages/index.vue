@@ -19,4 +19,5 @@ const { status, error } = await store.fetchProducts();
   <div v-else>
     ¡Agrega nuevos items a tu inventario!
   </div>
+
 </template>

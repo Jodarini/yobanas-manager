@@ -10,7 +10,13 @@ const { status, error } = await store.fetchProducts();
   <h1 class="text-2xl">Tus productos</h1>
   <p v-if="status === 'pending'">{{ status }}</p>
   <p v-else-if="error">{{ error }}</p>
-  <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-    <ProductCard v-for="product in store.filteredProducts" :key="product.id" :product="product" />
+
+  <div v-else-if="store.filteredProducts!.length > 0">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <ProductCard v-for="product in store.filteredProducts" :key="product.id" :product="product" />
+    </div>
+  </div>
+  <div v-else>
+    ¡Agrega nuevos items a tu inventario!
   </div>
 </template>

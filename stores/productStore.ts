@@ -24,10 +24,10 @@ export const useProductsStore = defineStore("products", () => {
 
   interface ProductFetch {
     product: ProductWithVariant,
-    variant: ProductVariants
+    variant: ProductVariants[]
   }
   async function fetchProduct(productId: number) {
-    const { data, status, error } = await useFetch<ProductWithVariant>(
+    const { data, status, error } = await useFetch(
       `/api/product/${productId}`,
     );
     return { data, status, error };

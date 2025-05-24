@@ -2,9 +2,9 @@
 const route = useRoute();
 const store = useProductsStore();
 const prod = await store.fetchProduct(+route.params.id);
-const product = prod.data.value.product;
-const variants = prod.data.value.variants;
-console.log({ variants })
+const product = prod.data.value?.product;
+const variants = prod.data.value?.variants
+
 </script>
 
 <template>
@@ -23,8 +23,8 @@ console.log({ variants })
       <div class="grid grid-cols-[auto_1fr_1fr] gap-2">
         <span class="font-bold">Colores</span>
         <div class="flex gap-2">
-          <span v-for="color in variants" :key="product.productInfo.id + product.variantInfo.color">
-            {{ color }}
+          <span v-for="variant in variants" :key="product.productInfo.id + product.variantInfo.color">
+            {{ variant.color }}
           </span>
         </div>
         <span class="font-bold text-right">
@@ -41,14 +41,16 @@ console.log({ variants })
         <span>{{ product.productInfo.brand }}</span>
         <div></div>
 
-        <span class="font-bold">Talla</span>
-        <div class="flex gap-1.5">
-          <template v-for="size in product.variantInfo.size" :key="product.productInfo.size + product.variantInfo.id">
-            <Button variant="outline">
-              {{ size.toLocaleUpperCase() }}
-            </Button>
-          </template>
-        </div>
+        <template v-if="product.variantInfo.size">
+          <span class="font-bold">Talla</span>
+          <div class="flex gap-1.5">
+            <template v-for="size in product.variantInfo.size" :key="product.productInfo.size + product.variantInfo.id">
+              <Button variant="outline">
+                {{ size.toLocaleUpperCase() }}
+              </Button>
+            </template>
+          </div>
+        </template>
       </div>
 
       <hr>
@@ -57,8 +59,8 @@ console.log({ variants })
       <div class="grid grid-cols-[auto_1fr_1fr] gap-6">
         <span class="font-bold">Color</span>
         <div class="flex gap-2">
-          <Button v-for="color in variants" :key="product.productInfo.id + product.variantInfo.color">
-            {{ color }}
+          <Button v-for="variant in variants" :key="product.productInfo.id + product.variantInfo.color">
+            {{ variant.color }}
           </Button>
           <Button variant="outline">
             +

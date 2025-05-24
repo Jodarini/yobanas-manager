@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/postgres-js";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import postgres from "postgres";
 import { productsTable, productVariants, ProductWithVariant } from "~/db/schema";
 
@@ -17,14 +17,10 @@ export default defineEventHandler(async (event) => {
     .where(eq(productVariants.productId, productId))
 
   // Select all color variants from product with ID
-  const variantResponse = await db
-    .select({ color: productVariants.color })
+  const variants = await db
+    .select()
     .from(productVariants)
     .where(eq(productVariants.productId, productId))
-
-  const variants = variantResponse.map(vari => vari.color)
-
-  console.log(variants)
 
   const product: ProductWithVariant[] = otherProduct.map(row => ({
     productInfo: row.products,

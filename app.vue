@@ -3,7 +3,7 @@
 <template>
   <div class="flex h-screen flex-col items-start justify-start">
     <NuxtLayout>
-      <div class="flex flex-col gap-4 p-4 w-full">
+      <div class="flex w-full flex-col gap-4 p-4">
         <NuxtPage />
       </div>
     </NuxtLayout>
@@ -11,5 +11,5 @@
 </template>
 
 <style>
-@import url("~/assets/css/main.css");
+  @import url('~/assets/css/main.css');
 </style>

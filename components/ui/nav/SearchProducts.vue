@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Input } from "@/components/ui/input";
-const position = ref("bottom");
+  import { Input } from '@/components/ui/input';
+  const position = ref('bottom');
 
-const store = useProductsStore();
+  const store = useProductsStore();
 </script>
 
 <template>
@@ -10,7 +10,7 @@ const store = useProductsStore();
   <div class="flex gap-2">
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
-        <Button variant="outline"> Filtro </Button>
+        <Button variant="outline">Filtro</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent class="w-56">
         <DropdownMenuLabel>Selecciona categoria</DropdownMenuLabel>
@@ -29,18 +29,18 @@ const store = useProductsStore();
 
     <DropdownMenu>
       <DropdownMenuTrigger as-child>
-        <Button variant="outline"> Ordenar </Button>
+        <Button variant="outline">Ordenar</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent class="w-56">
         <DropdownMenuLabel>Selecciona orden</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup v-model="position">
-          <DropdownMenuRadioItem value="bags"> Nombre </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="bags">Nombre</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="category">
             Categoria
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="new"> Mas nuevo </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="price"> Precio </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="new">Mas nuevo</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="price">Precio</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

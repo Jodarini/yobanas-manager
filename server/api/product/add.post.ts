@@ -1,24 +1,23 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import type { Product, ProductWithVariant } from "~/db/schema";
-import { productsTable, productVariants } from "~/db/schema";
-import { z } from "zod";
-import { eq, and } from "drizzle-orm";
-
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import type { Product, ProductWithVariant } from '~/db/schema';
+import { productsTable, productVariants } from '~/db/schema';
+import { z } from 'zod';
+import { eq, and } from 'drizzle-orm';
 
 const VariantSchema = z.object({
-  size: z.string().min(1, "Size is required"),
-  color: z.string().min(1, "Color is required"),
-  stock: z.number().int().nonnegative("Stock must be a non-negative integer"),
+  size: z.string().min(1, 'Size is required'),
+  color: z.string().min(1, 'Color is required'),
+  stock: z.number().int().nonnegative('Stock must be a non-negative integer'),
 });
 
 const ProductSchema = z.object({
-  title: z.string().min(1, "Product title is required"),
+  title: z.string().min(1, 'Product title is required'),
   description: z.string().optional(),
-  price: z.number().positive("Price must be positive"),
-  category: z.array(z.string()).min(1, "At least one category is required"),
-  thumbnail: z.string().url("Thumbnail must be a valid URL").optional(),
-  brand: z.string().min(1, "La marca debe tener al menos un caracter"),
+  price: z.number().positive('Price must be positive'),
+  category: z.array(z.string()).min(1, 'At least one category is required'),
+  thumbnail: z.string().url('Thumbnail must be a valid URL').optional(),
+  brand: z.string().min(1, 'La marca debe tener al menos un caracter'),
 });
 
 const RequestSchema = z.object({
@@ -57,21 +56,26 @@ export default defineEventHandler(async (event) => {
           )
         )
         .where(eq(productsTable.title, product.productInfo.title))
-        .limit(1)
-      const existingProductVariant: ProductWithVariant[] = queryResult.map(row => ({
-        productInfo: row.products,
-        variantInfo: row.product_variants
-      }));
+        .limit(1);
+      const existingProductVariant: ProductWithVariant[] = queryResult.map(
+        (row) => ({
+          productInfo: row.products,
+          variantInfo: row.product_variants,
+        })
+      );
 
       //add to stock
       if (existingProductVariant.length > 0) {
-        const foundItem = existingProductVariant[0]
-        const currentStock = foundItem.variantInfo.stock!
-        const newStock = currentStock + 1
+        const foundItem = existingProductVariant[0];
+        const currentStock = foundItem.variantInfo.stock!;
+        const newStock = currentStock + 1;
 
-        await tx.update(productVariants).set({ stock: newStock }).where(eq(productVariants.id, foundItem.variantInfo.id!))
+        await tx
+          .update(productVariants)
+          .set({ stock: newStock })
+          .where(eq(productVariants.id, foundItem.variantInfo.id!));
 
-        return { message: 'Se agregó stock al producto', product: foundItem }
+        return { message: 'Se agregó stock al producto', product: foundItem };
       }
 
       //check if product exists with different color
@@ -80,16 +84,14 @@ export default defineEventHandler(async (event) => {
         .from(productsTable)
         .innerJoin(
           productVariants,
-          and(
-            eq(productVariants.productId, productsTable.id)
-          )
+          and(eq(productVariants.productId, productsTable.id))
         )
         .where(eq(productsTable.title, product.productInfo.title))
-        .limit(1)
+        .limit(1);
 
       // add new variant
       if (existingProduct.length > 0) {
-        const productId = existingProduct[0].products.id
+        const productId = existingProduct[0].products.id;
 
         const newVariant = await tx
           .insert(productVariants)
@@ -97,26 +99,26 @@ export default defineEventHandler(async (event) => {
             productId,
             size: product.variantInfo.size,
             color: product.variantInfo.color,
-            stock: product.variantInfo.stock
+            stock: product.variantInfo.stock,
           })
-          .returning()
+          .returning();
 
         return {
           message: 'Agregó nueva variant al producto',
           product: {
             productInfo: existingProduct[0].products,
-            variantInfo: newVariant[0]
-          }
-        }
+            variantInfo: newVariant[0],
+          },
+        };
       }
 
       //add new product
       const newProduct = await tx
         .insert(productsTable)
         .values(insertData)
-        .returning()
+        .returning();
 
-      const productId = newProduct[0].id
+      const productId = newProduct[0].id;
 
       const newVariant = await tx
         .insert(productVariants)
@@ -126,24 +128,23 @@ export default defineEventHandler(async (event) => {
           color: product.variantInfo.color,
           stock: product.variantInfo.stock,
         })
-        .returning()
+        .returning();
 
       const result: ProductWithVariant = {
         productInfo: newProduct[0],
-        variantInfo: newVariant[0]
-      }
+        variantInfo: newVariant[0],
+      };
 
       return {
         message: 'Creo un nuevo producto',
-        product: result
-      }
-
-    })
+        product: result,
+      };
+    });
   } catch (error) {
-    console.error('Error adding product:', error)
+    console.error('Error adding product:', error);
     throw createError({
       statusCode: 500,
-      message: error instanceof Error ? error.message : 'Failed to add product'
-    })
+      message: error instanceof Error ? error.message : 'Failed to add product',
+    });
   }
 });

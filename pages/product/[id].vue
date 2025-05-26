@@ -1,15 +1,45 @@
 <script setup lang="ts">
 const route = useRoute();
 const store = useProductsStore();
-const prod = await store.fetchProduct(+route.params.id);
-const product = prod.data.value?.product;
-const variants = prod.data.value?.variants
+const { data, status, error, pending, refresh } = await store.fetchProduct(+route.params.id);
+const product = data.value?.product;
+const variants = data.value?.variants
 
 </script>
 
 <template>
+
+  <!-- Loading State -->
+  <div v-if="pending" class="flex items-center justify-center min-h-[400px]">
+    <div class="flex flex-col items-center gap-4">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900" />
+      <p class="text-gray-600">Cargando producto...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div v-else-if="error" class="flex flex-col items-center justify-center min-h-[400px] gap-4" style="bottom: 0;">
+    <div class="text-red-500 text-center">
+      <h2 class="text-2xl font-bold mb-2">Error al cargar el producto</h2>
+      <p class="text-gray-600 mb-4">{{ error.message || 'Ha ocurrido un error inesperado' }}</p>
+      <Button variant="outline" @click="refresh">
+        Intentar de nuevo
+      </Button>
+    </div>
+  </div>
+
+  <!-- Product Not Found -->
+  <div v-else-if="!product" class="flex flex-col items-center justify-center min-h-[400px]">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Producto no encontrado</h2>
+    <p class="text-gray-600 mb-4">El producto que buscas no existe o ha sido eliminado.</p>
+    <NuxtLink to="/">
+      <Button>Ver todos los productos</Button>
+    </NuxtLink>
+  </div>
+
   <div v-if="product" class="flex w-full gap-6">
-    <NuxtImg :src="product.productInfo.thumbnail!" :alt="product.productInfo.title"
+    <NuxtImg
+:src="product.productInfo.thumbnail" :alt="product.productInfo.title" loading="eager"
       class="h-full max-w-lg object-contain rounded-md" />
     <div class="flex flex-col gap-4 max-w-lg">
       <div>
@@ -23,7 +53,7 @@ const variants = prod.data.value?.variants
       <div class="grid grid-cols-[auto_1fr_1fr] gap-2">
         <span class="font-bold">Colores</span>
         <div class="flex gap-2">
-          <span v-for="variant in variants" :key="product.productInfo.id + product.variantInfo.color">
+          <span v-for="variant in variants" :key="variant.id + variant.color">
             {{ variant.color }}
           </span>
         </div>
@@ -39,15 +69,17 @@ const variants = prod.data.value?.variants
 
         <span class="font-bold">Marca</span>
         <span>{{ product.productInfo.brand }}</span>
-        <div></div>
+        <div />
 
         <template v-if="product.variantInfo.size">
           <span class="font-bold">Talla</span>
           <div class="flex gap-1.5">
-            <template v-for="size in product.variantInfo.size" :key="product.productInfo.size + product.variantInfo.id">
-              <Button variant="outline">
-                {{ size.toLocaleUpperCase() }}
-              </Button>
+            <template v-for="variant in variants" :key="variant.size">
+              <div v-if="variant.size">
+                <Button variant="outline">
+                  {{ variant.size.toLocaleUpperCase() }}
+                </Button>
+              </div>
             </template>
           </div>
         </template>
@@ -59,14 +91,14 @@ const variants = prod.data.value?.variants
       <div class="grid grid-cols-[auto_1fr_1fr] gap-6">
         <span class="font-bold">Color</span>
         <div class="flex gap-2">
-          <Button v-for="variant in variants" :key="product.productInfo.id + product.variantInfo.color">
+          <Button v-for="variant in variants" :key="variant.id + variant.color">
             {{ variant.color }}
           </Button>
           <Button variant="outline">
             +
           </Button>
         </div>
-        <div></div>
+        <div />
 
         <!-- <form action=""> -->
         <!--   <div class="flex gap-6"></div> -->
@@ -77,8 +109,10 @@ const variants = prod.data.value?.variants
         <div v-if="product.variantInfo.size">
           <span class="font-bold">Talla</span>
           <div class="flex gap-1.5">
-            <Button v-for="size in product.variantInfo.size" :key="product.variantInfo.size">
-              {{ size.toLocaleUpperCase() }}
+            <Button v-for="variant in variants" :key="variant.size || variant.id">
+              <div v-if="variant.size">
+                {{ variant.size.toLocaleUpperCase() }}
+              </div>
             </Button>
             <Button variant="outline">
               +

@@ -10,7 +10,6 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/eslint": "^0.5.4",
     "@nuxt/image": "^1.8.0",
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@vee-validate/zod": "^4.15.0",
@@ -33,10 +32,13 @@
   "devDependencies": {
     "@iconify-json/radix-icons": "^1.1.15",
     "@iconify/vue": "^4.1.2",
+    "@nuxt/eslint": "^0.5.4",
     "@nuxtjs/color-mode": "^3.4.4",
     "@pinia/nuxt": "^0.5.4",
     "@primevue/nuxt-module": "^4.0.5",
     "drizzle-kit": "^0.24.2",
+    "eslint": "^9.27.0",
+    "eslint-plugin-vue": "^10.1.0",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6"
   }

@@ -11,7 +11,7 @@ const { status, error } = await store.fetchProducts();
   <p v-if="status === 'pending'">{{ status }}</p>
   <p v-else-if="error">{{ error }}</p>
 
-  <div v-else-if="store.filteredProducts!.length > 0">
+  <div v-else-if="store.filteredProducts && store.filteredProducts.length > 0">
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <ProductCard v-for="product in store.filteredProducts" :key="product.id" :product="product" />
     </div>

@@ -3,7 +3,6 @@ import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { useForm } from "vee-validate";
 import { useToast } from "./ui/toast/use-toast";
-import { useFetch } from "#app";
 import Sheet from "./ui/sheet/Sheet.vue";
 import {
   TagsInput,
@@ -99,18 +98,18 @@ const onSubmit = handleSubmit(async (values) => {
     ...values
   };
   try {
-    const { data, error } = await useFetch("/api/product/add", {
+    const result = await $fetch("/api/product/add", {
       method: "post",
       body: product,
     });
-    if (error.value) {
-      throw new Error(error.value.message);
-    }
-    if (data.value) {
-      store.addProduct(data.value.product);
+    // if (error.value) {
+    //   throw new Error(error.value.message);
+    // }
+    if (result.product) {
+      store.addProduct(result.product);
       toast({
-        title: `${data.value.message}`,
-        description: `${data.value}`
+        title: `${result.message}`,
+        description: `${product.productInfo}`
       });
     }
     resetForm();

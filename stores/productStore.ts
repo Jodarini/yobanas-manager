@@ -22,15 +22,12 @@ export const useProductsStore = defineStore("products", () => {
     return { status, error };
   }
 
-  interface ProductFetch {
-    product: ProductWithVariant,
-    variant: ProductVariants[]
-  }
   async function fetchProduct(productId: number) {
-    const { data, status, error } = await useFetch(
-      `/api/product/${productId}`,
+    const { data, status, error, pending, refresh } = await useFetch(
+      `/api/product/${productId}`, {
+    }
     );
-    return { data, status, error };
+    return { data, status, error, pending, refresh };
   }
 
   async function addProduct(prod: ProductWithVariant) {

@@ -3,6 +3,7 @@
   import { Icon } from '@iconify/vue';
   import SearchProducts from './SearchProducts.vue';
 
+  const route = useRoute();
   const colorMode = useColorMode();
 </script>
 
@@ -16,17 +17,20 @@
     "
   >
     <div class="flex items-center space-x-4 lg:space-x-6">
-      <a
-        href="/"
+      <NuxtLink
+        to="/"
         class="text-sm font-medium transition-colors hover:text-primary"
       >
-        <NuxtImg
-          src="/Logo YC Principal sobre claro.png"
-          class="w-44"
-          alt="Yobanas Closet Logo"
-        />
-      </a>
-      <SearchProducts></SearchProducts>
+        <img src="/img/logosobreclaro.png" alt="Logo" class="w-6 min-w-20" />
+        <!-- <NuxtImg -->
+        <!--   src="~/img/logosobreclaro.png" -->
+        <!--   class="w-44" -->
+        <!--   alt="Yobanas Closet Logo" -->
+        <!-- /> -->
+      </NuxtLink>
+      <template v-if="route.path === '/'">
+        <SearchProducts />
+      </template>
       <AddProduct />
     </div>
 

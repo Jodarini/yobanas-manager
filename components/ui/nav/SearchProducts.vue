@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { Input } from '@/components/ui/input';
   const position = ref('bottom');
-
   const store = useProductsStore();
 </script>
 

@@ -11,6 +11,12 @@
   const product = data.value?.product;
   const variants = data.value?.variants;
 
+  const totalStock = computed(() =>
+    variants?.reduce((total, variant) => (total += variant.stock), 0)
+  );
+
+  console.log(variants);
+
   const selectedSize = ref('');
   const selectedColor = ref('');
 
@@ -124,7 +130,7 @@
             v-if="product.variantInfo.stock! > 0"
             class="font-bold text-green-700"
           >
-            In stock
+            In stock ({{ totalStock }})
           </span>
           <span v-else class="text-red-500">Out of stock</span>
         </div>

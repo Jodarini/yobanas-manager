@@ -31,6 +31,8 @@ export const useProductsStore = defineStore('products', () => {
   }
 
   async function addProduct(prod: ProductWithVariant) {
+    console.log({ prod });
+
     const p = {
       id: prod.productInfo.id,
       title: prod.productInfo.title,

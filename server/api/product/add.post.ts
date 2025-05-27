@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { eq, and } from 'drizzle-orm';
 
 const VariantSchema = z.object({
-  size: z.string().min(1, 'Size is required'),
+  size: z.string().optional(),
   color: z.string().min(1, 'Color is required'),
   stock: z.number().int().nonnegative('Stock must be a non-negative integer'),
 });

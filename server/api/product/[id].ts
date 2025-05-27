@@ -37,8 +37,6 @@ export default defineEventHandler(async (event) => {
     variants: getProductWithVariants.map((row) => row.product_variants), // All variants
   };
 
-  console.log(productWithVariants);
-
   const product: ProductWithVariant[] = otherProduct.map((row) => ({
     productInfo: row.products,
     variantInfo: row.product_variants,

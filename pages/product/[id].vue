@@ -1,11 +1,65 @@
 <script setup lang="ts">
+  import { useToast } from '@/components/ui/toast/use-toast';
+  import type { ProductWithVariant } from '~/db/schema';
+
+  const { toast } = useToast();
   const route = useRoute();
   const store = useProductsStore();
-  const { data, status, error, pending, refresh } = await store.fetchProduct(
+  const { data, error, pending, refresh } = await store.fetchProduct(
     +route.params.id
   );
   const product = data.value?.product;
   const variants = data.value?.variants;
+
+  const selectedSize = ref('');
+  const selectedColor = ref('');
+
+  function selectColor(color: string) {
+    selectedColor.value = color;
+    console.log(selectedColor.value);
+  }
+
+  function selectSize(size: string) {
+    selectedSize.value = size;
+    console.log(selectedSize.value);
+  }
+
+  async function addProduct() {
+    if (product) {
+      const newProduct = ref<ProductWithVariant>(product);
+      newProduct.value = {
+        productInfo: {
+          ...product.productInfo,
+          price: parseInt(product.productInfo.price),
+        },
+        variantInfo: {
+          ...product.variantInfo,
+          color: selectedColor.value,
+        },
+      };
+
+      try {
+        const result = await $fetch('/api/product/add', {
+          method: 'post',
+          body: newProduct.value,
+        });
+        if (result.product) {
+          store.addProduct(result.product);
+          toast({
+            title: `${result.message}`,
+            description: `Se agregaron ${product.variantInfo.stock} nuevos productos al stock`,
+          });
+        }
+      } catch (err) {
+        toast({
+          variant: 'destructive',
+          title: `${err}`,
+        });
+        console.error(err);
+      }
+      store.addProduct(newProduct.value);
+    }
+  }
 </script>
 
 <template>
@@ -117,6 +171,7 @@
             <Button
               v-for="variant in variants"
               :key="variant.id + variant.color"
+              @click="selectColor(variant.color)"
             >
               {{ variant.color }}
             </Button>
@@ -124,18 +179,13 @@
           </div>
           <div />
 
-          <!-- <form action=""> -->
-          <!--   <div class="flex gap-6"></div> -->
-          <!--   <label for="color-input"></label> -->
-          <!--   <Input type="text" name="color-input" class="bg-white" /> -->
-          <!-- </form> -->
-
           <div v-if="product.variantInfo.size">
             <span class="font-bold">Talla</span>
             <div class="flex gap-1.5">
               <Button
                 v-for="variant in variants"
                 :key="variant.size || variant.id"
+                @click="variant.size && selectSize(variant.size)"
               >
                 <div v-if="variant.size">
                   {{ variant.size.toLocaleUpperCase() }}
@@ -144,7 +194,7 @@
               <Button variant="outline">+</Button>
             </div>
           </div>
-          <Button>Agregar</Button>
+          <Button @click="addProduct">Agregar</Button>
         </div>
       </div>
     </div>

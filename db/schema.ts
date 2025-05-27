@@ -29,11 +29,10 @@ export const productVariants = pgTable('product_variants', {
   productId: integer('product_id')
     .notNull()
     .references(() => productsTable.id, { onDelete: 'cascade' }),
-  size: varchar('size'), // e.g., 'L', '10', 'M'
-  color: varchar('color', { length: 50 }).notNull(), // e.g., 'red', 'blue'
+  size: varchar('size', { length: 50 }),
+  color: varchar('color', { length: 50 }).notNull(),
   stock: integer('stock').notNull().default(0),
 });
-
 export type Product = typeof productsTable.$inferInsert;
 export type ProductVariants = typeof productVariants.$inferInsert;
 export type ProductWithVariant = {

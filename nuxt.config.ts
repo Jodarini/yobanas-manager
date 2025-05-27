@@ -5,12 +5,15 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
     '@nuxtjs/tailwindcss',
+    '@nuxt/image',
     'shadcn-nuxt',
     '@nuxtjs/color-mode',
     '@pinia/nuxt',
     '@nuxt/eslint',
-    '@nuxt/image',
   ],
+  image: {
+    dir: 'public', // or 'assets/images' if using assets
+  },
   eslint: {},
   colorMode: {
     classSuffix: '',

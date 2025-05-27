@@ -7,7 +7,13 @@
     "dev": "pnpx supabase start & nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "db:seed": "tsx db/seed.ts",
+    "db:seed:dev": "NODE_ENV=development tsx db/seed.ts",
+    "db:studio": "drizzle-kit studio",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:reset": "drizzle-kit drop && drizzle-kit push && npm run db:seed"
   },
   "dependencies": {
     "@nuxt/image": "^1.8.0",
@@ -36,10 +42,12 @@
     "@nuxtjs/color-mode": "^3.4.4",
     "@pinia/nuxt": "^0.5.4",
     "@primevue/nuxt-module": "^4.0.5",
-    "drizzle-kit": "^0.24.2",
+    "drizzle-kit": "^0.31.1",
     "eslint": "^9.27.0",
     "eslint-plugin-vue": "^10.1.0",
     "prettier": "^3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.6"
+    "prettier-plugin-tailwindcss": "^0.6.6",
+    "tsx": "^4.19.4",
+    "vue-eslint-parser": "^10.1.3"
   }
 }

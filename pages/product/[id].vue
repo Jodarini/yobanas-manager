@@ -11,23 +11,19 @@
   const product = data.value?.product;
   const variants = data.value?.variants;
 
+  const selectedSize = ref('');
+  const selectedColor = ref('');
+
   const totalStock = computed(() =>
     variants?.reduce((total, variant) => (total += variant.stock), 0)
   );
 
-  console.log(variants);
-
-  const selectedSize = ref('');
-  const selectedColor = ref('');
-
   function selectColor(color: string) {
     selectedColor.value = color;
-    console.log(selectedColor.value);
   }
 
   function selectSize(size: string) {
     selectedSize.value = size;
-    console.log(selectedSize.value);
   }
 
   async function addProduct() {
@@ -177,9 +173,10 @@
             <Button
               v-for="variant in variants"
               :key="variant.id + variant.color"
+              :variant="selectedColor === variant.color ? 'default' : 'outline'"
               @click="selectColor(variant.color)"
             >
-              {{ variant.color }}
+              {{ variant.color }} ({{ variant.stock }})
             </Button>
             <Button variant="outline">+</Button>
           </div>

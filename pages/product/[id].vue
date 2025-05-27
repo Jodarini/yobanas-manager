@@ -10,6 +10,12 @@
   );
   const product = data.value?.product;
   const variants = data.value?.variants;
+  const colors = computed(
+    () => new Set(variants.map((variant) => variant.color))
+  );
+  const sizes = computed(
+    () => new Set(variants.map((variant) => variant.size))
+  );
 
   const selectedSize = ref('');
   const selectedColor = ref('');
@@ -61,6 +67,11 @@
       }
       store.addProduct(newProduct.value);
     }
+
+    toast({
+      variant: 'destructive',
+      title: `Seleccione una variante primero.`,
+    });
   }
 </script>
 
@@ -107,12 +118,12 @@
       </NuxtLink>
     </div>
 
-    <div v-if="product" class="flex w-full gap-6">
+    <div v-else-if="product" class="flex w-full flex-col gap-6 md:flex-row">
       <NuxtImg
         :src="product.productInfo.thumbnail"
         :alt="product.productInfo.title"
         loading="eager"
-        class="h-full max-w-lg rounded-md object-contain"
+        class="h-full rounded-md object-contain md:max-w-lg"
       />
       <div class="flex max-w-lg flex-col gap-4">
         <div>
@@ -130,14 +141,16 @@
           </span>
           <span v-else class="text-red-500">Out of stock</span>
         </div>
-        <div class="grid grid-cols-[auto_1fr_1fr] gap-2">
+        <div
+          class="grid grid-cols-[auto_1fr] gap-2 md:grid-cols-[auto_1fr_1fr]"
+        >
           <span class="font-bold">Colores</span>
-          <div class="flex gap-2">
-            <span v-for="variant in variants" :key="variant.id + variant.color">
-              {{ variant.color }}
-            </span>
+          <div class="flex flex-wrap gap-2">
+            <Button variant="outline" v-for="color in colors" :key="color">
+              {{ color }}
+            </Button>
           </div>
-          <span class="text-right font-bold">
+          <span class="col-span-3 font-bold md:col-span-1 md:text-right">
             ${{
               parseInt(product.productInfo.price).toLocaleString('es-CO', {
                 minimumFractionDigits: 0,
@@ -151,12 +164,12 @@
           <div />
 
           <template v-if="product.variantInfo.size">
-            <span class="font-bold">Talla</span>
-            <div class="flex gap-1.5">
-              <template v-for="variant in variants" :key="variant.size">
-                <div v-if="variant.size">
+            <p class="font-bold">Talla</p>
+            <div class="flex flex-wrap gap-1.5">
+              <template v-for="size in sizes" :key="size">
+                <div v-if="size">
                   <Button variant="outline">
-                    {{ variant.size.toLocaleUpperCase() }}
+                    {{ size.toLocaleUpperCase() }}
                   </Button>
                 </div>
               </template>
@@ -167,37 +180,44 @@
         <hr />
 
         <span class="text-xl font-bold">Agregar nuevo</span>
-        <div class="grid grid-cols-[auto_1fr_1fr] gap-6">
+        <div class="grid grid-cols-[auto_1fr] gap-6">
           <span class="font-bold">Color</span>
-          <div class="flex gap-2">
+          <div class="flex flex-wrap gap-2">
             <Button
-              v-for="variant in variants"
-              :key="variant.id + variant.color"
-              :variant="selectedColor === variant.color ? 'default' : 'outline'"
-              @click="selectColor(variant.color)"
+              v-for="color in colors"
+              :key="color"
+              :variant="selectedColor === color ? 'default' : 'outline'"
+              @click="selectColor(color)"
             >
-              {{ variant.color }} ({{ variant.stock }})
+              {{ color }}
             </Button>
             <Button variant="outline">+</Button>
           </div>
           <div />
 
-          <div v-if="product.variantInfo.size">
+          <template v-if="product.variantInfo.size">
             <span class="font-bold">Talla</span>
-            <div class="flex gap-1.5">
+            <div class="flex flex-wrap gap-1.5">
               <Button
-                v-for="variant in variants"
-                :key="variant.size || variant.id"
-                @click="variant.size && selectSize(variant.size)"
+                v-for="size in sizes"
+                :key="size + 'admn'"
+                @click="size && selectSize(size)"
+                :variant="selectedSize === size ? 'default' : 'outline'"
               >
-                <div v-if="variant.size">
-                  {{ variant.size.toLocaleUpperCase() }}
+                <div v-if="size">
+                  {{ size.toLocaleUpperCase() }}
                 </div>
               </Button>
               <Button variant="outline">+</Button>
             </div>
-          </div>
-          <Button @click="addProduct">Agregar</Button>
+          </template>
+          <Button
+            class="col-span-3 bg-semilla/80 hover:bg-semilla"
+            @click="addProduct"
+            variant="default"
+          >
+            Agregar
+          </Button>
         </div>
       </div>
     </div>

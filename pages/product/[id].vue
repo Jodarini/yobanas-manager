@@ -11,10 +11,10 @@
   const product = data.value?.product;
   const variants = data.value?.variants;
   const colors = computed(
-    () => new Set(variants.map((variant) => variant.color))
+    () => new Set(variants?.map((variant) => variant.color))
   );
   const sizes = computed(
-    () => new Set(variants.map((variant) => variant.size))
+    () => new Set(variants?.map((variant) => variant.size))
   );
 
   const selectedSize = ref('');
@@ -32,6 +32,27 @@
     selectedSize.value = size;
   }
 
+  const productStock = computed(() => {
+    return variants?.find(
+      (variant) =>
+        variant.color === selectedColor.value &&
+        variant.size === selectedSize.value
+    );
+  });
+
+  function addStock() {
+    if (!productStock.value) return;
+    productStock.value.stock++;
+  }
+
+  function reduceStock() {
+    if (!productStock.value || productStock.value.stock === 0) return;
+    if (productStock.value.stock < 0) {
+      productStock.value.stock = 0;
+    }
+    productStock.value.stock--;
+  }
+
   async function addProduct() {
     if (product) {
       const newProduct = ref<ProductWithVariant>(product);
@@ -43,6 +64,7 @@
         variantInfo: {
           ...product.variantInfo,
           color: selectedColor.value,
+          stock: productStock.value?.stock || 0,
         },
       };
 
@@ -55,7 +77,7 @@
           store.addProduct(result.product);
           toast({
             title: `${result.message}`,
-            description: `Se agregaron ${product.variantInfo.stock} nuevos productos al stock`,
+            description: `Nuevo stock: ${productStock.value?.stock}`,
           });
         }
       } catch (err) {
@@ -67,11 +89,10 @@
       }
       store.addProduct(newProduct.value);
     }
-
-    toast({
-      variant: 'destructive',
-      title: `Seleccione una variante primero.`,
-    });
+    // toast({
+    //   variant: 'destructive',
+    //   title: `Seleccione una variante primero.`,
+    // });
   }
 </script>
 
@@ -137,7 +158,7 @@
             v-if="product.variantInfo.stock! > 0"
             class="font-bold text-green-700"
           >
-            In stock ({{ totalStock }})
+            En stock ({{ totalStock }})
           </span>
           <span v-else class="text-red-500">Out of stock</span>
         </div>
@@ -193,7 +214,6 @@
             </Button>
             <Button variant="outline">+</Button>
           </div>
-          <div />
 
           <template v-if="product.variantInfo.size">
             <span class="font-bold">Talla</span>
@@ -211,12 +231,26 @@
               <Button variant="outline">+</Button>
             </div>
           </template>
+          <template class="col-span-2" v-if="selectedSize && selectedColor">
+            <Label for="stock" class="font-bold">Stock</Label>
+            <div class="flex items-center gap-2">
+              <Button @click="reduceStock" variant="outline">-</Button>
+              <Input
+                id="stock"
+                type="number"
+                v-model.number="productStock.stock"
+                placeholder="Enter stock quantity"
+                min="0"
+              />
+
+              <Button @click="addStock" variant="outline">+</Button>
+            </div>
+          </template>
           <Button
-            class="col-span-3 bg-semilla/80 hover:bg-semilla"
             @click="addProduct"
-            variant="default"
+            :disabled="!selectedSize && !selectedColor"
           >
-            Agregar
+            Actualizar producto
           </Button>
         </div>
       </div>

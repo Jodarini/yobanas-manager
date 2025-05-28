@@ -72,7 +72,7 @@ export default defineEventHandler(async (event) => {
 
         await tx
           .update(productVariants)
-          .set({ stock: newStock })
+          .set({ stock: product.variantInfo.stock })
           .where(eq(productVariants.id, foundItem.variantInfo.id!));
 
         return { message: 'Se agregó stock al producto', product: foundItem };

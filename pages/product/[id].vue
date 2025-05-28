@@ -233,6 +233,14 @@
           </template>
           <template class="col-span-2" v-if="selectedSize && selectedColor">
             <Label for="stock" class="font-bold">Stock</Label>
+            <NumberField id="age" :default-value="18" :min="0">
+              <Label for="age">Age</Label>
+              <NumberFieldContent>
+                <NumberFieldDecrement />
+                <NumberFieldInput />
+                <NumberFieldIncrement />
+              </NumberFieldContent>
+            </NumberField>
             <div class="flex items-center gap-2">
               <Button @click="reduceStock" variant="outline">-</Button>
               <Input

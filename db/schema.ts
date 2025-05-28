@@ -33,14 +33,16 @@ export const productVariants = pgTable('product_variants', {
   color: varchar('color', { length: 50 }).notNull(),
   stock: integer('stock').notNull().default(0),
 });
+
 export type Product = typeof productsTable.$inferInsert;
-export type SelectProduct = typeof productsTable.$inferSelect;
 export type ProductVariants = typeof productVariants.$inferInsert;
-export type SelectProductVariants = typeof productVariants.$inferSelect;
 export type ProductWithVariant = {
   variantInfo: ProductVariants;
   productInfo: Product;
 };
+
+export type SelectProduct = typeof productsTable.$inferSelect;
+export type SelectProductVariants = typeof productVariants.$inferSelect;
 export type SelectProductWithVariant = {
   variantInfo: SelectProductVariants;
   productInfo: SelectProduct;

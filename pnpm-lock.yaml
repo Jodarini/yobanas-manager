@@ -44,9 +44,6 @@ importers:
       radix-vue:
         specifier: ^1.9.4
         version: 1.9.17(vue@3.5.14(typescript@5.8.3))
-      shadcn-nuxt:
-        specifier: ^0.10.4
-        version: 0.10.4(magicast@0.3.5)
       tailwind-merge:
         specifier: ^2.5.2
         version: 2.6.0
@@ -96,6 +93,9 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.6.6
         version: 0.6.11(prettier@3.5.3)
+      shadcn-nuxt:
+        specifier: ^0.10.4
+        version: 0.10.4(magicast@0.3.5)
       tsx:
         specifier: ^4.19.4
         version: 4.19.4

@@ -64,6 +64,7 @@
         variantInfo: {
           ...product.variantInfo,
           color: selectedColor.value,
+          size: selectedSize.value,
           stock: productStock.value?.stock || 0,
         },
       };
@@ -167,9 +168,9 @@
         >
           <span class="font-bold">Colores</span>
           <div class="flex flex-wrap gap-2">
-            <Button variant="outline" v-for="color in colors" :key="color">
+            <div variant="outline" v-for="color in colors" :key="color">
               {{ color }}
-            </Button>
+            </div>
           </div>
           <span class="col-span-3 font-bold md:col-span-1 md:text-right">
             ${{
@@ -189,9 +190,9 @@
             <div class="flex flex-wrap gap-1.5">
               <template v-for="size in sizes" :key="size">
                 <div v-if="size">
-                  <Button variant="outline">
+                  <div variant="outline">
                     {{ size.toLocaleUpperCase() }}
-                  </Button>
+                  </div>
                 </div>
               </template>
             </div>
@@ -231,28 +232,15 @@
               <Button variant="outline">+</Button>
             </div>
           </template>
-          <template class="col-span-2" v-if="selectedSize && selectedColor">
-            <Label for="stock" class="font-bold">Stock</Label>
-            <NumberField id="age" :default-value="18" :min="0">
-              <Label for="age">Age</Label>
+          <template v-if="selectedSize && selectedColor">
+            <Label for="stock">Stock</Label>
+            <NumberField id="stock" v-model="productStock.stock" :min="0">
               <NumberFieldContent>
                 <NumberFieldDecrement />
                 <NumberFieldInput />
                 <NumberFieldIncrement />
               </NumberFieldContent>
             </NumberField>
-            <div class="flex items-center gap-2">
-              <Button @click="reduceStock" variant="outline">-</Button>
-              <Input
-                id="stock"
-                type="number"
-                v-model.number="productStock.stock"
-                placeholder="Enter stock quantity"
-                min="0"
-              />
-
-              <Button @click="addStock" variant="outline">+</Button>
-            </div>
           </template>
           <Button
             @click="addProduct"

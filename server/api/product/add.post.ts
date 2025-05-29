@@ -1,29 +1,12 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import type { Product, ProductWithVariant } from '~/db/schema';
-import { productsTable, productVariants } from '~/db/schema';
-import { z } from 'zod';
+import {
+  insertProductSchema,
+  productsTable,
+  productVariants,
+} from '~/db/schema';
 import { eq, and } from 'drizzle-orm';
-
-const VariantSchema = z.object({
-  size: z.string().optional(),
-  color: z.string().min(1, 'Color is required'),
-  stock: z.number().int().nonnegative('Stock must be a non-negative integer'),
-});
-
-const ProductSchema = z.object({
-  title: z.string().min(1, 'Product title is required'),
-  description: z.string().optional(),
-  price: z.number().positive('Price must be positive'),
-  category: z.array(z.string()).min(1, 'At least one category is required'),
-  thumbnail: z.string().url('Thumbnail must be a valid URL').optional(),
-  brand: z.string().min(1, 'La marca debe tener al menos un caracter'),
-});
-
-const RequestSchema = z.object({
-  productInfo: ProductSchema,
-  variantInfo: VariantSchema,
-});
 
 export default defineEventHandler(async (event) => {
   const connectionString = process.env.TEST_SUPABASE_URL!;
@@ -31,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const db = drizzle(client);
 
   const body = await readBody(event);
-  const product = RequestSchema.parse(body);
+  const product = insertProductSchema.parse(body);
 
   try {
     const insertData: Product = {
@@ -68,8 +51,6 @@ export default defineEventHandler(async (event) => {
       //add to stock
       if (existingProductVariant.length > 0) {
         const foundItem = existingProductVariant[0];
-        const currentStock = foundItem.variantInfo.stock!;
-        const newStock = currentStock + 1;
 
         await tx
           .update(productVariants)
@@ -114,6 +95,7 @@ export default defineEventHandler(async (event) => {
       }
 
       //add new product
+      console.log('adding product', insertData);
       const newProduct = await tx
         .insert(productsTable)
         .values(insertData)

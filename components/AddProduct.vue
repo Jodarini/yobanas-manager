@@ -34,38 +34,10 @@
     CommandList,
   } from '@/components/ui/command';
   import type { NewProductWithVariant } from '~/types/types';
+  import { insertProductSchema } from '~/db/schema';
 
   const { toast } = useToast();
-  const formSchema = toTypedSchema(
-    z.object({
-      productInfo: z.object({
-        title: z.string().min(1, 'Debe ingresar un titulo'),
-        description: z.string().optional().nullable(),
-        price: z
-          .number({ message: 'Debe ser un numero' })
-          .positive('El precio debe ser positivo'),
-        category: z
-          .array(z.string())
-          .min(1, 'Debe agregar al menos una categoria')
-          .max(3, 'El producto debe tener maximo 3 categorias'),
-        thumbnail: z
-          .string()
-          .url('Debe ingresar un enlace correcto')
-          .optional()
-          .nullable(),
-        brand: z.string().min(1, 'La marca debe tener al menos un caracter'),
-        tags: z.string().optional().nullable(),
-      }),
-      variantInfo: z.object({
-        size: z.string(),
-        color: z.string().min(1, 'Debe agregar al menos un color'),
-        stock: z
-          .number({ message: 'Debe ser un numero' })
-          .int()
-          .nonnegative('La cantidad debe ser positiva'),
-      }),
-    })
-  );
+  const formSchema = toTypedSchema(insertProductSchema);
 
   const { handleSubmit, resetForm } = useForm({
     validationSchema: formSchema,
@@ -91,7 +63,6 @@
   const store = useProductsStore();
 
   const onSubmit = handleSubmit(async (values) => {
-    // const newTags = values.productInfo.tags?.split(",");
     const product: NewProductWithVariant = {
       ...values,
     };
@@ -265,7 +236,7 @@
                       <ComboboxContent>
                         <CommandList
                           position="popper"
-                          class="z-[50] mt-2 w-[--radix-popper-anchor-width] rounded-md border bg-popover text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
+                          class="bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-[50] mt-2 w-[--radix-popper-anchor-width] rounded-md border shadow-md outline-none"
                         >
                           <CommandEmpty />
                           <CommandGroup>

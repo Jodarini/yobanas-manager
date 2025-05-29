@@ -32,7 +32,7 @@
     selectedSize.value = size;
   }
 
-  const productStock = computed(() => {
+  const selectedVariant = computed(() => {
     return variants?.find(
       (variant) =>
         variant.color === selectedColor.value &&
@@ -40,32 +40,19 @@
     );
   });
 
-  function addStock() {
-    if (!productStock.value) return;
-    productStock.value.stock++;
-  }
-
-  function reduceStock() {
-    if (!productStock.value || productStock.value.stock === 0) return;
-    if (productStock.value.stock < 0) {
-      productStock.value.stock = 0;
-    }
-    productStock.value.stock--;
-  }
-
   async function addProduct() {
     if (product) {
       const newProduct = ref<ProductWithVariant>(product);
       newProduct.value = {
         productInfo: {
           ...product.productInfo,
-          price: parseInt(product.productInfo.price),
+          price: product.productInfo.price,
         },
         variantInfo: {
           ...product.variantInfo,
           color: selectedColor.value,
           size: selectedSize.value,
-          stock: productStock.value?.stock || 0,
+          stock: selectedVariant.value?.stock || 0,
         },
       };
 
@@ -78,7 +65,7 @@
           store.addProduct(result.product);
           toast({
             title: `${result.message}`,
-            description: `Nuevo stock: ${productStock.value?.stock}`,
+            description: `Nuevo stock: ${selectedVariant.value?.stock}`,
           });
         }
       } catch (err) {
@@ -90,10 +77,6 @@
       }
       store.addProduct(newProduct.value);
     }
-    // toast({
-    //   variant: 'destructive',
-    //   title: `Seleccione una variante primero.`,
-    // });
   }
 </script>
 
@@ -142,7 +125,7 @@
 
     <div v-else-if="product" class="flex w-full flex-col gap-6 md:flex-row">
       <NuxtImg
-        :src="product.productInfo.thumbnail"
+        :src="product.productInfo.thumbnail || undefined"
         :alt="product.productInfo.title"
         loading="eager"
         class="h-full rounded-md object-contain md:max-w-lg"
@@ -232,9 +215,9 @@
               <Button variant="outline">+</Button>
             </div>
           </template>
-          <template v-if="selectedSize && selectedColor">
+          <template v-if="selectedSize && selectedColor && selectedVariant">
             <Label for="stock">Stock</Label>
-            <NumberField id="stock" v-model="productStock.stock" :min="0">
+            <NumberField id="stock" v-model="selectedVariant.stock" :min="0">
               <NumberFieldContent>
                 <NumberFieldDecrement />
                 <NumberFieldInput />

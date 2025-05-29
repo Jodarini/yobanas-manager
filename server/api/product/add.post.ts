@@ -52,7 +52,8 @@ export default defineEventHandler(async (event) => {
           productVariants,
           and(
             eq(productVariants.productId, productsTable.id),
-            eq(productVariants.color, product.variantInfo.color)
+            eq(productVariants.color, product.variantInfo.color),
+            eq(productVariants.size, product.variantInfo.size!)
           )
         )
         .where(eq(productsTable.title, product.productInfo.title))

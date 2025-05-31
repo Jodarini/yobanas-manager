@@ -3,8 +3,8 @@ import {
   serial,
   text,
   varchar,
-  numeric,
   integer,
+  real,
 } from 'drizzle-orm/pg-core';
 import z from 'zod';
 
@@ -18,10 +18,9 @@ export const productsTable = pgTable('products', {
   id: serial('id').primaryKey().notNull(),
   title: text('title').notNull(),
   description: text('description'),
-  price: numeric('price', { precision: 10, scale: 2 }).notNull(),
+  price: real('price').notNull(),
   thumbnail: text('thumbnail'),
   brand: text('brand').notNull(),
-  tags: text('tags').array(),
   category: text('category').array(),
 });
 
@@ -49,6 +48,12 @@ export type SelectProductWithVariant = {
   productInfo: SelectProduct;
 };
 
+type WithoutIds<T> = Omit<T, 'id' | 'productId'>;
+export type ProductEdit = {
+  variantInfo: Partial<WithoutIds<ProductVariants>>;
+  productInfo: Partial<WithoutIds<Product>>;
+};
+
 export const insertProductSchema = z.object({
   productInfo: z.object({
     title: z.string().min(1, 'Debe ingresar un titulo'),
@@ -66,7 +71,6 @@ export const insertProductSchema = z.object({
       .optional()
       .nullable(),
     brand: z.string().min(1, 'La marca debe tener al menos un caracter'),
-    tags: z.string().optional().nullable(),
   }),
   variantInfo: z.object({
     size: z.string(),
@@ -75,5 +79,40 @@ export const insertProductSchema = z.object({
       .number({ message: 'Debe ser un numero' })
       .int()
       .nonnegative('La cantidad debe ser positiva'),
+  }),
+});
+
+export const editProductSchema = z.object({
+  productInfo: z.object({
+    title: z.string().min(1, 'Debe ingresar un titulo').optional(),
+    description: z.string().optional().nullable().optional(),
+    price: z
+      .number({ message: 'Debe ser un numero' })
+      .positive('El precio debe ser positivo')
+      .optional(),
+    category: z
+      .array(z.string())
+      .min(1, 'Debe agregar al menos una categoria')
+      .max(3, 'El producto debe tener maximo 3 categorias')
+      .optional(),
+    thumbnail: z
+      .string()
+      .url('Debe ingresar un enlace correcto')
+      .optional()
+      .nullable(),
+    brand: z
+      .string()
+      .min(1, 'La marca debe tener al menos un caracter')
+      .optional(),
+  }),
+  variantInfo: z.object({
+    size: z.string().optional(),
+    color: z.string().min(1, 'Debe agregar al menos un color').optional(),
+    stock: z
+      .number({ message: 'Debe ser un numero' })
+      .int()
+      .min(0, 'La cantidad debe ser positiva')
+      .default(0)
+      .optional(),
   }),
 });

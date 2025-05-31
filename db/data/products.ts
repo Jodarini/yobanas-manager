@@ -6,7 +6,6 @@ export const productsData = [
     thumbnail:
       'https://cdn.dummyjson.com/products/images/mens-shoes/Nike%20Air%20Jordan%201%20Red%20And%20Black/1.png',
     brand: 'Deportivo',
-    tags: ['deportes', 'running', 'calzado'],
     category: ['zapatos', 'ropa deportiva'],
   },
   {
@@ -16,7 +15,6 @@ export const productsData = [
     thumbnail:
       'https://cdn.dummyjson.com/products/images/mens-watches/Brown%20Leather%20Belt%20Watch/1.png',
     brand: 'TechColombia',
-    tags: ['electrónicos', 'wearable', 'fitness'],
     category: ['gadgets', 'tecnología'],
   },
   {
@@ -26,7 +24,6 @@ export const productsData = [
     thumbnail:
       'https://cdn.dummyjson.com/products/images/mens-shirts/Man%20Plaid%20Shirt/1.png',
     brand: 'Clásico',
-    tags: ['accesorios', 'cuero', 'billetera'],
     category: ['billeteras', 'moda'],
   },
   {
@@ -35,7 +32,6 @@ export const productsData = [
     price: '650000.00',
     thumbnail: 'https://fakestoreapi.com/img/61IBBVJvSDL._AC_SY879_.jpg',
     brand: 'SonidoPro',
-    tags: ['electrónicos', 'audio', 'inalámbrico'],
     category: ['audífonos', 'electrónicos'],
   },
   {
@@ -45,7 +41,6 @@ export const productsData = [
     thumbnail:
       'https://cdn.dummyjson.com/products/images/tops/Blue%20Over-sized%20Hoodie/1.png',
     brand: 'EcoVestir',
-    tags: ['ropa', 'algodón', 'casual'],
     category: ['camisetas', 'ropa'],
   },
   {
@@ -54,7 +49,6 @@ export const productsData = [
     price: '280000.00',
     thumbnail: 'https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_.jpg',
     brand: 'ClimaColombia',
-    tags: ['ropa', 'impermeable', 'clima'],
     category: ['chaquetas', 'ropa'],
   },
   {
@@ -63,7 +57,6 @@ export const productsData = [
     price: '220000.00',
     thumbnail: 'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
     brand: 'UrbanoCali',
-    tags: ['accesorios', 'trabajo', 'mochila'],
     category: ['mochilas', 'accesorios'],
   },
   {
@@ -74,7 +67,6 @@ export const productsData = [
     thumbnail:
       'https://cdn.dummyjson.com/products/images/smartphones/iPhone%20X/1.png',
     brand: 'TechMóvil',
-    tags: ['electrónicos', 'smartphone', 'móvil'],
     category: ['celulares', 'tecnología'],
   },
   {
@@ -84,7 +76,6 @@ export const productsData = [
     thumbnail:
       'https://cdn.dummyjson.com/products/images/fragrances/Calvin%20Klein%20CK%20One/1.png',
     brand: 'Elegancia',
-    tags: ['perfume', 'fragancia', 'masculino'],
     category: ['perfumes', 'belleza'],
   },
   {
@@ -93,7 +84,6 @@ export const productsData = [
     price: '3500000.00',
     thumbnail: 'https://fakestoreapi.com/img/81QpkIctqPL._AC_SX679_.jpg',
     brand: 'GameTech',
-    tags: ['electrónicos', 'laptop', 'gaming'],
     category: ['computadores', 'tecnología'],
   },
   {
@@ -103,7 +93,6 @@ export const productsData = [
     thumbnail:
       'https://cdn.dummyjson.com/products/images/sunglasses/Classic%20Sun%20Glasses/1.png',
     brand: 'SolStyle',
-    tags: ['accesorios', 'gafas', 'protección'],
     category: ['gafas', 'accesorios'],
   },
   {
@@ -113,7 +102,6 @@ export const productsData = [
     thumbnail:
       'https://cdn.dummyjson.com/products/images/skin-care/Attitude%20Super%20Leaves%20Hand%20Soap/1.png',
     brand: 'BellezaNatural',
-    tags: ['belleza', 'cuidado', 'facial'],
     category: ['cosméticos', 'belleza'],
   },
 ];

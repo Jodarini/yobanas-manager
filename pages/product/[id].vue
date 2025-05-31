@@ -46,7 +46,7 @@
       newProduct.value = {
         productInfo: {
           ...product.productInfo,
-          price: product.productInfo.price,
+          price: parseInt(product.productInfo.price),
         },
         variantInfo: {
           ...product.variantInfo,
@@ -181,57 +181,7 @@
             </div>
           </template>
         </div>
-
-        <hr />
-
-        <span class="text-xl font-bold">Agregar nuevo</span>
-        <div class="grid grid-cols-[auto_1fr] gap-6">
-          <span class="font-bold">Color</span>
-          <div class="flex flex-wrap gap-2">
-            <Button
-              v-for="color in colors"
-              :key="color"
-              :variant="selectedColor === color ? 'default' : 'outline'"
-              @click="selectColor(color)"
-            >
-              {{ color }}
-            </Button>
-            <Button variant="outline">+</Button>
-          </div>
-
-          <template v-if="product.variantInfo.size">
-            <span class="font-bold">Talla</span>
-            <div class="flex flex-wrap gap-1.5">
-              <Button
-                v-for="size in sizes"
-                :key="size + 'admn'"
-                @click="size && selectSize(size)"
-                :variant="selectedSize === size ? 'default' : 'outline'"
-              >
-                <div v-if="size">
-                  {{ size.toLocaleUpperCase() }}
-                </div>
-              </Button>
-              <Button variant="outline">+</Button>
-            </div>
-          </template>
-          <template v-if="selectedSize && selectedColor && selectedVariant">
-            <Label for="stock">Stock</Label>
-            <NumberField id="stock" v-model="selectedVariant.stock" :min="0">
-              <NumberFieldContent>
-                <NumberFieldDecrement />
-                <NumberFieldInput />
-                <NumberFieldIncrement />
-              </NumberFieldContent>
-            </NumberField>
-          </template>
-          <Button
-            @click="addProduct"
-            :disabled="!selectedSize && !selectedColor"
-          >
-            Actualizar producto
-          </Button>
-        </div>
+        <EditProductDialog :product :variants />
       </div>
     </div>
   </div>

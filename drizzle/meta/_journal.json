@@ -8,6 +8,13 @@
       "when": 1748380395546,
       "tag": "20250527211315_common_karnak",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1748621685956,
+      "tag": "20250530161445_flaky_joystick",
+      "breakpoints": true
     }
   ]
 }

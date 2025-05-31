@@ -16,7 +16,7 @@ importers:
         version: 4.1.8(vite@6.3.5(@types/node@22.15.24)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.40.0)(tsx@4.19.4)(yaml@2.8.0))
       '@vee-validate/zod':
         specifier: ^4.15.0
-        version: 4.15.0(vue@3.5.15(typescript@5.8.3))(zod@3.25.33)
+        version: 4.15.0(vue@3.5.15(typescript@5.8.3))(zod@3.25.42)
       '@vueuse/core':
         specifier: ^11.3.0
         version: 11.3.0(vue@3.5.15(typescript@5.8.3))
@@ -31,7 +31,7 @@ importers:
         version: 0.43.1(postgres@3.4.7)
       drizzle-zod:
         specifier: ^0.8.2
-        version: 0.8.2(drizzle-orm@0.43.1(postgres@3.4.7))(zod@3.25.33)
+        version: 0.8.2(drizzle-orm@0.43.1(postgres@3.4.7))(zod@3.25.42)
       lucide-vue-next:
         specifier: ^0.436.0
         version: 0.436.0(vue@3.5.15(typescript@5.8.3))
@@ -63,8 +63,8 @@ importers:
         specifier: latest
         version: 3.5.15(typescript@5.8.3)
       zod:
-        specifier: ^3.25.33
-        version: 3.25.33
+        specifier: ^3.25.42
+        version: 3.25.42
     devDependencies:
       '@iconify-json/radix-icons':
         specifier: ^1.2.2
@@ -5435,8 +5435,8 @@ packages:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
 
-  zod@3.25.33:
-    resolution: {integrity: sha512-RnBGYCwJFrLi/hUmeqbYjSIrS/strWjN5PHWgUfyVq96nKycSa4gp4+p6hQGwvcabZs0DWRGzyLhEeQWl+5NhA==}
+  zod@3.25.42:
+    resolution: {integrity: sha512-PcALTLskaucbeHc41tU/xfjfhcz8z0GdhhDcSgrCTmSazUuqnYqiXO63M0QUBVwpBlsLsNVn5qHSC5Dw3KZvaQ==}
 
 snapshots:
 
@@ -6250,7 +6250,7 @@ snapshots:
       unixify: 1.0.0
       urlpattern-polyfill: 8.0.2
       yargs: 17.7.2
-      zod: 3.25.33
+      zod: 3.25.42
     transitivePeerDependencies:
       - encoding
       - rollup
@@ -7192,11 +7192,11 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.7.6':
     optional: true
 
-  '@vee-validate/zod@4.15.0(vue@3.5.15(typescript@5.8.3))(zod@3.25.33)':
+  '@vee-validate/zod@4.15.0(vue@3.5.15(typescript@5.8.3))(zod@3.25.42)':
     dependencies:
       type-fest: 4.41.0
       vee-validate: 4.15.0(vue@3.5.15(typescript@5.8.3))
-      zod: 3.25.33
+      zod: 3.25.42
     transitivePeerDependencies:
       - vue
 
@@ -8081,10 +8081,10 @@ snapshots:
     optionalDependencies:
       postgres: 3.4.7
 
-  drizzle-zod@0.8.2(drizzle-orm@0.43.1(postgres@3.4.7))(zod@3.25.33):
+  drizzle-zod@0.8.2(drizzle-orm@0.43.1(postgres@3.4.7))(zod@3.25.42):
     dependencies:
       drizzle-orm: 0.43.1(postgres@3.4.7)
-      zod: 3.25.33
+      zod: 3.25.42
 
   dunder-proto@1.0.1:
     dependencies:
@@ -11180,4 +11180,4 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod@3.25.33: {}
+  zod@3.25.42: {}

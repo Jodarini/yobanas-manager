@@ -34,7 +34,7 @@
     "tw-animate-css": "^1.3.0",
     "vee-validate": "^4.15.0",
     "vue": "latest",
-    "zod": "^3.25.33"
+    "zod": "^3.25.42"
   },
   "devDependencies": {
     "@iconify-json/radix-icons": "^1.2.2",

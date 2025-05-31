@@ -97,7 +97,7 @@
                     <Loader2 class="mr-2 h-4 w-4 animate-spin" />
                   </span>
                 </div>
-                <template v-else>Confirmar</template>
+                <p v-else class="font-bold">Borrar</p>
               </Button>
             </div>
           </DialogContent>

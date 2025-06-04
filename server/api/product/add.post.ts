@@ -95,7 +95,6 @@ export default defineEventHandler(async (event) => {
       }
 
       //add new product
-      console.log('adding product', insertData);
       const newProduct = await tx
         .insert(productsTable)
         .values(insertData)

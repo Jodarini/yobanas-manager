@@ -11,8 +11,8 @@
 
   const store = useProductsStore();
   const { product, variants } = defineProps<{
-    product: SelectProductWithVariant;
-    variants: SelectProductVariants[];
+    product: ProductWithVariant;
+    variants: ProductVariants[];
   }>();
 
   const selectedSize = ref('');
@@ -35,13 +35,11 @@
   function selectColor(color: string) {
     selectedColor.value = color;
     setFieldValue('variantInfo.color', color);
-    console.log('Selected color:', selectedColor.value);
   }
 
   function selectSize(size: string) {
     selectedSize.value = size;
     setFieldValue('variantInfo.size', size);
-    console.log('Selected size:', selectedSize.value);
   }
   const formSchema = toTypedSchema(editProductSchema);
 
@@ -106,10 +104,10 @@
       <Button variant="outline">Editar producto</Button>
     </DialogTrigger>
     <DialogContent>
-      <form @submit.prevent="addProduct" class="space-y-6">
+      <form @submit.prevent="addProduct">
         <DialogHeader>
           <DialogTitle class="mb-6">Editar producto</DialogTitle>
-          <DialogDescription class="space-y-6">
+          <DialogDescription class="space-y-4">
             <FormField v-slot="{ componentField }" name="productInfo.title">
               <FormItem>
                 <FormLabel>Nombre</FormLabel>
@@ -166,8 +164,9 @@
                 <FormControl>
                   <ToggleGroup type="single">
                     <div class="flex flex-wrap gap-2">
-                      <template v-for="color in colors">
+                      <template v-for="color in colors" :key="color">
                         <ToggleGroupItem
+                          variant="outline"
                           :value="color"
                           @click="selectColor(color)"
                         >
@@ -188,8 +187,9 @@
                 <FormControl>
                   <ToggleGroup type="single">
                     <div class="flex flex-wrap gap-2">
-                      <template v-for="size in sizes">
+                      <template v-for="size in sizes" :key="size">
                         <ToggleGroupItem
+                          variant="outline"
                           :value="size"
                           @click="selectSize(size)"
                         >
@@ -211,7 +211,7 @@
                 name="variantInfo.stock"
               >
                 <FormItem>
-                  <FormLabel>stock</FormLabel>
+                  <FormLabel class="font-bold">Stock</FormLabel>
                   <NumberField
                     class="gap-2"
                     :min="0"

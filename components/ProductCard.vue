@@ -32,7 +32,7 @@
           <div class="mt-auto flex items-center justify-between">
             <span class="text-lg font-semibold">
               ${{
-                parseInt(product.price).toLocaleString('es-CO', {
+                product.price.toLocaleString('es-CO', {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 0,
                 })

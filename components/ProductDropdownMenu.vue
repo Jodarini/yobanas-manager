@@ -61,7 +61,7 @@
         >
           <path
             d="M11 20a1 1 0 11.293.707A1 1 0 0111 20zm0-8a1 1 0 11.293.707A1 1 0 0111 12zm0-8a1 1 0 11.293.707A1 1 0 0111 4z"
-          ></path>
+          />
         </svg>
       </Button>
     </DropdownMenuTrigger>

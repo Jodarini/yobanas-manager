@@ -1,11 +1,8 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { eq } from 'drizzle-orm';
 import postgres from 'postgres';
-import {
-  productsTable,
-  productVariants,
-  ProductWithVariant,
-} from '~/db/schema';
+import type { ProductWithVariant } from '~/db/schema';
+import { productsTable, productVariants } from '~/db/schema';
 
 export default defineEventHandler(async (event) => {
   const connectionString = process.env.TEST_SUPABASE_URL!;
@@ -25,17 +22,6 @@ export default defineEventHandler(async (event) => {
     .select()
     .from(productVariants)
     .where(eq(productVariants.productId, productId));
-
-  const getProductWithVariants = await db
-    .select()
-    .from(productsTable)
-    .innerJoin(productVariants, eq(productVariants.productId, productsTable.id))
-    .where(eq(productsTable.id, productId));
-
-  const productWithVariants = {
-    product: getProductWithVariants[0]?.products, // Product info from first row
-    variants: getProductWithVariants.map((row) => row.product_variants), // All variants
-  };
 
   const product: ProductWithVariant[] = otherProduct.map((row) => ({
     productInfo: row.products,

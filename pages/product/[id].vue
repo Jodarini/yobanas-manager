@@ -1,8 +1,4 @@
 <script setup lang="ts">
-  import { useToast } from '@/components/ui/toast/use-toast';
-  import type { ProductWithVariant } from '~/db/schema';
-
-  const { toast } = useToast();
   const route = useRoute();
   const store = useProductsStore();
   const { data, error, pending, refresh } = await store.fetchProduct(
@@ -17,67 +13,9 @@
     () => new Set(variants?.map((variant) => variant.size))
   );
 
-  const selectedSize = ref('');
-  const selectedColor = ref('');
-
   const totalStock = computed(() =>
     variants?.reduce((total, variant) => (total += variant.stock), 0)
   );
-
-  function selectColor(color: string) {
-    selectedColor.value = color;
-  }
-
-  function selectSize(size: string) {
-    selectedSize.value = size;
-  }
-
-  const selectedVariant = computed(() => {
-    return variants?.find(
-      (variant) =>
-        variant.color === selectedColor.value &&
-        variant.size === selectedSize.value
-    );
-  });
-
-  async function addProduct() {
-    if (product) {
-      const newProduct = ref<ProductWithVariant>(product);
-      newProduct.value = {
-        productInfo: {
-          ...product.productInfo,
-          price: parseInt(product.productInfo.price),
-        },
-        variantInfo: {
-          ...product.variantInfo,
-          color: selectedColor.value,
-          size: selectedSize.value,
-          stock: selectedVariant.value?.stock || 0,
-        },
-      };
-
-      try {
-        const result = await $fetch('/api/product/add', {
-          method: 'post',
-          body: newProduct.value,
-        });
-        if (result.product) {
-          store.addProduct(result.product);
-          toast({
-            title: `${result.message}`,
-            description: `Nuevo stock: ${selectedVariant.value?.stock}`,
-          });
-        }
-      } catch (err) {
-        toast({
-          variant: 'destructive',
-          title: `${err}`,
-        });
-        console.error(err);
-      }
-      store.addProduct(newProduct.value);
-    }
-  }
 </script>
 
 <template>
@@ -151,13 +89,13 @@
         >
           <span class="font-bold">Colores</span>
           <div class="flex flex-wrap gap-2">
-            <div variant="outline" v-for="color in colors" :key="color">
+            <div v-for="color in colors" :key="color" variant="outline">
               {{ color }}
             </div>
           </div>
           <span class="col-span-3 font-bold md:col-span-1 md:text-right">
             ${{
-              parseInt(product.productInfo.price).toLocaleString('es-CO', {
+              product.productInfo.price.toLocaleString('es-CO', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
               })

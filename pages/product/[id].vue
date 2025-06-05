@@ -119,7 +119,10 @@
             </div>
           </template>
         </div>
-        <EditProductDialog :product :variants />
+        <div class="flex justify-end">
+          <AddProductVariantDialog :product :variants />
+          <EditProductDialog :product :variants />
+        </div>
       </div>
     </div>
   </div>

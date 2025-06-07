@@ -110,6 +110,9 @@ export const editProductSchema = z.object({
       .min(1, 'La marca debe tener al menos un caracter')
       .optional(),
   }),
+});
+
+export const addVariantSchema = z.object({
   variantInfo: z.object({
     size: z.string().optional(),
     color: z.string().min(1, 'Debe agregar al menos un color').optional(),

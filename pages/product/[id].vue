@@ -120,7 +120,7 @@
           </template>
         </div>
         <div class="flex justify-end">
-          <AddProductVariantDialog :product :variants />
+          <AddProductVariantDialog :variants />
           <EditProductDialog :product :variants />
         </div>
       </div>

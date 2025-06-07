@@ -1,17 +1,13 @@
 <script setup lang="ts">
-  import {
-    editProductSchema,
-    type SelectProductVariants,
-    type SelectProductWithVariant,
-  } from '~/db/schema';
+  import { addVariantSchema, type ProductVariants } from '~/db/schema';
   import { useToast } from '@/components/ui/toast/use-toast';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
+
+  const route = useRoute();
   const { toast } = useToast();
 
-  const store = useProductsStore();
-  const { product, variants } = defineProps<{
-    product: ProductWithVariant;
+  const { variants } = defineProps<{
     variants: ProductVariants[];
   }>();
 
@@ -41,7 +37,6 @@
     selectedSize.value = size;
     setFieldValue('variantInfo.size', size);
   }
-  const formSchema = toTypedSchema(editProductSchema);
 
   watch(
     selectedVariant,
@@ -53,33 +48,21 @@
     { immediate: true }
   );
 
-  const { handleSubmit, resetForm, setFieldValue } = useForm({
+  const formSchema = toTypedSchema(addVariantSchema);
+  const { handleSubmit, setFieldValue } = useForm({
     validationSchema: formSchema,
-    initialValues: {
-      productInfo: {
-        title: product.productInfo.title,
-        description: product.productInfo.description,
-        category: ['test'],
-        brand: product.productInfo.brand,
-        price: product.productInfo.price,
-        thumbnail: product.productInfo.thumbnail,
-      },
-    },
   });
 
   const addProduct = handleSubmit(async (values) => {
     const newProduct = ref(values);
     newProduct.value = {
-      productInfo: {
-        ...values.productInfo,
-      },
       variantInfo: {
         ...values.variantInfo,
       },
     };
 
     try {
-      const result = await $fetch('/api/product/edit-variant', {
+      const result = await $fetch(`/api/product/${route.params.id}`, {
         method: 'put',
         body: newProduct.value,
       });
@@ -94,7 +77,6 @@
       });
       console.error(err);
     }
-    store.addProduct(newProduct.value);
   });
 </script>
 
@@ -106,58 +88,8 @@
     <DialogContent>
       <form @submit.prevent="addProduct">
         <DialogHeader>
-          <DialogTitle class="mb-6">Editar producto</DialogTitle>
+          <DialogTitle class="mb-6">Editar variante</DialogTitle>
           <DialogDescription class="space-y-4">
-            <FormField v-slot="{ componentField }" name="productInfo.title">
-              <FormItem>
-                <FormLabel>Nombre</FormLabel>
-                <FormControl>
-                  <Input
-                    required
-                    type="text"
-                    placeholder="Nombre"
-                    :default-value="product.productInfo.title"
-                    v-bind="componentField"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField
-              v-slot="{ componentField }"
-              name="productInfo.description"
-            >
-              <FormItem>
-                <FormLabel>Descripcion</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Descripcion"
-                    :default-value="product.productInfo.description"
-                    v-bind="componentField"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="productInfo.price">
-              <FormItem>
-                <FormLabel>Precio</FormLabel>
-                <FormControl>
-                  <Input
-                    required
-                    type="number"
-                    placeholder="Precio"
-                    :default-value="product.productInfo.price"
-                    v-bind="componentField"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
             <FormField name="variantInfo.color">
               <FormItem>
                 <FormLabel class="font-bold">Color</FormLabel>

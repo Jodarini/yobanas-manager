@@ -1,20 +1,151 @@
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import postgres from 'postgres';
 import type { ProductWithVariant } from '~/db/schema';
-import { editProductSchema, productsTable, productVariants } from '~/db/schema';
+import {
+  addVariantSchema,
+  editProductSchema,
+  productsTable,
+  productVariants,
+} from '~/db/schema';
+
+async function handleProductUpdate(
+  db: PostgresJsDatabase,
+  productId: number,
+  productInfo: any
+) {
+  return await db.transaction(async (tx) => {
+    const updatePayload: Record<string, unknown> = {};
+
+    if (productInfo.title) {
+      updatePayload.title = productInfo.title;
+    }
+    if (productInfo.description) {
+      updatePayload.description = productInfo.description;
+    }
+    if (productInfo.price) {
+      updatePayload.price = productInfo.price;
+    }
+    if (productInfo.brand) {
+      updatePayload.brand = productInfo.brand;
+    }
+    if (productInfo.thumbnail) {
+      updatePayload.thumbnail = productInfo.thumbnail;
+    }
+    if (productInfo.category) {
+      updatePayload.category = productInfo.category;
+    }
+    if (Object.keys(updatePayload).length === 0) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'No fields to update',
+      });
+    }
+
+    await tx
+      .update(productsTable)
+      .set(updatePayload)
+      .where(eq(productsTable.id, productId));
+
+    return { success: true, payloadWas: updatePayload };
+  });
+}
+
+async function addProductVariant(
+  db: PostgresJsDatabase,
+  product: any,
+  productId: number
+) {
+  return await db.transaction(async (tx) => {
+    const [variant] = await tx
+      .select()
+      .from(productVariants)
+      .where(
+        and(
+          eq(productVariants.color, product.variantInfo.color!),
+          eq(productVariants.size, product.variantInfo.size!),
+          eq(productVariants.productId, productId)
+        )
+      );
+
+    const result = await tx
+      .update(productVariants)
+      .set({ stock: product.variantInfo.stock })
+      .returning()
+      .where(eq(productVariants.id, variant.id));
+
+    return {
+      message: 'Editó la variante del producto',
+      product: {
+        productInfo: result,
+      },
+    };
+  });
+}
+
+async function getProductWithVariants(
+  productId: number,
+  db: PostgresJsDatabase
+) {
+  const [productData, variants] = await Promise.all([
+    db
+      .select()
+      .from(productVariants)
+      .innerJoin(productsTable, eq(productsTable.id, productId))
+      .where(eq(productVariants.productId, productId))
+      .limit(1),
+    db
+      .select()
+      .from(productVariants)
+      .where(eq(productVariants.productId, productId)),
+  ]);
+
+  if (productData.length === 0) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: 'Product not found',
+    });
+  }
+
+  const product: ProductWithVariant = {
+    productInfo: productData[0].products,
+    variantInfo: productData[0].product_variants,
+  };
+  return { product, variants };
+}
 
 export default defineEventHandler(async (event) => {
   const connectionString = process.env.TEST_SUPABASE_URL!;
 
   const client = postgres(connectionString);
   const db = drizzle(client);
-  const productId = parseInt(event.context.params!.id);
   const { id } = getRouterParams(event);
+  const productId = parseInt(id);
+
+  if (!id || isNaN(parseInt(id))) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid product ID',
+    });
+  }
 
   if (event.method === 'PUT' || event.method === 'PATCH') {
     try {
       const body = await readBody(event);
+      if (body.variantInfo) {
+        const parseResult = addVariantSchema.safeParse(body);
+
+        if (!parseResult.success) {
+          throw createError({
+            statusCode: 400,
+            statusMessage: 'Invalid request data',
+            data: parseResult.error.errors,
+          });
+        }
+        return await addProductVariant(db, body, productId);
+      }
+
       const parseResult = editProductSchema.safeParse(body);
 
       if (!parseResult.success) {
@@ -25,40 +156,7 @@ export default defineEventHandler(async (event) => {
         });
       }
 
-      const product = parseResult.data;
-      const updatePayload: Record<string, unknown> = {};
-
-      if (product.productInfo.title) {
-        updatePayload.title = product.productInfo.title;
-      }
-      if (product.productInfo.description) {
-        updatePayload.description = product.productInfo.description;
-      }
-      if (product.productInfo.price) {
-        updatePayload.price = product.productInfo.price;
-      }
-      if (product.productInfo.brand) {
-        updatePayload.brand = product.productInfo.brand;
-      }
-      if (product.productInfo.thumbnail) {
-        updatePayload.thumbnail = product.productInfo.thumbnail;
-      }
-      if (product.productInfo.category) {
-        updatePayload.category = product.productInfo.category;
-      }
-      if (Object.keys(updatePayload).length === 0) {
-        throw createError({
-          statusCode: 400,
-          statusMessage: 'No fields to update',
-        });
-      }
-
-      await db
-        .update(productsTable)
-        .set(updatePayload)
-        .where(eq(productsTable.id, id));
-
-      return { success: true, payloadWas: updatePayload };
+      return await handleProductUpdate(db, productId, body.productInfo);
     } catch (err) {
       console.error('Error parsing the body', err);
       throw err;
@@ -66,23 +164,5 @@ export default defineEventHandler(async (event) => {
       await client.end();
     }
   }
-
-  const otherProduct = await db
-    .select()
-    .from(productVariants)
-    .innerJoin(productsTable, eq(productsTable.id, productId))
-    .where(eq(productVariants.productId, productId));
-
-  // Select all color variants from product with ID
-  const variants = await db
-    .select()
-    .from(productVariants)
-    .where(eq(productVariants.productId, productId));
-
-  const product: ProductWithVariant[] = otherProduct.map((row) => ({
-    productInfo: row.products,
-    variantInfo: row.product_variants,
-  }));
-
-  return { product: product[0], variants };
+  return await getProductWithVariants(productId, db);
 });

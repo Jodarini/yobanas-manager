@@ -6,14 +6,14 @@
   const { toast } = useToast();
   const route = useRoute();
 
-  const store = useProductsStore();
+  // const store = useProductsStore();
   const { product } = defineProps<{
     product: ProductWithVariant;
   }>();
 
   const formSchema = toTypedSchema(editProductSchema);
 
-  const { handleSubmit, resetForm } = useForm({
+  const { handleSubmit } = useForm({
     validationSchema: formSchema,
     initialValues: {
       productInfo: {
@@ -33,9 +33,6 @@
       productInfo: {
         ...values.productInfo,
       },
-      variantInfo: {
-        ...values.variantInfo,
-      },
     };
 
     try {
@@ -45,7 +42,7 @@
       });
       toast({
         title: `${result.message}`,
-        description: `Nuevo stock: ${values.variantInfo.stock}`,
+        description: `Se actualizó el producto: ${values.productInfo.title}`,
       });
     } catch (err) {
       toast({
@@ -54,7 +51,7 @@
       });
       console.error(err);
     }
-    store.addProduct(newProduct.value);
+    // store.addProduct(newProduct.value);
   });
 </script>
 
@@ -94,7 +91,7 @@
                   <Input
                     type="text"
                     placeholder="Descripcion"
-                    :default-value="product.productInfo.description"
+                    :default-value="product.productInfo.description!"
                     v-bind="componentField"
                   />
                 </FormControl>

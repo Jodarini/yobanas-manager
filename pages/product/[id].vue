@@ -1,9 +1,13 @@
 <script setup lang="ts">
   const route = useRoute();
-  const store = useProductsStore();
-  const { data, error, pending, refresh } = await store.fetchProduct(
-    +route.params.id
+  const { data, error, refresh, pending } = await useFetch(
+    `/api/product/${+route.params.id}`,
+    {
+      key: `product-${route.params.id}`,
+      server: true,
+    }
   );
+
   const product = data.value?.product;
   const variants = data.value?.variants;
   const colors = computed(

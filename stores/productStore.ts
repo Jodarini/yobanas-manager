@@ -22,14 +22,20 @@ export const useProductsStore = defineStore('products', () => {
     return { status, error };
   }
 
-  async function fetchProduct(productId: number) {
-    const { data, status, error, pending, refresh } = await useFetch(
-      `/api/product/${productId}`,
-      {}
-    );
-    return { data, status, error, pending, refresh };
-  }
+  // async function fetchProduct(productId: number) {
+  //   const { data, status, error, pending, refresh } = await useFetch(
+  //     `/api/product/${productId}`,
+  //     {}
+  //   );
+  //   return { data, status, error, pending, refresh };
+  // }
 
+  async function fetchProduct(productId: number) {
+    return await useFetch(`/api/product/${productId}`, {
+      key: `product-${productId}`, // Important for caching and deduplication
+      server: true, // Ensures server-side execution
+    });
+  }
   async function addProduct(prod: ProductWithVariant) {
     const p = {
       id: prod.productInfo.id,

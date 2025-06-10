@@ -14,7 +14,7 @@
   const deleteProduct = async (productId: number) => {
     isDeleting.value = true;
     try {
-      const { error } = await useFetch('/api/product/delete', {
+      const { error } = await useFetch(`/api/product/${props.id}`, {
         method: 'delete',
         body: { id: productId },
       });

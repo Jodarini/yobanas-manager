@@ -2,7 +2,7 @@ import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { eq, and } from 'drizzle-orm';
 import postgres from 'postgres';
-import type { ProductVariants, ProductWithVariant } from '~/db/schema';
+import type { ProductVariants } from '~/db/schema';
 import {
   addVariantSchema,
   editProductSchema,
@@ -88,37 +88,6 @@ async function addProductVariant(
   });
 }
 
-async function getProductWithVariants(
-  productId: number,
-  db: PostgresJsDatabase
-) {
-  const [productData, variants] = await Promise.all([
-    db
-      .select()
-      .from(productVariants)
-      .innerJoin(productsTable, eq(productsTable.id, productId))
-      .where(eq(productVariants.productId, productId))
-      .limit(1),
-    db
-      .select()
-      .from(productVariants)
-      .where(eq(productVariants.productId, productId)),
-  ]);
-
-  if (productData.length === 0) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: 'Product not found',
-    });
-  }
-
-  const product: ProductWithVariant = {
-    productInfo: productData[0].products,
-    variantInfo: productData[0].product_variants,
-  };
-  return { product, variants };
-}
-
 export default defineEventHandler(async (event) => {
   const connectionString = process.env.TEST_SUPABASE_URL!;
 
@@ -127,30 +96,10 @@ export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event);
   const productId = parseInt(id);
 
-  if (!id || isNaN(parseInt(id))) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Invalid product ID',
-    });
-  }
-
-  if (event.method === 'PUT' || event.method === 'PATCH') {
-    try {
-      const body = await readBody(event);
-      if (body.variantInfo) {
-        const parseResult = addVariantSchema.safeParse(body);
-
-        if (!parseResult.success) {
-          throw createError({
-            statusCode: 400,
-            statusMessage: 'Invalid request data',
-            data: parseResult.error.errors,
-          });
-        }
-        return await addProductVariant(db, body, productId);
-      }
-
-      const parseResult = editProductSchema.safeParse(body);
+  try {
+    const body = await readBody(event);
+    if (body.variantInfo) {
+      const parseResult = addVariantSchema.safeParse(body);
 
       if (!parseResult.success) {
         throw createError({
@@ -159,14 +108,24 @@ export default defineEventHandler(async (event) => {
           data: parseResult.error.errors,
         });
       }
-
-      return await handleProductUpdate(db, productId, body.productInfo);
-    } catch (err) {
-      console.error('Error parsing the body', err);
-      throw err;
-    } finally {
-      await client.end();
+      return await addProductVariant(db, body, productId);
     }
+
+    const parseResult = editProductSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Invalid request data',
+        data: parseResult.error.errors,
+      });
+    }
+
+    return await handleProductUpdate(db, productId, body.productInfo);
+  } catch (err) {
+    console.error('Error parsing the body', err);
+    throw err;
+  } finally {
+    await client.end();
   }
-  return await getProductWithVariants(productId, db);
 });

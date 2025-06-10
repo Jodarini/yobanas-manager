@@ -6,7 +6,6 @@
   const { toast } = useToast();
   const route = useRoute();
 
-  // const store = useProductsStore();
   const { product } = defineProps<{
     product: ProductWithVariant;
   }>();

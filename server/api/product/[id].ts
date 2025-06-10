@@ -2,7 +2,7 @@ import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { eq, and } from 'drizzle-orm';
 import postgres from 'postgres';
-import type { ProductWithVariant } from '~/db/schema';
+import type { ProductVariants, ProductWithVariant } from '~/db/schema';
 import {
   addVariantSchema,
   editProductSchema,
@@ -10,32 +10,25 @@ import {
   productVariants,
 } from '~/db/schema';
 
+type EditProductInfo = {
+  title?: string;
+  description?: string | null;
+  price?: number;
+  category?: string[];
+  thumbnail?: string | null;
+  brand?: string;
+};
+
 async function handleProductUpdate(
   db: PostgresJsDatabase,
   productId: number,
-  productInfo: any
+  productInfo: EditProductInfo
 ) {
   return await db.transaction(async (tx) => {
-    const updatePayload: Record<string, unknown> = {};
+    const updatePayload = Object.fromEntries(
+      Object.entries(productInfo).filter(([_, value]) => value)
+    ) as Partial<EditProductInfo>;
 
-    if (productInfo.title) {
-      updatePayload.title = productInfo.title;
-    }
-    if (productInfo.description) {
-      updatePayload.description = productInfo.description;
-    }
-    if (productInfo.price) {
-      updatePayload.price = productInfo.price;
-    }
-    if (productInfo.brand) {
-      updatePayload.brand = productInfo.brand;
-    }
-    if (productInfo.thumbnail) {
-      updatePayload.thumbnail = productInfo.thumbnail;
-    }
-    if (productInfo.category) {
-      updatePayload.category = productInfo.category;
-    }
     if (Object.keys(updatePayload).length === 0) {
       throw createError({
         statusCode: 400,
@@ -54,17 +47,28 @@ async function handleProductUpdate(
 
 async function addProductVariant(
   db: PostgresJsDatabase,
-  product: any,
+  product: { variantInfo: Partial<Omit<ProductVariants, 'id' | 'productId'>> },
   productId: number
 ) {
   return await db.transaction(async (tx) => {
+    if (
+      !product.variantInfo.color ||
+      !product.variantInfo.size ||
+      !product.variantInfo.stock
+    ) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Missing required fields',
+      });
+    }
+
     const [variant] = await tx
       .select()
       .from(productVariants)
       .where(
         and(
-          eq(productVariants.color, product.variantInfo.color!),
-          eq(productVariants.size, product.variantInfo.size!),
+          eq(productVariants.color, product.variantInfo.color),
+          eq(productVariants.size, product.variantInfo.size),
           eq(productVariants.productId, productId)
         )
       );

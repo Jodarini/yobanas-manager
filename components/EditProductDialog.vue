@@ -50,7 +50,6 @@
       });
       console.error(err);
     }
-    // store.addProduct(newProduct.value);
   });
 </script>
 

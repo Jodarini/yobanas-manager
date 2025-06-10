@@ -62,7 +62,7 @@
     };
 
     try {
-      const result = await $fetch(`/api/product/${route.params.id}`, {
+      const result = await $fetch(`/api/product/${+route.params.id}`, {
         method: 'put',
         body: newProduct.value,
       });

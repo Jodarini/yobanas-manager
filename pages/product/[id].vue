@@ -10,6 +10,7 @@
 
   const product = data.value?.product;
   const variants = data.value?.variants;
+
   const colors = computed(
     () => new Set(variants?.map((variant) => variant.color))
   );
@@ -124,7 +125,7 @@
           </template>
         </div>
         <div class="flex justify-end">
-          <AddProductVariantDialog :variants />
+          <AddProductVariantDialog v-if="variants" :variants />
           <EditProductDialog :product :variants />
         </div>
       </div>

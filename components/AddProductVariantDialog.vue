@@ -34,6 +34,7 @@
   }
 
   function selectSize(size: string) {
+    console.log('selectSize', size);
     selectedSize.value = size;
     setFieldValue('variantInfo.size', size);
   }
@@ -56,28 +57,65 @@
   const addProduct = handleSubmit(async (values) => {
     const newProduct = ref(values);
     newProduct.value = {
+      id: +route.params.id,
       variantInfo: {
         ...values.variantInfo,
       },
     };
 
-    try {
-      const result = await $fetch(`/api/product/${+route.params.id}`, {
-        method: 'put',
-        body: newProduct.value,
-      });
-      toast({
-        title: `${result.message}`,
-        description: `Nuevo stock: ${values.variantInfo.stock}`,
-      });
-    } catch (err) {
-      toast({
-        variant: 'destructive',
-        title: `${err}`,
-      });
-      console.error(err);
+    if (addingSize.value) {
+      console.log('adding');
+      try {
+        const result = await $fetch(
+          `/api/product/${+route.params.id}/addVariant`,
+          {
+            method: 'POST',
+            body: newProduct.value,
+          }
+        );
+        toast({
+          title: `${result.message}`,
+          description: `Nuevo stock: ${values.variantInfo.stock}`,
+        });
+      } catch (err) {
+        toast({
+          variant: 'destructive',
+          title: `${err}`,
+        });
+        console.error(err);
+      }
+    } else {
+      try {
+        const result = await $fetch(`/api/product/${+route.params.id}`, {
+          method: 'put',
+          body: newProduct.value,
+        });
+        toast({
+          title: `${result.message}`,
+          description: `Nuevo stock: ${values.variantInfo.stock}`,
+        });
+      } catch (err) {
+        toast({
+          variant: 'destructive',
+          title: `${err}`,
+        });
+        console.error(err);
+      }
     }
   });
+
+  const addingSize = ref(false);
+  const addingColor = ref(false);
+
+  function showAddSize() {
+    console.log('showAddSize');
+    addingSize.value = true;
+  }
+
+  function showAddColor() {
+    console.log('showAddColor');
+    addingColor.value = true;
+  }
 </script>
 
 <template>
@@ -90,7 +128,7 @@
         <DialogHeader>
           <DialogTitle class="mb-6">Editar variante</DialogTitle>
           <DialogDescription class="space-y-4">
-            <FormField name="variantInfo.color">
+            <FormField v-slot="{ value }" name="variantInfo.color">
               <FormItem>
                 <FormLabel class="font-bold">Color</FormLabel>
                 <FormControl>
@@ -105,7 +143,33 @@
                           {{ color }}
                         </ToggleGroupItem>
                       </template>
-                      <Button type="button" variant="outline">+</Button>
+
+                      <div v-if="addingColor">
+                        <Input
+                          type="text"
+                          placeholder="Color"
+                          :model-value="value"
+                          @keydown.enter.prevent="selectColor(value)"
+                          @update:model-value="
+                            (v) => {
+                              if (v) {
+                                setFieldValue('variantInfo.color', v);
+                              } else {
+                                setFieldValue('variantInfo.color', undefined);
+                              }
+                            }
+                          "
+                        />
+                        {{ selectedColor }}
+                      </div>
+                      <Button
+                        v-else
+                        type="button"
+                        variant="outline"
+                        @click="showAddColor"
+                      >
+                        +
+                      </Button>
                     </div>
                   </ToggleGroup>
                 </FormControl>
@@ -113,7 +177,7 @@
               </FormItem>
             </FormField>
 
-            <FormField name="variantInfo.size">
+            <FormField v-slot="{ value }" name="variantInfo.size">
               <FormItem>
                 <FormLabel class="font-bold">Talla</FormLabel>
                 <FormControl>
@@ -122,13 +186,38 @@
                       <template v-for="size in sizes" :key="size">
                         <ToggleGroupItem
                           variant="outline"
-                          :value="size"
-                          @click="selectSize(size)"
+                          :value="size!"
+                          @click="selectSize(size!)"
                         >
                           {{ size }}
                         </ToggleGroupItem>
                       </template>
-                      <Button type="button" variant="outline">+</Button>
+                      <div v-if="addingSize">
+                        <Input
+                          type="text"
+                          placeholder="Tamaño"
+                          :model-value="value"
+                          @keydown.enter.prevent="selectSize(value)"
+                          @update:model-value="
+                            (v) => {
+                              if (v) {
+                                setFieldValue('variantInfo.size', v);
+                              } else {
+                                setFieldValue('variantInfo.size', undefined);
+                              }
+                            }
+                          "
+                        />
+                        {{ selectedSize }}
+                      </div>
+                      <Button
+                        v-else
+                        type="button"
+                        variant="outline"
+                        @click="showAddSize"
+                      >
+                        +
+                      </Button>
                     </div>
                   </ToggleGroup>
                 </FormControl>
@@ -136,9 +225,12 @@
               </FormItem>
             </FormField>
 
+            {{ selectedSize }}
+            {{ selectedColor }}
+            {{ selectedVariant }}
             <div class="grid grid-cols-[auto_1fr] gap-6">
               <FormField
-                v-if="selectedSize && selectedColor && selectedVariant"
+                v-if="selectedSize && selectedColor"
                 v-slot="{ value }"
                 name="variantInfo.stock"
               >

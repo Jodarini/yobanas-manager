@@ -113,6 +113,7 @@ export const editProductSchema = z.object({
 });
 
 export const addVariantSchema = z.object({
+  id: z.number().optional(),
   variantInfo: z.object({
     size: z.string().optional(),
     color: z.string().min(1, 'Debe agregar al menos un color').optional(),

@@ -17,10 +17,10 @@ export const productVariantsData = [
   { productId: 1, size: '42', color: 'negro', stock: 4 },
 
   // Reloj Inteligente (productId: 2)
-  { productId: 2, size: 'Talla Única', color: 'negro', stock: 25 },
-  { productId: 2, size: 'Talla Única', color: 'plateado', stock: 18 },
-  { productId: 2, size: 'Talla Única', color: 'dorado', stock: 12 },
-  { productId: 2, size: 'Talla Única', color: 'blanco', stock: 15 },
+  { productId: 2, size: 'Talla u', color: 'negro', stock: 25 },
+  { productId: 2, size: 'Talla u', color: 'plateado', stock: 18 },
+  { productId: 2, size: 'Talla u', color: 'dorado', stock: 12 },
+  { productId: 2, size: 'Talla u', color: 'blanco', stock: 15 },
 
   // Billetera de Cuero (productId: 3)
   { productId: 3, size: 'Estándar', color: 'café', stock: 22 },
@@ -31,10 +31,10 @@ export const productVariantsData = [
   { productId: 3, size: 'Compacta', color: 'marrón', stock: 10 },
 
   // Audífonos Inalámbricos (productId: 4)
-  { productId: 4, size: 'Talla Única', color: 'negro', stock: 30 },
-  { productId: 4, size: 'Talla Única', color: 'blanco', stock: 25 },
-  { productId: 4, size: 'Talla Única', color: 'azul', stock: 12 },
-  { productId: 4, size: 'Talla Única', color: 'rojo', stock: 8 },
+  { productId: 4, size: 'Talla u', color: 'negro', stock: 30 },
+  { productId: 4, size: 'Talla u', color: 'blanco', stock: 25 },
+  { productId: 4, size: 'Talla u', color: 'azul', stock: 12 },
+  { productId: 4, size: 'Talla u', color: 'rojo', stock: 8 },
 
   // Camiseta de Algodón (productId: 5)
   { productId: 5, size: 'S', color: 'blanco', stock: 35 },
@@ -51,10 +51,10 @@ export const productVariantsData = [
   { productId: 5, size: 'XL', color: 'gris', stock: 15 },
 
   // Chaqueta Impermeable (productId: 6)
-  { productId: 6, size: 'S', color: 'azul marino', stock: 18 },
-  { productId: 6, size: 'M', color: 'azul marino', stock: 25 },
-  { productId: 6, size: 'L', color: 'azul marino', stock: 22 },
-  { productId: 6, size: 'XL', color: 'azul marino', stock: 15 },
+  { productId: 6, size: 'S', color: 'azul', stock: 18 },
+  { productId: 6, size: 'M', color: 'azul', stock: 25 },
+  { productId: 6, size: 'L', color: 'azul', stock: 22 },
+  { productId: 6, size: 'XL', color: 'azul', stock: 15 },
   { productId: 6, size: 'S', color: 'gris', stock: 16 },
   { productId: 6, size: 'M', color: 'gris', stock: 20 },
   { productId: 6, size: 'L', color: 'gris', stock: 18 },
@@ -83,22 +83,22 @@ export const productVariantsData = [
   { productId: 8, size: '512GB', color: 'blanco', stock: 6 },
 
   // Perfume Masculino (productId: 9)
-  { productId: 9, size: '50ml', color: 'transparente', stock: 25 },
-  { productId: 9, size: '100ml', color: 'transparente', stock: 20 },
-  { productId: 9, size: '150ml', color: 'transparente', stock: 15 },
+  { productId: 9, size: '50ml', color: 'transpa', stock: 25 },
+  { productId: 9, size: '100ml', color: 'transp', stock: 20 },
+  { productId: 9, size: '150ml', color: 'transp', stock: 15 },
 
   // Laptop Gaming (productId: 10)
-  { productId: 10, size: '15.6 pulgadas', color: 'negro', stock: 8 },
-  { productId: 10, size: '15.6 pulgadas', color: 'gris', stock: 6 },
-  { productId: 10, size: '17.3 pulgadas', color: 'negro', stock: 5 },
-  { productId: 10, size: '17.3 pulgadas', color: 'gris', stock: 4 },
+  { productId: 10, size: '15.6', color: 'negro', stock: 8 },
+  { productId: 10, size: '15.6', color: 'gris', stock: 6 },
+  { productId: 10, size: '17.3', color: 'negro', stock: 5 },
+  { productId: 10, size: '17.3', color: 'gris', stock: 4 },
 
   // Gafas de Sol (productId: 11)
-  { productId: 11, size: 'Talla Única', color: 'negro', stock: 30 },
-  { productId: 11, size: 'Talla Única', color: 'café', stock: 25 },
-  { productId: 11, size: 'Talla Única', color: 'dorado', stock: 20 },
-  { productId: 11, size: 'Talla Única', color: 'plateado', stock: 18 },
-  { productId: 11, size: 'Talla Única', color: 'azul', stock: 15 },
+  { productId: 11, size: 'Talla u', color: 'negro', stock: 30 },
+  { productId: 11, size: 'Talla u', color: 'café', stock: 25 },
+  { productId: 11, size: 'Talla u', color: 'dorado', stock: 20 },
+  { productId: 11, size: 'Talla u', color: 'plateado', stock: 18 },
+  { productId: 11, size: 'Talla u', color: 'azul', stock: 15 },
 
   // Crema Facial (productId: 12)
   { productId: 12, size: '50ml', color: 'blanco', stock: 40 },

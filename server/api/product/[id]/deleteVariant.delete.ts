@@ -9,8 +9,10 @@ export default defineEventHandler(async (event) => {
   const db = drizzle(client);
 
   const body = await readBody(event);
+  console.log(body);
   const product = deleteVariantSchema.parse(body);
-  console.log({ ok: product });
+  console.log({ deleted: product });
+  return;
 
   try {
     if (

@@ -127,15 +127,7 @@ export const addVariantSchema = z.object({
 });
 
 export const deleteVariantSchema = z.object({
-  id: z.number().optional(),
-  variantInfo: z.object({
-    size: z.string().optional(),
-    color: z.string().min(1, 'Debe agregar al menos un color').optional(),
-    stock: z
-      .number({ message: 'Debe ser un numero' })
-      .int()
-      .min(0, 'La cantidad debe ser positiva')
-      .default(0)
-      .optional(),
-  }),
+  id: z.number(),
+  size: z.string(),
+  color: z.string().min(1, 'Debe agregar al menos un color'),
 });

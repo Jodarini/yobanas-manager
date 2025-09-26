@@ -34,7 +34,6 @@
   }
 
   function selectSize(size: string) {
-    console.log('selectSize', size);
     selectedSize.value = size;
     setFieldValue('variantInfo.size', size);
   }
@@ -64,7 +63,6 @@
     };
 
     if (addingSize.value) {
-      console.log('adding');
       try {
         const result = await $fetch(
           `/api/product/${+route.params.id}/addVariant`,
@@ -91,7 +89,7 @@
           body: newProduct.value,
         });
         toast({
-          title: `${result.message}`,
+          title: `${result}`,
           description: `Nuevo stock: ${values.variantInfo.stock}`,
         });
       } catch (err) {
@@ -108,17 +106,42 @@
   const addingColor = ref(false);
 
   function showAddSize() {
-    console.log('showAddSize');
     addingSize.value = true;
   }
 
   function showAddColor() {
-    console.log('showAddColor');
     addingColor.value = true;
   }
 
-  function deleteVariant() {
+  async function deleteVariant() {
     console.log('deleteVariant');
+    const variantToDelete = {
+      id: +route.params.id,
+      size: selectedSize.value,
+      color: selectedColor.value,
+    };
+    console.log(variantToDelete);
+    try {
+      const result = await $fetch(
+        `/api/product/${+route.params.id}/deleteVariant`,
+        {
+          method: 'delete',
+          body: variantToDelete,
+        }
+      );
+      toast({
+        // title: `${result}`,
+        title: `Deleting`,
+        // description: `Nuevo stock: ${values.variantInfo.stock}`,
+        description: `Item with info: ${selectedColor.value}`,
+      });
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: `${err}`,
+      });
+      console.error(err);
+    }
   }
 </script>
 
@@ -264,12 +287,7 @@
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
-                <Button
-                  type="button"
-                  variant="outline"
-                  @click="deleteVariant"
-                  disabled
-                >
+                <Button type="button" variant="outline" @click="deleteVariant">
                   Borrar
                 </Button>
               </FormField>

@@ -9,6 +9,7 @@ export default defineEventHandler(async (event) => {
   const client = postgres(connectionString);
   const db = drizzle(client);
   try {
+    // TODO: FIX THIS SO THAT YOU ACTUALLY FIND THE RIGHT VARIANT BASED ON ITS CARACTERISTICS
     const result = await db
       .delete(productsTable)
       .where(eq(productsTable.id, body.id));

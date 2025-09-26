@@ -116,6 +116,10 @@
     console.log('showAddColor');
     addingColor.value = true;
   }
+
+  function deleteVariant() {
+    console.log('deleteVariant');
+  }
 </script>
 
 <template>
@@ -225,9 +229,6 @@
               </FormItem>
             </FormField>
 
-            {{ selectedSize }}
-            {{ selectedColor }}
-            {{ selectedVariant }}
             <div class="grid grid-cols-[auto_1fr] gap-6">
               <FormField
                 v-if="selectedSize && selectedColor"
@@ -263,6 +264,14 @@
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
+                <Button
+                  type="button"
+                  variant="outline"
+                  @click="deleteVariant"
+                  disabled
+                >
+                  Borrar
+                </Button>
               </FormField>
             </div>
           </DialogDescription>

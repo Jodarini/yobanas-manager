@@ -50,6 +50,7 @@ async function addProductVariant(
   product: { variantInfo: Partial<Omit<ProductVariants, 'id' | 'productId'>> },
   productId: number
 ) {
+  console.log(product);
   return await db.transaction(async (tx) => {
     if (
       !product.variantInfo.color ||

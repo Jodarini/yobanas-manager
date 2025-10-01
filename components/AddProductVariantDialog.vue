@@ -89,7 +89,7 @@
           body: newProduct.value,
         });
         toast({
-          title: `${result}`,
+          title: `${result.message}`,
           description: `Nuevo stock: ${values.variantInfo.stock}`,
         });
       } catch (err) {
@@ -131,9 +131,9 @@
       );
       toast({
         // title: `${result}`,
-        title: `Deleting`,
+        title: `Borrando...`,
         // description: `Nuevo stock: ${values.variantInfo.stock}`,
-        description: `Item with info: ${selectedColor.value}`,
+        description: `Product: ${selectedColor.value}`,
       });
     } catch (err) {
       toast({
@@ -187,7 +187,6 @@
                             }
                           "
                         />
-                        {{ selectedColor }}
                       </div>
                       <Button
                         v-else
@@ -235,7 +234,6 @@
                             }
                           "
                         />
-                        {{ selectedSize }}
                       </div>
                       <Button
                         v-else

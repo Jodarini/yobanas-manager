@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import postgres from 'postgres';
 import { deleteVariantSchema, productVariants } from '~/db/schema';
 
@@ -9,11 +9,23 @@ export default defineEventHandler(async (event) => {
   const db = drizzle(client);
 
   const body = await readBody(event);
-  console.log(body);
   const product = deleteVariantSchema.parse(body);
   console.log({ deleted: product });
-  return;
 
+  try {
+    await db
+      .delete(productVariants)
+      .where(
+        and(
+          eq(productVariants.productId, product.id),
+          eq(productVariants.size, product.size),
+          eq(productVariants.color, product.color)
+        )
+      );
+  } catch (error) {
+    console.error('Error borrando producto: ', error);
+  }
+  return;
   try {
     if (
       !product.id ||

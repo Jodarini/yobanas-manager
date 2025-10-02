@@ -1,26 +1,38 @@
 <script setup lang="ts">
   const route = useRoute();
-  const { data, error, refresh, pending } = await useFetch(
-    `/api/product/${+route.params.id}`,
-    {
-      key: `product-${route.params.id}`,
-      server: true,
-    }
+  // const {
+  //   data,
+  //   error,
+  //   refresh: refreshVariants,
+  //   pending,
+  // } = await useFetch(`/api/product/${+route.params.id}`, {
+  //   key: `${route.params.id}`,
+  //   server: true,
+  // });
+  const { data, error, pending, refresh } = await useAsyncData('product', () =>
+    $fetch(`/api/product/${+route.params.id}`)
   );
 
-  const product = data.value?.product;
-  const variants = data.value?.variants;
+  const product = computed(() => data.value?.product);
+  const variants = computed(() => data.value?.variants);
 
   const colors = computed(
-    () => new Set(variants?.map((variant) => variant.color))
+    () =>
+      variants.value && new Set(variants?.value.map((variant) => variant.color))
   );
   const sizes = computed(
-    () => new Set(variants?.map((variant) => variant.size))
+    () =>
+      variants.value && new Set(variants?.value.map((variant) => variant.size))
   );
 
   const totalStock = computed(() =>
-    variants?.reduce((total, variant) => (total += variant.stock), 0)
+    variants?.value.reduce((total, variant) => (total += variant.stock), 0)
   );
+
+  function handleChildClick() {
+    console.log('Received data from child'); // Log the received data
+    // refreshVariants();
+  }
 </script>
 
 <template>
@@ -62,8 +74,9 @@
         El producto que buscas no existe o ha sido eliminado.
       </p>
       <NuxtLink to="/">
-        <Button>Ver todos los productos</Button>
+        <Button variant="outline">Ver todos los productos</Button>
       </NuxtLink>
+      <Button variant="outline" @click="refresh">Intentar de nuevo</Button>
     </div>
 
     <div v-else-if="product" class="flex w-full flex-col gap-6 md:flex-row">
@@ -125,8 +138,14 @@
           </template>
         </div>
         <div class="flex justify-end">
-          <AddProductVariantDialog v-if="variants" :variants />
-          <EditProductDialog :product :variants />
+          <ClientOnly>
+            <AddProductVariantDialog
+              v-if="variants"
+              :variants
+              @updated-variants="handleChildClick"
+            />
+            <EditProductDialog :product :variants />
+          </ClientOnly>
         </div>
       </div>
     </div>

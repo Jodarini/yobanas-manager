@@ -6,7 +6,10 @@
 
   const route = useRoute();
   const { toast } = useToast();
+  const emit = defineEmits(['updatedVariants']);
 
+  let previousProduct = undefined;
+  const { data: productData } = useNuxtData('product');
   const { variants } = defineProps<{
     variants: ProductVariants[];
   }>();
@@ -21,12 +24,15 @@
         variant.size === selectedSize.value
     );
   });
-  const colors = computed(
-    () => new Set(variants?.map((variant) => variant.color))
-  );
-  const sizes = computed(
-    () => new Set(variants?.map((variant) => variant.size))
-  );
+  const colors = computed(() => {
+    const variants = productData.value?.variants || [];
+    return new Set(variants.map((v) => v.color));
+  });
+
+  const sizes = computed(() => {
+    const variants = productData.value?.variants || [];
+    return new Set(variants.map((v) => v.size));
+  });
 
   function selectColor(color: string) {
     selectedColor.value = color;
@@ -53,6 +59,31 @@
     validationSchema: formSchema,
   });
 
+  // async function addTodo() {
+  //
+  //   await $fetch('/api/product/${+route.params.id}/addVariant', {
+  //     method: 'post',
+  //     body: {
+  //       todo: newTodo.value,
+  //     },
+  //     onRequest() {
+  //       // Store the previously cached value to restore if fetch fails.
+  //       previousTodos = todos.value;
+  //
+  //       // Optimistically update the todos.
+  //       todos.value = [...todos.value, newTodo.value];
+  //     },
+  //     onResponseError() {
+  //       // Rollback the data if the request failed.
+  //       todos.value = previousTodos;
+  //     },
+  //     async onResponse() {
+  //       // Invalidate todos in the background if the request succeeded.
+  //       await refreshNuxtData('todos');
+  //     },
+  //   });
+  // }
+
   const addProduct = handleSubmit(async (values) => {
     const newProduct = ref(values);
     newProduct.value = {
@@ -62,28 +93,45 @@
       },
     };
 
-    if (addingSize.value) {
-      try {
+    try {
+      if (addingSize.value) {
+        // Add new variant (color and size)
         const result = await $fetch(
           `/api/product/${+route.params.id}/addVariant`,
           {
             method: 'POST',
             body: newProduct.value,
+            onRequest() {
+              previousProduct = productData.value;
+              productData.value = {
+                ...productData.value,
+                variants: [
+                  ...productData.value.variants,
+                  {
+                    color: newProduct.value.variantInfo.color,
+                    size: newProduct.value.variantInfo.size,
+                    stock: newProduct.value.variantInfo.stock,
+                  },
+                ],
+              };
+              console.log(productData.value);
+            },
+            onResponseError() {
+              productData.value = previousProduct;
+            },
+            async onResponse() {
+              // Maybe should emit a signal after closing dialog to refresh instead of using this
+              // Refresh the data in background to get actual server state
+              // await refreshNuxtData('product');
+            },
           }
         );
+        console.log(productData.value);
         toast({
           title: `${result.message}`,
           description: `Nuevo stock: ${values.variantInfo.stock}`,
         });
-      } catch (err) {
-        toast({
-          variant: 'destructive',
-          title: `${err}`,
-        });
-        console.error(err);
-      }
-    } else {
-      try {
+      } else {
         const result = await $fetch(`/api/product/${+route.params.id}`, {
           method: 'put',
           body: newProduct.value,
@@ -92,13 +140,15 @@
           title: `${result.message}`,
           description: `Nuevo stock: ${values.variantInfo.stock}`,
         });
-      } catch (err) {
-        toast({
-          variant: 'destructive',
-          title: `${err}`,
-        });
-        console.error(err);
       }
+      emit('updatedVariants');
+      // emit('variantsUpdated');
+    } catch (err) {
+      toast({
+        variant: 'destructive',
+        title: `${err}`,
+      });
+      console.error(err);
     }
   });
 
@@ -114,13 +164,11 @@
   }
 
   async function deleteVariant() {
-    console.log('deleteVariant');
     const variantToDelete = {
       id: +route.params.id,
       size: selectedSize.value,
       color: selectedColor.value,
     };
-    console.log(variantToDelete);
     try {
       const result = await $fetch(
         `/api/product/${+route.params.id}/deleteVariant`,
@@ -146,7 +194,8 @@
 </script>
 
 <template>
-  <Dialog>
+  <button @click="$emit('updatedVariants')">Click me</button>
+  <Dialog :modal="false">
     <DialogTrigger>
       <Button variant="outline">Editar variantes</Button>
     </DialogTrigger>

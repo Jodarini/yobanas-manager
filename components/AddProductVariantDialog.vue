@@ -8,6 +8,7 @@
   const { toast } = useToast();
   const emit = defineEmits(['updatedVariants']);
 
+  const myArray = [1, 2, 3];
   let previousProduct = undefined;
   const { data: productData } = useNuxtData('product');
   const { variants } = defineProps<{
@@ -114,19 +115,17 @@
                   },
                 ],
               };
-              console.log(productData.value);
             },
             onResponseError() {
               productData.value = previousProduct;
             },
-            async onResponse() {
-              // Maybe should emit a signal after closing dialog to refresh instead of using this
-              // Refresh the data in background to get actual server state
-              // await refreshNuxtData('product');
-            },
+            // async onResponse() {
+            //   // Maybe should emit a signal after closing dialog to refresh instead of using this
+            //   // Refresh the data in background to get actual server state
+            //   // await refreshNuxtData('product');
+            // },
           }
         );
-        console.log(productData.value);
         toast({
           title: `${result.message}`,
           description: `Nuevo stock: ${values.variantInfo.stock}`,
@@ -135,6 +134,31 @@
         const result = await $fetch(`/api/product/${+route.params.id}`, {
           method: 'put',
           body: newProduct.value,
+          onRequest() {
+            previousProduct = productData.value;
+            const updatedVariants2 = productData.value.variants.map(
+              (variant) => {
+                if (
+                  newProduct.value.variantInfo.color === variant.color &&
+                  newProduct.value.variantInfo.size === variant.size
+                ) {
+                  return {
+                    ...variant,
+                    stock: newProduct.value.variantInfo.stock,
+                  };
+                } else {
+                  return variant;
+                }
+              }
+            );
+            productData.value = {
+              ...productData.value,
+              variants: updatedVariants2,
+            };
+          },
+          onResponseError() {
+            productData.value = previousProduct;
+          },
         });
         toast({
           title: `${result.message}`,
@@ -175,6 +199,27 @@
         {
           method: 'delete',
           body: variantToDelete,
+          onRequest() {
+            previousProduct = productData.value;
+            // const newVariants = productData.value.variants.map((variant) => {
+            //   if (
+            //     variantToDelete.size !== variant.size ||
+            //     variantToDelete.color !== variant.color
+            //   ) {
+            //     return variant;
+            //   }
+            // });
+
+            const newVariants = productData.value.variants.filter(
+              (variant) =>
+                variant.size !== variantToDelete.size ||
+                variant.color !== variantToDelete.color
+            );
+            console.log(newVariants);
+            console.log(productData.value);
+            productData.value = { ...productData.value, variants: newVariants };
+            console.log(productData.value);
+          },
         }
       );
       toast({
@@ -194,7 +239,6 @@
 </script>
 
 <template>
-  <button @click="$emit('updatedVariants')">Click me</button>
   <Dialog :modal="false">
     <DialogTrigger>
       <Button variant="outline">Editar variantes</Button>

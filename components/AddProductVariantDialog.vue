@@ -6,41 +6,39 @@
 
   const route = useRoute();
   const { toast } = useToast();
-  const emit = defineEmits(['updatedVariants']);
 
-  const myArray = [1, 2, 3];
   let previousProduct = undefined;
   const { data: productData } = useNuxtData('product');
-  const { variants } = defineProps<{
-    variants: ProductVariants[];
-  }>();
 
   const selectedSize = ref('');
   const selectedColor = ref('');
 
   const selectedVariant = computed(() => {
-    return variants?.find(
+    return productData.value.variantInfo?.find(
       (variant) =>
         variant.color === selectedColor.value &&
         variant.size === selectedSize.value
     );
   });
+
   const colors = computed(() => {
-    const variants = productData.value?.variants || [];
+    const variants = productData.value?.variantInfo || [];
     return new Set(variants.map((v) => v.color));
   });
 
   const sizes = computed(() => {
-    const variants = productData.value?.variants || [];
+    const variants = productData.value?.variantInfo || [];
     return new Set(variants.map((v) => v.size));
   });
 
   function selectColor(color: string) {
+    addingColor.value = false;
     selectedColor.value = color;
     setFieldValue('variantInfo.color', color);
   }
 
   function selectSize(size: string) {
+    addingSize.value = false;
     selectedSize.value = size;
     setFieldValue('variantInfo.size', size);
   }
@@ -59,31 +57,6 @@
   const { handleSubmit, setFieldValue } = useForm({
     validationSchema: formSchema,
   });
-
-  // async function addTodo() {
-  //
-  //   await $fetch('/api/product/${+route.params.id}/addVariant', {
-  //     method: 'post',
-  //     body: {
-  //       todo: newTodo.value,
-  //     },
-  //     onRequest() {
-  //       // Store the previously cached value to restore if fetch fails.
-  //       previousTodos = todos.value;
-  //
-  //       // Optimistically update the todos.
-  //       todos.value = [...todos.value, newTodo.value];
-  //     },
-  //     onResponseError() {
-  //       // Rollback the data if the request failed.
-  //       todos.value = previousTodos;
-  //     },
-  //     async onResponse() {
-  //       // Invalidate todos in the background if the request succeeded.
-  //       await refreshNuxtData('todos');
-  //     },
-  //   });
-  // }
 
   const addProduct = handleSubmit(async (values) => {
     const newProduct = ref(values);
@@ -115,9 +88,15 @@
                   },
                 ],
               };
+              toast({
+                title: `Variante agregada correctamente`,
+              });
             },
             onResponseError() {
               productData.value = previousProduct;
+              toast({
+                title: 'Algo anduvo mal! Intentalo de nuevo',
+              });
             },
             // async onResponse() {
             //   // Maybe should emit a signal after closing dialog to refresh instead of using this
@@ -126,17 +105,14 @@
             // },
           }
         );
-        toast({
-          title: `${result.message}`,
-          description: `Nuevo stock: ${values.variantInfo.stock}`,
-        });
       } else {
+        // Agregar stock a variante seleccionada
         const result = await $fetch(`/api/product/${+route.params.id}`, {
           method: 'put',
           body: newProduct.value,
           onRequest() {
             previousProduct = productData.value;
-            const updatedVariants2 = productData.value.variants.map(
+            const updatedVariants = productData.value.variantInfo.map(
               (variant) => {
                 if (
                   newProduct.value.variantInfo.color === variant.color &&
@@ -153,20 +129,17 @@
             );
             productData.value = {
               ...productData.value,
-              variants: updatedVariants2,
+              variantInfo: updatedVariants,
             };
+            toast({
+              title: `Stock agregado correctamente`,
+            });
           },
           onResponseError() {
             productData.value = previousProduct;
           },
         });
-        toast({
-          title: `${result.message}`,
-          description: `Nuevo stock: ${values.variantInfo.stock}`,
-        });
       }
-      emit('updatedVariants');
-      // emit('variantsUpdated');
     } catch (err) {
       toast({
         variant: 'destructive',
@@ -180,10 +153,12 @@
   const addingColor = ref(false);
 
   function showAddSize() {
+    selectedSize.value = '';
     addingSize.value = true;
   }
 
   function showAddColor() {
+    selectedColor.value = '';
     addingColor.value = true;
   }
 
@@ -201,33 +176,26 @@
           body: variantToDelete,
           onRequest() {
             previousProduct = productData.value;
-            // const newVariants = productData.value.variants.map((variant) => {
-            //   if (
-            //     variantToDelete.size !== variant.size ||
-            //     variantToDelete.color !== variant.color
-            //   ) {
-            //     return variant;
-            //   }
-            // });
 
-            const newVariants = productData.value.variants.filter(
+            const newVariants = productData.value.variantInfo.filter(
               (variant) =>
                 variant.size !== variantToDelete.size ||
                 variant.color !== variantToDelete.color
             );
-            console.log(newVariants);
-            console.log(productData.value);
             productData.value = { ...productData.value, variants: newVariants };
-            console.log(productData.value);
+
+            toast({
+              title: `Variante borrada correctamente`,
+            });
+          },
+          onResponseError() {
+            productData.value = previousProduct;
+            toast({
+              title: 'Algo anduvo mal! Intentalo de nuevo',
+            });
           },
         }
       );
-      toast({
-        // title: `${result}`,
-        title: `Borrando...`,
-        // description: `Nuevo stock: ${values.variantInfo.stock}`,
-        description: `Product: ${selectedColor.value}`,
-      });
     } catch (err) {
       toast({
         variant: 'destructive',
@@ -345,7 +313,9 @@
 
             <div class="grid grid-cols-[auto_1fr] gap-6">
               <FormField
-                v-if="selectedSize && selectedColor"
+                v-if="
+                  (selectedSize && selectedColor) || (addingColor && addingSize)
+                "
                 v-slot="{ value }"
                 name="variantInfo.stock"
               >
@@ -386,7 +356,12 @@
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button type="submit">Actualizar producto</Button>
+          {{ selectedVariant }}
+          {{ selectedColor }}
+          {{ selectedSize }}
+          <Button type="submit" :disabled="!selectedVariant">
+            Actualizar producto
+          </Button>
         </DialogFooter>
       </form>
     </DialogContent>

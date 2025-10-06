@@ -31,9 +31,9 @@ async function getProductWithVariants(
 
   const product: ProductWithVariant = {
     productInfo: productData[0].products,
-    variantInfo: productData[0].product_variants,
+    variantInfo: variants,
   };
-  return { product, variants };
+  return product;
 }
 export default defineEventHandler(async (event) => {
   const connectionString = process.env.TEST_SUPABASE_URL!;

@@ -10,38 +10,48 @@
     product: ProductWithVariant;
   }>();
 
+  const { data: productData } = useNuxtData('product');
+  let previousProduct = undefined;
+
   const formSchema = toTypedSchema(editProductSchema);
 
   const { handleSubmit } = useForm({
     validationSchema: formSchema,
     initialValues: {
       productInfo: {
-        title: product.productInfo.title,
-        description: product.productInfo.description,
+        title: productData.value.productInfo.title,
+        description: productData.value.productInfo.description,
         category: ['test'],
-        brand: product.productInfo.brand,
-        price: product.productInfo.price,
-        thumbnail: product.productInfo.thumbnail,
+        brand: productData.value.productInfo.brand,
+        price: productData.value.productInfo.price,
+        thumbnail: productData.value.productInfo.thumbnail,
       },
     },
   });
 
   const editProduct = handleSubmit(async (values) => {
     const newProduct = ref(values);
-    newProduct.value = {
-      productInfo: {
-        ...values.productInfo,
-      },
-    };
 
     try {
       const result = await $fetch(`/api/product/${route.params.id}`, {
         method: 'put',
         body: newProduct.value,
-      });
-      toast({
-        title: `${result.message}`,
-        description: `Se actualizó el producto: ${values.productInfo.title}`,
+        onRequest() {
+          previousProduct = productData.value;
+          productData.value = {
+            ...productData.value,
+            productInfo: newProduct.value.productInfo,
+          };
+          toast({
+            title: `Producto actualizado correctamente`,
+          });
+        },
+        onResponseError() {
+          productData.value = previousProduct;
+          toast({
+            title: 'Algo anduvo mal! Intentalo de nuevo',
+          });
+        },
       });
     } catch (err) {
       toast({
@@ -71,7 +81,7 @@
                     required
                     type="text"
                     placeholder="Nombre"
-                    :default-value="product.productInfo.title"
+                    :default-value="productData.productInfo.title"
                     v-bind="componentField"
                   />
                 </FormControl>
@@ -89,7 +99,7 @@
                   <Input
                     type="text"
                     placeholder="Descripcion"
-                    :default-value="product.productInfo.description!"
+                    :default-value="productData.productInfo.description!"
                     v-bind="componentField"
                   />
                 </FormControl>
@@ -105,7 +115,7 @@
                     required
                     type="number"
                     placeholder="Precio"
-                    :default-value="product.productInfo.price"
+                    :default-value="productData.productInfo.price"
                     v-bind="componentField"
                   />
                 </FormControl>

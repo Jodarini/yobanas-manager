@@ -38,7 +38,7 @@ export type Product = typeof productsTable.$inferInsert;
 export type ProductVariants = typeof productVariants.$inferInsert;
 export type ProductWithVariant = {
   productInfo: Product;
-  variantInfo: ProductVariants;
+  variantInfo: ProductVariants[];
 };
 
 export type ProductWithVariants = {

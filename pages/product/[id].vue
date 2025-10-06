@@ -1,20 +1,14 @@
 <script setup lang="ts">
-  const route = useRoute();
-  // const {
-  //   data,
-  //   error,
-  //   refresh: refreshVariants,
-  //   pending,
-  // } = await useFetch(`/api/product/${+route.params.id}`, {
-  //   key: `${route.params.id}`,
-  //   server: true,
-  // });
-  const { data, error, pending, refresh } = await useAsyncData('product', () =>
-    $fetch(`/api/product/${+route.params.id}`)
-  );
+  import type { ProductWithVariant } from '~/db/schema';
 
-  const product = computed(() => data.value?.product);
-  const variants = computed(() => data.value?.variants);
+  const route = useRoute();
+  const { data, error, pending, refresh } =
+    await useAsyncData<ProductWithVariant>('product', () =>
+      $fetch<ProductWithVariant>(`/api/product/${+route.params.id}`)
+    );
+
+  const product = computed(() => data.value?.productInfo);
+  const variants = computed(() => data.value?.variantInfo);
 
   const colors = computed(
     () =>
@@ -26,13 +20,8 @@
   );
 
   const totalStock = computed(() =>
-    variants?.value.reduce((total, variant) => (total += variant.stock), 0)
+    variants.value?.reduce((total, variant) => (total += variant.stock), 0)
   );
-
-  function handleChildClick() {
-    console.log('Received data from child'); // Log the received data
-    // refreshVariants();
-  }
 </script>
 
 <template>
@@ -81,21 +70,21 @@
 
     <div v-else-if="product" class="flex w-full flex-col gap-6 md:flex-row">
       <NuxtImg
-        :src="product.productInfo.thumbnail || undefined"
-        :alt="product.productInfo.title"
+        :src="product.thumbnail || undefined"
+        :alt="product.title"
         loading="eager"
         class="h-full rounded-md object-contain md:max-w-lg"
       />
       <div class="flex max-w-lg flex-col gap-4">
         <div>
           <h3 class="mb-2 text-4xl font-semibold">
-            {{ product.productInfo.title }}
+            {{ product.title }}
           </h3>
-          <p>{{ product.productInfo.description }}</p>
+          <p>{{ product.description }}</p>
         </div>
         <div>
           <span
-            v-if="product.variantInfo.stock! > 0"
+            v-if="totalStock && totalStock > 0"
             class="font-bold text-green-700"
           >
             En stock ({{ totalStock }})
@@ -113,7 +102,7 @@
           </div>
           <span class="col-span-3 font-bold md:col-span-1 md:text-right">
             ${{
-              product.productInfo.price.toLocaleString('es-CO', {
+              product.price.toLocaleString('es-CO', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
               })
@@ -121,10 +110,10 @@
           </span>
 
           <span class="font-bold">Marca</span>
-          <span>{{ product.productInfo.brand }}</span>
+          <span>{{ product.brand }}</span>
           <div />
 
-          <template v-if="product.variantInfo.size">
+          <template v-if="variants.size">
             <p class="font-bold">Talla</p>
             <div class="flex flex-wrap gap-1.5">
               <template v-for="size in sizes" :key="size">

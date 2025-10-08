@@ -3,9 +3,7 @@
 <template>
   <div class="flex h-screen flex-col items-start justify-start">
     <NuxtLayout>
-      <div class="flex w-full flex-col gap-4 p-4">
-        <NuxtPage />
-      </div>
+      <NuxtPage />
     </NuxtLayout>
   </div>
 </template>

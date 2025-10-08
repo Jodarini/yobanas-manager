@@ -14,6 +14,7 @@
       <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
         <SidebarTrigger class="-ml-1" />
         <div class="flex flex-1 items-center gap-2">
+          alskdjaslkjd
           <!-- Add breadcrumbs or page title here if needed -->
         </div>
       </header>

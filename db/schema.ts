@@ -87,6 +87,30 @@ export const insertProductSchema = z.object({
   }),
 });
 
+export const editProductSchema2 = z.object({
+  productInfo: z.object({
+    title: z.string().min(1, 'Debe ingresar un titulo'),
+    description: z.string().optional().nullable(),
+    price: z
+      .number({ message: 'Debe ser un numero' })
+      .positive('El precio debe ser positivo'),
+  }),
+  variantInfo: z
+    .array(
+      // Changed to array
+      z.object({
+        id: z.number().optional(), // Add id field
+        size: z.string().min(1, 'Debe ingresar un tamaño'),
+        color: z.string().min(1, 'Debe agregar al menos un color'),
+        stock: z.coerce // Add coerce for number inputs
+          .number({ message: 'Debe ser un numero' })
+          .int()
+          .nonnegative('La cantidad debe ser positiva'),
+      })
+    )
+    .min(1, 'Debe tener al menos una variante'), // Require at least 1 variant
+});
+
 export const editProductSchema = z.object({
   productInfo: z.object({
     title: z.string().min(1, 'Debe ingresar un titulo').optional(),

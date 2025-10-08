@@ -6,10 +6,6 @@
   const { toast } = useToast();
   const route = useRoute();
 
-  const { product } = defineProps<{
-    product: ProductWithVariant;
-  }>();
-
   const { data: productData } = useNuxtData('product');
   let previousProduct = undefined;
 

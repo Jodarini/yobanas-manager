@@ -3,18 +3,25 @@
   import { useToast } from '@/components/ui/toast/use-toast';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
+  // import { onMounted, ref } from 'vue';
+  // import { columns } from '@/components/columns';
+  // import DataTable from '@/components/DataTable.vue';
 
   const route = useRoute();
   const { toast } = useToast();
 
   let previousProduct = undefined;
   const { data: productData } = useNuxtData('product');
+  const { variants } = defineProps<{
+    variants: ProductVariants[];
+  }>();
+  console.log(productData.value);
 
   const selectedSize = ref('');
   const selectedColor = ref('');
 
   const selectedVariant = computed(() => {
-    return productData.value.variantInfo?.find(
+    return variants?.find(
       (variant) =>
         variant.color === selectedColor.value &&
         variant.size === selectedSize.value
@@ -22,23 +29,21 @@
   });
 
   const colors = computed(() => {
-    const variants = productData.value?.variantInfo || [];
+    const variants = productData.value?.variants || [];
     return new Set(variants.map((v) => v.color));
   });
 
   const sizes = computed(() => {
-    const variants = productData.value?.variantInfo || [];
+    const variants = productData.value?.variants || [];
     return new Set(variants.map((v) => v.size));
   });
 
   function selectColor(color: string) {
-    addingColor.value = false;
     selectedColor.value = color;
     setFieldValue('variantInfo.color', color);
   }
 
   function selectSize(size: string) {
-    addingSize.value = false;
     selectedSize.value = size;
     setFieldValue('variantInfo.size', size);
   }
@@ -88,9 +93,6 @@
                   },
                 ],
               };
-              toast({
-                title: `Variante agregada correctamente`,
-              });
             },
             onResponseError() {
               productData.value = previousProduct;
@@ -105,14 +107,17 @@
             // },
           }
         );
+        toast({
+          title: `${result.message}`,
+          description: `Nuevo stock: ${values.variantInfo.stock}`,
+        });
       } else {
-        // Agregar stock a variante seleccionada
         const result = await $fetch(`/api/product/${+route.params.id}`, {
           method: 'put',
           body: newProduct.value,
           onRequest() {
             previousProduct = productData.value;
-            const updatedVariants = productData.value.variantInfo.map(
+            const updatedVariants2 = productData.value.variants.map(
               (variant) => {
                 if (
                   newProduct.value.variantInfo.color === variant.color &&
@@ -129,15 +134,16 @@
             );
             productData.value = {
               ...productData.value,
-              variantInfo: updatedVariants,
+              variants: updatedVariants2,
             };
-            toast({
-              title: `Stock agregado correctamente`,
-            });
           },
           onResponseError() {
             productData.value = previousProduct;
           },
+        });
+        toast({
+          title: `${result.message}`,
+          description: `Nuevo stock: ${values.variantInfo.stock}`,
         });
       }
     } catch (err) {
@@ -153,12 +159,10 @@
   const addingColor = ref(false);
 
   function showAddSize() {
-    selectedSize.value = '';
     addingSize.value = true;
   }
 
   function showAddColor() {
-    selectedColor.value = '';
     addingColor.value = true;
   }
 
@@ -177,25 +181,21 @@
           onRequest() {
             previousProduct = productData.value;
 
-            const newVariants = productData.value.variantInfo.filter(
+            const newVariants = productData.value.variants.filter(
               (variant) =>
                 variant.size !== variantToDelete.size ||
                 variant.color !== variantToDelete.color
             );
             productData.value = { ...productData.value, variants: newVariants };
-
-            toast({
-              title: `Variante borrada correctamente`,
-            });
-          },
-          onResponseError() {
-            productData.value = previousProduct;
-            toast({
-              title: 'Algo anduvo mal! Intentalo de nuevo',
-            });
           },
         }
       );
+      toast({
+        // title: `${result}`,
+        title: `Borrando...`,
+        // description: `Nuevo stock: ${values.variantInfo.stock}`,
+        description: `Product: ${selectedColor.value}`,
+      });
     } catch (err) {
       toast({
         variant: 'destructive',
@@ -204,9 +204,31 @@
       console.error(err);
     }
   }
+
+  // const data = ref<Payment[]>([]);
+
+  // async function getData(): Promise<Payment[]> {
+  //   // Fetch data from your API here.
+  //   return [
+  //     {
+  //       id: '728ed52f',
+  //       amount: 100,
+  //       status: 'pending',
+  //       email: 'm@example.com',
+  //     },
+  //     // ...
+  //   ];
+  // }
+
+  // onMounted(async () => {
+  //   data.value = await getData();
+  // });
 </script>
 
 <template>
+  <!-- <div class="container mx-auto py-10">
+    <DataTable :columns="columns" :data="data" />
+  </div> -->
   <Dialog :modal="false">
     <DialogTrigger>
       <Button variant="outline">Editar variantes</Button>
@@ -313,9 +335,7 @@
 
             <div class="grid grid-cols-[auto_1fr] gap-6">
               <FormField
-                v-if="
-                  (selectedSize && selectedColor) || (addingColor && addingSize)
-                "
+                v-if="selectedSize && selectedColor"
                 v-slot="{ value }"
                 name="variantInfo.stock"
               >
@@ -356,9 +376,6 @@
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          {{ selectedVariant }}
-          {{ selectedColor }}
-          {{ selectedSize }}
           <Button type="submit" :disabled="!selectedVariant">
             Actualizar producto
           </Button>

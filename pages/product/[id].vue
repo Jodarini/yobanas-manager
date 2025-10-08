@@ -2,10 +2,10 @@
   import type { ProductWithVariant } from '~/db/schema';
 
   const route = useRoute();
-  const { data, error, pending, refresh } =
-    await useAsyncData<ProductWithVariant>('product', () =>
-      $fetch<ProductWithVariant>(`/api/product/${+route.params.id}`)
-    );
+  const { data, error, pending, refresh } = await useFetch(
+    `/api/product/${+route.params.id}`,
+    { key: 'product' }
+  );
 
   const product = computed(() => data.value?.productInfo);
   const variants = computed(() => data.value?.variantInfo);
@@ -138,5 +138,6 @@
         </div>
       </div>
     </div>
+    <EditVariants />
   </div>
 </template>

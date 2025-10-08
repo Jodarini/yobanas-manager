@@ -63,6 +63,13 @@
     };
     setFieldValue('variantInfo', [newVariant, ...currentVariants]);
   };
+
+  const removeVariant = (index) => {
+    const currentVariants = values.variantInfo || [];
+    const newVariants = [...currentVariants];
+    newVariants.splice(index, 1);
+    setFieldValue('variantInfo', newVariants);
+  };
 </script>
 <template>
   <form @submit="onSubmit">
@@ -104,8 +111,8 @@
           <FormControl>
             <Input
               type="number"
-              step="0.01"
-              placeholder="0.00"
+              step="1000"
+              placeholder="Precio"
               v-bind="componentField"
             />
           </FormControl>
@@ -116,20 +123,23 @@
 
     <!-- Variants Section -->
     <div class="mt-8 space-y-4">
-      <h3 class="text-xl font-semibold">Variantes</h3>
-      <Button @click="addVariant">Agregar variante</Button>
+      <div class="flex justify-between">
+        <h3 class="text-xl font-semibold">Variantes</h3>
+        <Button @click.prevent="addVariant">Agregar variante</Button>
+      </div>
 
       <div
         v-for="(variant, index) in productData.variantInfo"
         :key="variant.id"
         class="space-y-4 rounded-lg bg-gray-800/8 p-4"
       >
-        <div class="grid grid-cols-3 gap-4">
+        <div class="flex flex-col gap-4 md:flex-row">
           <FormField
+            class="w-full"
             v-slot="{ componentField }"
             :name="`variantInfo[${index}].size`"
           >
-            <FormItem>
+            <FormItem class="w-full">
               <FormLabel>Tamaño</FormLabel>
               <FormControl>
                 <Input
@@ -143,10 +153,11 @@
           </FormField>
 
           <FormField
+            class="w-full"
             v-slot="{ componentField }"
             :name="`variantInfo[${index}].color`"
           >
-            <FormItem>
+            <FormItem class="w-full">
               <FormLabel>Color</FormLabel>
               <FormControl>
                 <Input
@@ -160,17 +171,30 @@
           </FormField>
 
           <FormField
+            class="w-full"
             v-slot="{ componentField }"
             :name="`variantInfo[${index}].stock`"
           >
-            <FormItem>
+            <FormItem class="w-full">
               <FormLabel>Stock</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="0" v-bind="componentField" />
+                <Input
+                  type="number"
+                  step="1"
+                  placeholder="0"
+                  v-bind="componentField"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           </FormField>
+          <Button
+            class="w-fit self-end"
+            variant="destructive"
+            @click.prevent="removeVariant(index)"
+          >
+            X
+          </Button>
         </div>
       </div>
     </div>

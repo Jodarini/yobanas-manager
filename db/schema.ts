@@ -89,6 +89,7 @@ export const insertProductSchema = z.object({
 
 export const editProductSchema2 = z.object({
   productInfo: z.object({
+    id: z.number().min(1, 'Ingrese un ID'),
     title: z.string().min(1, 'Debe ingresar un titulo'),
     description: z.string().optional().nullable(),
     price: z

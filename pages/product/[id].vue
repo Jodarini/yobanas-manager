@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import type { ProductWithVariant } from '~/db/schema';
-
   const route = useRoute();
   const { data, error, pending, refresh } = await useFetch(
     `/api/product/${+route.params.id}`,
@@ -69,13 +67,13 @@
     </div>
 
     <div v-else-if="product" class="flex w-full flex-col gap-6 md:flex-row">
-      <NuxtImg
+      <!-- <NuxtImg
         :src="product.thumbnail || undefined"
         :alt="product.title"
         loading="eager"
         class="h-full rounded-md object-contain md:max-w-lg"
-      />
-      <div class="flex max-w-lg flex-col gap-4">
+      /> -->
+      <!-- <div class="flex max-w-lg flex-col gap-4">
         <div>
           <h3 class="mb-2 text-4xl font-semibold">
             {{ product.title }}
@@ -136,7 +134,7 @@
             <EditProductDialog :product :variants />
           </ClientOnly>
         </div>
-      </div>
+      </div> -->
     </div>
     <EditVariants />
   </div>

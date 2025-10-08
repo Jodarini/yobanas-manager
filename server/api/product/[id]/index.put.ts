@@ -6,6 +6,7 @@ import type { ProductVariants } from '~/db/schema';
 import {
   addVariantSchema,
   editProductSchema,
+  editProductSchema2,
   productsTable,
   productVariants,
 } from '~/db/schema';
@@ -94,35 +95,71 @@ export default defineEventHandler(async (event) => {
 
   const client = postgres(connectionString);
   const db = drizzle(client);
-  const { id } = getRouterParams(event);
-  const productId = parseInt(id);
+  // const { id } = getRouterParams(event);
+  // const productId = parseInt(id);
 
   try {
     const body = await readBody(event);
-    if (body.variantInfo) {
-      const parseResult = addVariantSchema.safeParse(body);
+    const product = editProductSchema2.parse(body);
+    console.log(product);
+    db.transaction(async (tx) => {
+      const result = await tx
+        .update(productsTable)
+        .set({
+          title: product.productInfo.title,
+          description: product.productInfo.description,
+          price: product.productInfo.price,
+        })
+        .returning()
+        .where(eq(productsTable.id, product.productInfo.id));
 
-      if (!parseResult.success) {
-        throw createError({
-          statusCode: 400,
-          statusMessage: 'Invalid request data',
-          data: parseResult.error.errors,
-        });
-      }
-      return await addProductVariant(db, body, productId);
-    }
+      await tx
+        .delete(productVariants)
+        .where(eq(productVariants.productId, product.productInfo.id));
 
-    const parseResult = editProductSchema.safeParse(body);
+      await tx.insert(productVariants).values(
+        product.variantInfo.map((v) => ({
+          productId: product.productInfo.id,
+          size: v.size,
+          color: v.color,
+          stock: v.stock,
+        }))
+      );
 
-    if (!parseResult.success) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Invalid request data',
-        data: parseResult.error.errors,
-      });
-    }
+      // await tx.update(productVariants).set()
 
-    return await handleProductUpdate(db, productId, body.productInfo);
+      return {
+        message: 'Editó el producto',
+        product: {
+          productInfo: result,
+        },
+      };
+    });
+
+    // if (body.variantInfo) {
+    //   const parseResult = addVariantSchema.safeParse(body);
+
+    //   if (!parseResult.success) {
+    //     throw createError({
+    //       statusCode: 400,
+    //       statusMessage: 'Invalid request data',
+    //       data: parseResult.error.errors,
+    //     });
+    //   }
+    //   return await addProductVariant(db, body, productId);
+    // }
+
+    // const parseResult = editProductSchema.safeParse(body);
+
+    // if (!parseResult.success) {
+    //   throw createError({
+    //     statusCode: 400,
+    //     statusMessage: 'Invalid request data',
+    //     data: parseResult.error.errors,
+    //   });
+    // }
+
+    // return await handleProductUpdate(db, productId, body.productInfo);
   } catch (err) {
     console.error('Error parsing the body', err);
     throw err;

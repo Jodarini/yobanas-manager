@@ -1,19 +1,20 @@
 <script setup lang="ts">
-  import { editProductSchema2, type ProductWithVariant } from '~/db/schema';
+  import { editProductSchema2 } from '~/db/schema';
   import { useToast } from '@/components/ui/toast/use-toast';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
+
   const { toast } = useToast();
   const route = useRoute();
 
   const formSchema = toTypedSchema(editProductSchema2);
   const { data: productData } = useNuxtData('product');
-  let previousProduct = undefined;
 
   const { handleSubmit } = useForm({
     validationSchema: formSchema,
     initialValues: {
       productInfo: {
+        id: +route.params.id,
         title: productData.value?.productInfo?.title || '',
         description: productData.value?.productInfo?.description || '',
         price: productData.value?.productInfo?.price || 0,
@@ -23,11 +24,14 @@
   });
 
   const onSubmit = handleSubmit(
+    // TODO: Implement dirty field validation
     async (values) => {
-      console.log('hello');
       try {
         const newProduct = ref(values);
-        console.log(newProduct.value);
+        await $fetch(`/api/product/${route.params.id}`, {
+          method: 'put',
+          body: newProduct.value,
+        });
       } catch (err) {
         toast({
           variant: 'destructive',
@@ -101,10 +105,8 @@
       <div
         v-for="(variant, index) in productData.variantInfo"
         :key="variant.id"
-        class="space-y-4 rounded-lg border p-4"
+        class="space-y-4 rounded-lg bg-gray-800/8 p-4"
       >
-        <p class="text-sm text-gray-500">Variante ID: {{ variant.id }}</p>
-
         <div class="grid grid-cols-3 gap-4">
           <FormField
             v-slot="{ componentField }"

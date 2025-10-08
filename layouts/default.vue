@@ -9,6 +9,9 @@
 
 <template>
   <SidebarProvider>
+    <ClientOnly>
+      <Toaster />
+    </ClientOnly>
     <AppSidebar />
     <SidebarInset class="flex flex-1 flex-col">
       <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">

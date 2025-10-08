@@ -10,7 +10,7 @@
   const formSchema = toTypedSchema(editProductSchema2);
   const { data: productData } = useNuxtData('product');
 
-  const { handleSubmit } = useForm({
+  const { handleSubmit, values, setFieldValue } = useForm({
     validationSchema: formSchema,
     initialValues: {
       productInfo: {
@@ -32,6 +32,11 @@
           method: 'put',
           body: newProduct.value,
         });
+
+        toast({
+          title: 'Producto actualizado exitosamente',
+        });
+        await refreshNuxtData('product');
       } catch (err) {
         toast({
           variant: 'destructive',
@@ -47,6 +52,17 @@
       console.error('Current values:', values);
     }
   );
+
+  const addVariant = () => {
+    const currentVariants = values.variantInfo || [];
+    const newVariant = {
+      title: '',
+      description: '',
+      price: 0,
+      stock: 0,
+    };
+    setFieldValue('variantInfo', [newVariant, ...currentVariants]);
+  };
 </script>
 <template>
   <form @submit="onSubmit">
@@ -101,6 +117,7 @@
     <!-- Variants Section -->
     <div class="mt-8 space-y-4">
       <h3 class="text-xl font-semibold">Variantes</h3>
+      <Button @click="addVariant">Agregar variante</Button>
 
       <div
         v-for="(variant, index) in productData.variantInfo"

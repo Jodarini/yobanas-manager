@@ -1,25 +1,28 @@
 <script setup lang="ts">
+  import { columns } from '@/components/columns';
   const store = useProductsStore();
   const { status, error } = await store.fetchProducts();
+  console.log(store.filteredProducts);
 </script>
 
 <template>
   <div>
-    <h1 class="text-2xl">Tus productos</h1>
+    <h1 class="mb-6 text-2xl">Productos</h1>
     <p v-if="status === 'pending'">{{ status }}</p>
     <p v-else-if="error">{{ error }}</p>
 
     <div
       v-else-if="store.filteredProducts && store.filteredProducts.length > 0"
     >
+      <DataTable :columns="columns" :data="store.filteredProducts" />
       <div
         class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
       >
-        <ProductCard
+        <!-- <ProductCard
           v-for="product in store.filteredProducts"
           :key="product.id"
           :product="product"
-        />
+        /> -->
       </div>
     </div>
     <div v-else>¡Agrega nuevos items a tu inventario!</div>

@@ -5,21 +5,17 @@
     { key: 'product' }
   );
 
-  const product = computed(() => data.value?.productInfo);
-  const variants = computed(() => data.value?.variantInfo);
-
-  const colors = computed(
-    () =>
-      variants.value && new Set(variants?.value.map((variant) => variant.color))
-  );
-  const sizes = computed(
-    () =>
-      variants.value && new Set(variants?.value.map((variant) => variant.size))
-  );
-
-  const totalStock = computed(() =>
-    variants.value?.reduce((total, variant) => (total += variant.stock), 0)
-  );
+  const product = computed(() => data.value?.productInfo ?? null);
+  // const variants = computed(() => data.value?.variantInfo ?? []);
+  // const colors = computed(
+  //   () => new Set(variants.value.map((v) => v.color).filter(Boolean))
+  // );
+  // const sizes = computed(
+  //   () => new Set(variants.value.map((v) => v.size).filter(Boolean))
+  // );
+  // const totalStock = computed(() =>
+  //   variants.value.reduce((t, v) => t + (v.stock ?? 0), 0)
+  // );
 </script>
 
 <template>
@@ -135,7 +131,7 @@
           </ClientOnly>
         </div>
       </div> -->
+      <EditVariants />
     </div>
-    <EditVariants />
   </div>
 </template>

@@ -72,47 +72,61 @@
   };
 </script>
 <template>
-  <form @submit="onSubmit">
+  <form class="w-full" @submit="onSubmit">
     <!-- Product Info Fields -->
     <div class="space-y-4">
       <h3 class="text-xl font-semibold">Información del Producto</h3>
 
-      <FormField v-slot="{ componentField }" name="productInfo.title">
-        <FormItem>
-          <FormLabel>Nombre</FormLabel>
-          <FormControl>
-            <Input
-              type="text"
-              placeholder="Nombre del producto"
-              v-bind="componentField"
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
+      <div class="flex gap-4">
+        <FormField
+          v-slot="{ componentField }"
+          class="flex-1"
+          name="productInfo.title"
+        >
+          <FormItem class="w-full">
+            <FormLabel>Nombre</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="Nombre del producto"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
 
-      <FormField v-slot="{ componentField }" name="productInfo.description">
-        <FormItem>
+        <FormField
+          v-slot="{ componentField }"
+          class="flex-1"
+          name="productInfo.price"
+        >
+          <FormItem class="w-full">
+            <FormLabel>Precio</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                step="1000"
+                placeholder="Precio"
+                v-bind="componentField"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+      </div>
+
+      <FormField
+        v-slot="{ componentField }"
+        class="w-full"
+        name="productInfo.description"
+      >
+        <FormItem class="w-full">
           <FormLabel>Descripción</FormLabel>
           <FormControl>
-            <Input
+            <Textarea
               type="text"
               placeholder="Descripción"
-              v-bind="componentField"
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-
-      <FormField v-slot="{ componentField }" name="productInfo.price">
-        <FormItem>
-          <FormLabel>Precio</FormLabel>
-          <FormControl>
-            <Input
-              type="number"
-              step="1000"
-              placeholder="Precio"
               v-bind="componentField"
             />
           </FormControl>

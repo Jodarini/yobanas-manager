@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { Product, ProductVariants, ProductWithVariant } from '~/db/schema';
+import type { Product, ProductWithVariant } from '~/db/schema';
 
 export const useProductsStore = defineStore('products', () => {
   const products = ref<Product[]>();
@@ -36,6 +36,7 @@ export const useProductsStore = defineStore('products', () => {
       server: true, // Ensures server-side execution
     });
   }
+
   async function addProduct(prod: ProductWithVariant) {
     const p = {
       id: prod.productInfo.id,
@@ -66,6 +67,14 @@ export const useProductsStore = defineStore('products', () => {
     return Array.from(categories);
   });
 
+  const productBrands = computed(() => {
+    const brands = new Set<string>([]);
+    products.value?.forEach((prod) => {
+      brands.add(prod.brand);
+    });
+    return Array.from(brands);
+  });
+
   return {
     products,
     fetchProducts,
@@ -74,6 +83,7 @@ export const useProductsStore = defineStore('products', () => {
     filteredProducts,
     filterText,
     productCategories,
+    productBrands,
     filterCategory,
   };
 });

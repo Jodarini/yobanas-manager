@@ -15,7 +15,6 @@
   const { variants } = defineProps<{
     variants: ProductVariants[];
   }>();
-  console.log(productData.value);
 
   const selectedSize = ref('');
   const selectedColor = ref('');

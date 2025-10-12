@@ -51,7 +51,6 @@ async function addProductVariant(
   product: { variantInfo: Partial<Omit<ProductVariants, 'id' | 'productId'>> },
   productId: number
 ) {
-  console.log(product);
   return await db.transaction(async (tx) => {
     if (
       !product.variantInfo.color ||
@@ -101,7 +100,6 @@ export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
     const product = editProductSchema2.parse(body);
-    console.log(product);
     db.transaction(async (tx) => {
       const result = await tx
         .update(productsTable)

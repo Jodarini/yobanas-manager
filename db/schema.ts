@@ -90,19 +90,20 @@ export const insertProductSchema = z.object({
 export const editProductSchema2 = z.object({
   productInfo: z.object({
     id: z.number().min(1, 'Ingrese un ID'),
-    title: z.string().min(1, 'Debe ingresar un titulo'),
+    title: z.string().min(1, 'Debe ingresar un nombre'),
     description: z.string().optional().nullable(),
     price: z
       .number({ message: 'Debe ser un numero' })
       .positive('El precio debe ser positivo'),
+    brand: z.string().min(1, 'La marca debe tener al menos un caracter'),
   }),
   variantInfo: z
     .array(
       // Changed to array
       z.object({
         id: z.number().optional(), // Add id field
-        size: z.string().min(1, 'Debe ingresar un tamaño'),
-        color: z.string().min(1, 'Debe agregar al menos un color'),
+        size: z.string().min(1, 'Debe ingresar el tamaño'),
+        color: z.string().min(1, 'Debe ingresar el color'),
         stock: z.coerce // Add coerce for number inputs
           .number({ message: 'Debe ser un numero' })
           .int()

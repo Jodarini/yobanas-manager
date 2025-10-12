@@ -10,7 +10,6 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody(event);
   const product = addVariantSchema.parse(body);
-  console.log({ ok: product });
 
   try {
     if (

@@ -3,40 +3,57 @@
   import { useToast } from '@/components/ui/toast/use-toast';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
+  import { Check, ChevronsUpDown } from 'lucide-vue-next';
+  import { Button } from '@/components/ui/button';
+  import {
+    Combobox,
+    ComboboxAnchor,
+    ComboboxEmpty,
+    ComboboxGroup,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxItemIndicator,
+    ComboboxList,
+    ComboboxTrigger,
+  } from '@/components/ui/combobox';
+  import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+  } from '@/components/ui/form';
 
   const { toast } = useToast();
-  const route = useRoute();
+
+  const store = useProductsStore();
+
+  if (!store.products) {
+    await store.fetchProducts();
+  }
 
   const formSchema = toTypedSchema(editProductSchema2);
-  const { data: productData } = useNuxtData('product');
 
   const { handleSubmit, values, setFieldValue } = useForm({
     validationSchema: formSchema,
-    initialValues: {
-      productInfo: {
-        id: +route.params.id,
-        title: productData.value?.productInfo?.title || '',
-        description: productData.value?.productInfo?.description || '',
-        price: productData.value?.productInfo?.price || 0,
-      },
-      variantInfo: productData.value?.variantInfo || [],
-    },
   });
 
+  const brands = store.productBrands;
+
+  const newProduct = ref(values);
+
   const onSubmit = handleSubmit(
-    // TODO: Implement dirty field validation
-    async (values) => {
+    async () => {
       try {
-        const newProduct = ref(values);
-        await $fetch(`/api/product/${route.params.id}`, {
-          method: 'put',
+        await $fetch(`/api/product/add`, {
+          method: 'POST',
           body: newProduct.value,
         });
 
         toast({
-          title: 'Producto actualizado exitosamente',
+          title: 'Producto agregado exitosamente',
         });
-        await refreshNuxtData('product');
+        //TODO: clear inputs
       } catch (err) {
         toast({
           variant: 'destructive',
@@ -75,9 +92,9 @@
   <form class="w-full" @submit="onSubmit">
     <!-- Product Info Fields -->
     <div class="space-y-4">
-      <h3 class="text-xl font-semibold">Información del Producto</h3>
+      <h3 class="text-xl font-semibold">Agregar producto</h3>
 
-      <div class="flex gap-4">
+      <div class="flex flex-col gap-4 md:flex-row">
         <FormField
           v-slot="{ componentField }"
           class="flex-1"
@@ -92,6 +109,56 @@
                 v-bind="componentField"
               />
             </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+
+        <FormField class="flex-1" name="productInfo.brand">
+          <FormItem class="flex w-full flex-col">
+            <FormLabel>Marca</FormLabel>
+
+            <Combobox>
+              <FormControl class="w-full">
+                <ComboboxAnchor>
+                  <div class="relative w-full max-w-sm items-center">
+                    <ComboboxInput
+                      :display-value="(val) => val?.name ?? ''"
+                      placeholder="Seleccione una marca..."
+                    />
+                    <ComboboxTrigger
+                      class="absolute inset-y-0 end-0 flex items-center justify-center px-3"
+                    >
+                      <ChevronsUpDown class="text-muted-foreground size-4" />
+                    </ComboboxTrigger>
+                  </div>
+                </ComboboxAnchor>
+              </FormControl>
+
+              <ComboboxList>
+                <ComboboxEmpty>Nothing found.</ComboboxEmpty>
+
+                <ComboboxGroup>
+                  <ComboboxItem
+                    v-for="opt in brands"
+                    :key="opt"
+                    :value="opt"
+                    @select="
+                      () => {
+                        setFieldValue('productInfo.brand', opt);
+                      }
+                    "
+                  >
+                    {{ opt }}
+                    <ComboboxItemIndicator>
+                      <Check class="ml-auto h-4 w-4" />
+                    </ComboboxItemIndicator>
+                  </ComboboxItem>
+                </ComboboxGroup>
+              </ComboboxList>
+            </Combobox>
+
+            <!-- <FormDescription>
+            </FormDescription> -->
             <FormMessage />
           </FormItem>
         </FormField>
@@ -143,7 +210,7 @@
       </div>
 
       <div
-        v-for="(variant, index) in productData.variantInfo"
+        v-for="(variant, index) in newProduct.variantInfo"
         :key="variant.id"
         class="space-y-4 rounded-lg bg-gray-800/8 p-4"
       >

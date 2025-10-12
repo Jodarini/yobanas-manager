@@ -16,6 +16,7 @@ export default defineEventHandler(async () => {
       price: productsTable.price,
       category: productsTable.category,
       thumbnail: productsTable.thumbnail,
+      brand: productsTable.brand,
       totalStock:
         sql<number>`COALESCE(SUM(${productVariants.stock}), 0)::int`.as(
           'total_stock'
@@ -28,6 +29,7 @@ export default defineEventHandler(async () => {
       productsTable.title,
       productsTable.price,
       productsTable.category,
+      productsTable.brand,
       productsTable.thumbnail
     );
 
@@ -36,7 +38,6 @@ export default defineEventHandler(async () => {
     ...r,
     totalStock: Number((r as any).total_stock ?? (r as any).totalStock ?? 0),
   }));
-  console.log(normalized);
 
   return allProducts;
 });

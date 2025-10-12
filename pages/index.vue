@@ -6,7 +6,10 @@
 
 <template>
   <div>
-    <h1 class="mb-6 text-2xl">Productos</h1>
+    <div class="flex justify-between">
+      <h1 class="mb-6 text-2xl">Productos</h1>
+      <NuxtLink to="add-product">Agregar Producto</NuxtLink>
+    </div>
     <p v-if="status === 'pending'">{{ status }}</p>
     <p v-else-if="error">{{ error }}</p>
 

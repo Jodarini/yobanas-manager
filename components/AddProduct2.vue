@@ -75,7 +75,7 @@
   <form class="w-full" @submit="onSubmit">
     <!-- Product Info Fields -->
     <div class="space-y-4">
-      <h3 class="text-xl font-semibold">Información del Producto</h3>
+      <h3 class="text-xl font-semibold">Agregar producto</h3>
 
       <div class="flex gap-4">
         <FormField

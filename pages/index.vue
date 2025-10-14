@@ -2,7 +2,6 @@
   import { columns } from '@/components/columns';
   const store = useProductsStore();
   const { status, error } = await store.fetchProducts();
-  console.log(store.filteredProducts);
 </script>
 
 <template>

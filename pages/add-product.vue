@@ -117,10 +117,9 @@ const removeVariant = (index: number) => {
             <Combobox v-bind="componentField">
               <FormControl class="w-full">
                 <ComboboxAnchor>
-
                   <div
-                    class="min-h-10 w-full rounded-md border border-input bg-background px-2 py-2 text-sm ring-offset-background focus-within:outline-none focus-within:ring-1 focus-within:ring-ring">
-                    <div class="relative min-w-full w-full max-w-sm items-center">
+                    class="min-h-10 rounded-md border border-input bg-background px-2 py-2 text-sm ring-offset-background focus-within:outline-none focus-within:ring-1 focus-within:ring-ring">
+                    <div class="relative min-w-full max-w-sm items-center">
                       <ComboboxInput :value="value" :display-value="(val) => val?.name ?? ''"
                         placeholder="Seleccione una marca..." />
                       <ComboboxTrigger class="absolute inset-y-0 end-0 flex items-center justify-center px-3">
@@ -147,20 +146,18 @@ const removeVariant = (index: number) => {
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField, value }" class="flex-1" name="productInfo.category">
+        <FormField v-slot="{ value }" class="flex-1" name="productInfo.category">
           <FormItem class="flex w-full flex-col">
             <FormLabel>Categorías</FormLabel>
 
             <FormControl>
               <Combobox :model-value="value || []" @update:model-value="(next) => {
-                // next can be string or array depending on emitter; normalize to array
                 const arr = Array.isArray(next) ? next : (next == null ? [] : [String(next)])
                 setFieldValue('productInfo.category', arr)
               }" v-model:search-term="searchTerm" multiple>
                 <ComboboxAnchor class="relative w-full">
                   <div class="min-h-10 w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm">
                     <div class="flex items-center gap-2">
-                      <!-- Render chips from value; no binding back to field -->
                       <div class="flex flex-1 flex-wrap items-center gap-1.5">
                         <template v-for="item in value || []" :key="`cat-${item}`">
                           <span
@@ -177,9 +174,7 @@ const removeVariant = (index: number) => {
                           </span>
                         </template>
 
-                        <!-- The only editable input goes through ComboboxInput, not TagsInput -->
                         <ComboboxInput :value="''" :display-value="() => ''" placeholder="Seleccione categorías..."
-                          class="m-0 min-w-[100px] flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
                           @keydown.enter.prevent />
                       </div>
 
@@ -190,9 +185,8 @@ const removeVariant = (index: number) => {
                   </div>
                 </ComboboxAnchor>
 
-                <ComboboxList
-                  class="z-50 mt-2 max-h-64 w-full overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md">
-                  <ComboboxEmpty class="py-6 text-center text-sm text-muted-foreground">
+                <ComboboxList>
+                  <ComboboxEmpty class="">
                     No se encontraron resultados
                   </ComboboxEmpty>
 
@@ -204,11 +198,8 @@ const removeVariant = (index: number) => {
                         const next = has ? curr.filter(v => v !== category) : [...curr, category]
                         setFieldValue('productInfo.category', next)
                       }
-                    " class="relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm">
-                      <span class="mr-1 grid h-4 w-4 place-items-center">
-                        <Check class="h-4 w-4"
-                          :class="(value || []).includes(category) ? 'opacity-100' : 'opacity-0'" />
-                      </span>
+                    ">
+                      <Check class="h-4 w-4" :class="(value || []).includes(category) ? 'opacity-100' : 'opacity-0'" />
                       <span class="truncate">{{ category }}</span>
                     </ComboboxItem>
                   </ComboboxGroup>

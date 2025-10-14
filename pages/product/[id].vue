@@ -1,21 +1,21 @@
 <script setup lang="ts">
-  const route = useRoute();
-  const { data, error, pending, refresh } = await useFetch(
-    `/api/product/${+route.params.id}`,
-    { key: 'product' }
-  );
+const route = useRoute();
+const { data, error, pending, refresh } = await useFetch(
+  `/api/product/${+route.params.id}`,
+  { key: 'product' }
+);
 
-  const product = computed(() => data.value?.productInfo ?? null);
-  // const variants = computed(() => data.value?.variantInfo ?? []);
-  // const colors = computed(
-  //   () => new Set(variants.value.map((v) => v.color).filter(Boolean))
-  // );
-  // const sizes = computed(
-  //   () => new Set(variants.value.map((v) => v.size).filter(Boolean))
-  // );
-  // const totalStock = computed(() =>
-  //   variants.value.reduce((t, v) => t + (v.stock ?? 0), 0)
-  // );
+const product = computed(() => data.value?.productInfo ?? null);
+// const variants = computed(() => data.value?.variantInfo ?? []);
+// const colors = computed(
+//   () => new Set(variants.value.map((v) => v.color).filter(Boolean))
+// );
+// const sizes = computed(
+//   () => new Set(variants.value.map((v) => v.size).filter(Boolean))
+// );
+// const totalStock = computed(() =>
+//   variants.value.reduce((t, v) => t + (v.stock ?? 0), 0)
+// );
 </script>
 
 <template>
@@ -23,19 +23,13 @@
     <!-- Loading State -->
     <div v-if="pending" class="flex min-h-[400px] items-center justify-center">
       <div class="flex flex-col items-center gap-4">
-        <div
-          class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900"
-        />
+        <div class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900" />
         <p class="text-gray-600">Cargando producto...</p>
       </div>
     </div>
 
     <!-- Error State -->
-    <div
-      v-else-if="error"
-      class="flex min-h-[400px] flex-col items-center justify-center gap-4"
-      style="bottom: 0"
-    >
+    <div v-else-if="error" class="flex min-h-[400px] flex-col items-center justify-center gap-4" style="bottom: 0">
       <div class="text-center text-red-500">
         <h2 class="mb-2 text-2xl font-bold">Error al cargar el producto</h2>
         <p class="mb-4 text-gray-600">
@@ -46,10 +40,7 @@
     </div>
 
     <!-- Product Not Found -->
-    <div
-      v-else-if="!product"
-      class="flex min-h-[400px] flex-col items-center justify-center"
-    >
+    <div v-else-if="!product" class="flex min-h-[400px] flex-col items-center justify-center">
       <h2 class="mb-4 text-2xl font-bold text-gray-800">
         Producto no encontrado
       </h2>
@@ -117,20 +108,16 @@
                   </div>
                 </div>
               </template>
-            </div>
-          </template>
-        </div>
-        <div class="flex justify-end">
-          <ClientOnly>
-            <AddProductVariantDialog
-              v-if="variants"
-              :variants
-              @updated-variants="handleChildClick"
-            />
-            <EditProductDialog :product :variants />
-          </ClientOnly>
-        </div>
-      </div> -->
+</div>
+</template>
+</div>
+<div class="flex justify-end">
+  <ClientOnly>
+    <AddProductVariantDialog v-if="variants" :variants @updated-variants="handleChildClick" />
+    <EditProductDialog :product :variants />
+  </ClientOnly>
+</div>
+</div> -->
       <EditVariants />
     </div>
   </div>

@@ -32,10 +32,10 @@ export const useProductsStore = defineStore('products', () => {
 
   async function fetchProduct(productId: number) {
     return await useFetch(`/api/product/${productId}`, {
-      key: `product-${productId}`, // Important for caching and deduplication
-      server: true, // Ensures server-side execution
+      key: `product-${productId}`
     });
   }
+
   async function addProduct(prod: InsertProduct) {
 
     const result = await $fetch(`/api/product/add`, {
@@ -67,12 +67,10 @@ export const useProductsStore = defineStore('products', () => {
   });
 
   const productCategories = computed(() => {
-    const categories = new Set<string>(['Todos']);
+    const categories = new Set<string>([]);
     products.value?.forEach((prod) => {
       prod.category?.forEach((cat) => categories.add(cat));
     });
-    console.log({ categories })
-    console.log(Array.from(categories))
     return Array.from(categories);
   });
 

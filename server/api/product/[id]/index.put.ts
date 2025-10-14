@@ -107,6 +107,8 @@ export default defineEventHandler(async (event) => {
           title: product.productInfo.title,
           description: product.productInfo.description,
           price: product.productInfo.price,
+          category: product.productInfo.category,
+          brand: product.productInfo.brand
         })
         .returning()
         .where(eq(productsTable.id, product.productInfo.id));

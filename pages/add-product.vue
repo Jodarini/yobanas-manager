@@ -4,7 +4,7 @@ import { addProductSchema, insertProductSchema, type InsertProduct } from '~/db/
 import { useToast } from '@/components/ui/toast/use-toast';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
-import { Check, ChevronsUpDown, X } from 'lucide-vue-next';
+import { Check, ChevronsUpDown } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import {
   Combobox,
@@ -17,13 +17,6 @@ import {
   ComboboxList,
   ComboboxTrigger,
 } from '@/components/ui/combobox';
-import {
-  TagsInput,
-  TagsInputInput,
-  TagsInputItem,
-  TagsInputItemDelete,
-  TagsInputItemText,
-} from '@/components/ui/tags-input';
 import {
   FormControl,
   FormField,

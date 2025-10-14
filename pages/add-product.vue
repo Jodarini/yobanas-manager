@@ -1,5 +1,6 @@
 <script setup lang="ts">
-  import { editProductSchema2 } from '~/db/schema';
+  import { z } from 'zod';
+  import { editProductSchema2, addProductSchema } from '~/db/schema';
   import { useToast } from '@/components/ui/toast/use-toast';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
@@ -32,18 +33,34 @@
     await store.fetchProducts();
   }
 
-  const formSchema = toTypedSchema(editProductSchema2);
+  const formSchema = toTypedSchema(addProductSchema);
+  type FormValues = z.infer<typeof addProductSchema>;
 
-  const { handleSubmit, values, setFieldValue } = useForm({
-    validationSchema: formSchema,
-  });
+  // const { handleSubmit, values, setFieldValue } = useForm({
+  //   validationSchema: formSchema,
+  // });
+  const { handleSubmit, values, setFieldValue, resetForm } =
+    useForm<FormValues>({
+      validationSchema: formSchema,
+      initialValues: {
+        productInfo: {
+          title: 'title',
+          brand: 'brand',
+          price: 1000,
+          description: 'description',
+        },
+        variantInfo: [{ size: 'small', stock: 10, color: 'red' }],
+      },
+    });
 
   const brands = store.productBrands;
+  const categories = store.productCategories;
 
   const newProduct = ref(values);
 
   const onSubmit = handleSubmit(
-    async () => {
+    async (values) => {
+      console.log(values);
       try {
         await $fetch(`/api/product/add`, {
           method: 'POST',
@@ -71,6 +88,7 @@
   );
 
   const addVariant = () => {
+    console.log('addVariant');
     const currentVariants = values.variantInfo || [];
     const newVariant = {
       title: '',
@@ -89,7 +107,7 @@
   };
 </script>
 <template>
-  <form class="w-full" @submit="onSubmit">
+  <form class="w-full" @submit.prevent="onSubmit">
     <!-- Product Info Fields -->
     <div class="space-y-4">
       <h3 class="text-xl font-semibold">Agregar producto</h3>
@@ -113,15 +131,20 @@
           </FormItem>
         </FormField>
 
-        <FormField class="flex-1" name="productInfo.brand">
+        <FormField
+          v-slot="{ value, componentField }"
+          class="flex-1"
+          name="productInfo.brand"
+        >
           <FormItem class="flex w-full flex-col">
             <FormLabel>Marca</FormLabel>
 
-            <Combobox>
+            <Combobox v-bind="componentField">
               <FormControl class="w-full">
                 <ComboboxAnchor>
                   <div class="relative w-full max-w-sm items-center">
                     <ComboboxInput
+                      :value="value"
                       :display-value="(val) => val?.name ?? ''"
                       placeholder="Seleccione una marca..."
                     />
@@ -159,6 +182,134 @@
 
             <!-- <FormDescription>
             </FormDescription> -->
+            <FormMessage />
+          </FormItem>
+        </FormField>
+
+        <FormField
+          v-slot="{ value, componentField }"
+          class="flex-1"
+          name="productInfo.category"
+        >
+          <FormItem class="flex w-full flex-col">
+            <FormLabel>Categorías</FormLabel>
+
+            <Combobox v-bind="componentField">
+              <FormControl class="w-full">
+                <ComboboxAnchor>
+                  <div class="relative w-full max-w-sm items-center">
+                    <ComboboxInput
+                      :value="value"
+                      :display-value="
+                        (vals) => (Array.isArray(vals) ? vals.join(', ') : '')
+                      "
+                      placeholder="Seleccione categorías..."
+                    />
+                    <ComboboxTrigger
+                      class="absolute inset-y-0 end-0 flex items-center justify-center px-3"
+                    >
+                      <ChevronsUpDown class="text-muted-foreground size-4" />
+                    </ComboboxTrigger>
+                  </div>
+                </ComboboxAnchor>
+              </FormControl>
+
+              <ComboboxList>
+                <ComboboxEmpty>Nothing found.</ComboboxEmpty>
+
+                <ComboboxGroup>
+                  <ComboboxItem
+                    v-for="opt in categories"
+                    :key="opt"
+                    :value="opt"
+                    @select="
+                      () => {
+                        const arr = Array.isArray(value) ? [...value] : [];
+                        const idx = arr.indexOf(opt);
+                        if (idx === -1) {
+                          setFieldValue('productInfo.category', [...arr, opt]);
+                        } else {
+                          arr.splice(idx, 1);
+                          setFieldValue('productInfo.category', arr);
+                        }
+                      }
+                    "
+                  >
+                    {{ opt }}
+                    <ComboboxItemIndicator
+                      v-if="Array.isArray(value) && value.includes(opt)"
+                    >
+                      <Check class="ml-auto h-4 w-4" />
+                    </ComboboxItemIndicator>
+                  </ComboboxItem>
+                </ComboboxGroup>
+              </ComboboxList>
+            </Combobox>
+
+            <FormMessage />
+          </FormItem>
+        </FormField>
+
+        <FormField
+          v-slot="{ value, componentField }"
+          class="flex-1"
+          name="productInfo.category"
+        >
+          <FormItem class="flex w-full flex-col">
+            <FormLabel>Categorías</FormLabel>
+
+            <Combobox v-bind="componentField">
+              <FormControl class="w-full">
+                <ComboboxAnchor>
+                  <div class="relative w-full max-w-sm items-center">
+                    <ComboboxInput
+                      :value="value"
+                      :display-value="
+                        (vals) =>
+                          Array.isArray(vals)
+                            ? vals.map((v) => v.name).join(', ')
+                            : ''
+                      "
+                      placeholder="Seleccione categorías..."
+                    />
+                    <ComboboxTrigger
+                      class="absolute inset-y-0 end-0 flex items-center justify-center px-3"
+                    >
+                      <ChevronsUpDown class="text-muted-foreground size-4" />
+                    </ComboboxTrigger>
+                  </div>
+                </ComboboxAnchor>
+              </FormControl>
+
+              <ComboboxList>
+                <ComboboxEmpty>Nothing found.</ComboboxEmpty>
+                <ComboboxGroup>
+                  <ComboboxItem
+                    v-for="opt in categories"
+                    :key="opt"
+                    :value="opt"
+                    @select="
+                      () => {
+                        const arr = Array.isArray(value) ? [...value] : [];
+                        const idx = arr.findIndex((v) => v.id === opt);
+                        if (idx === -1) {
+                          setFieldValue('productInfo.category', [...arr, opt]);
+                        } else {
+                          arr.splice(idx, 1);
+                          setFieldValue('productInfo.category', arr);
+                        }
+                      }
+                    "
+                  >
+                    {{ opt }}
+                    <ComboboxItemIndicator>
+                      <Check class="ml-auto h-4 w-4" />
+                    </ComboboxItemIndicator>
+                  </ComboboxItem>
+                </ComboboxGroup>
+              </ComboboxList>
+            </Combobox>
+
             <FormMessage />
           </FormItem>
         </FormField>
@@ -280,6 +431,6 @@
       </div>
     </div>
 
-    <Button type="submit" class="mt-6 self-end">Actualizar producto</Button>
+    <Button type="submit" class="mt-6 self-end">Agregar producto</Button>
   </form>
 </template>

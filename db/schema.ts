@@ -92,6 +92,11 @@ export const editProductSchema2 = z.object({
     id: z.number().min(1, 'Ingrese un ID'),
     title: z.string().min(1, 'Debe ingresar un nombre'),
     description: z.string().optional().nullable(),
+    category: z
+      .array(z.string())
+      .min(1, 'Debe agregar al menos una categoria')
+      .max(3, 'El producto debe tener maximo 3 categorias')
+      .optional(),
     price: z
       .number({ message: 'Debe ser un numero' })
       .positive('El precio debe ser positivo'),
@@ -111,6 +116,14 @@ export const editProductSchema2 = z.object({
       })
     )
     .min(1, 'Debe tener al menos una variante'), // Require at least 1 variant
+});
+
+const productInfoNoId = z.object({
+  ...editProductSchema2.shape.productInfo.shape,
+});
+
+export const addProductSchema = editProductSchema2.extend({
+  productInfo: productInfoNoId.omit({ id: true }),
 });
 
 export const editProductSchema = z.object({

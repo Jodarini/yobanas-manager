@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody(event);
   const product = insertProductSchema.parse(body);
+  console.log({ product });
 
   try {
     const insertData: Product = {

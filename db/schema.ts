@@ -77,14 +77,18 @@ export const insertProductSchema = z.object({
       .nullable(),
     brand: z.string().min(1, 'La marca debe tener al menos un caracter'),
   }),
-  variantInfo: z.object({
-    size: z.string(),
-    color: z.string().min(1, 'Debe agregar al menos un color'),
-    stock: z
-      .number({ message: 'Debe ser un numero' })
-      .int()
-      .nonnegative('La cantidad debe ser positiva'),
-  }),
+  variantInfo:
+    z.array(
+      z.object({
+        size: z.string(),
+        color: z.string().min(1, 'Debe agregar al menos un color'),
+        stock: z
+          .number({ message: 'Debe ser un numero' })
+          .int()
+          .nonnegative('La cantidad debe ser positiva'),
+      }),
+    )
+
 });
 
 export type InsertProduct = z.infer<typeof insertProductSchema>;

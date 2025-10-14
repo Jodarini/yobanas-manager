@@ -32,7 +32,6 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import type { NewProductWithVariant } from '~/types/types';
 import { insertProductSchema, type InsertProduct } from '~/db/schema';
 
 const { toast } = useToast();
@@ -181,45 +180,45 @@ const addNewCategory = (category: string) => {
             </FormItem>
           </FormField>
 
-          <FormField :model-value="modelValue" name="productInfo.category">
-            <FormItem>
-              <FormLabel>Categorias</FormLabel>
-              <FormControl>
-                <TagsInput class="gap-0 px-0" :model-value="modelValue">
-                  <div class="flex flex-wrap items-center gap-2 px-3">
-                    <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
-                      <TagsInputItemText />
-                      <TagsInputItemDelete />
-                    </TagsInputItem>
-                  </div>
-                  <ComboboxRoot v-model="modelValue" v-model:open="open" v-model:searchTerm="searchTerm" class="w-full">
-                    <ComboboxAnchor as-child>
-                      <ComboboxInput placeholder="Categoria..." as-child>
-                        <TagsInputInput class="w-full px-3" :class="modelValue.length > 0 ? 'mt-2' : ''"
-                          @keydown.enter.prevent />
-                      </ComboboxInput>
-                    </ComboboxAnchor>
-                    <ComboboxPortal>
-                      <ComboboxContent>
-                        <CommandList position="popper"
-                          class="bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-[50] mt-2 w-[--radix-popper-anchor-width] rounded-md border shadow-md outline-none">
-                          <CommandEmpty />
-                          <CommandGroup>
-                            <CommandItem v-for="cat in filteredCategories" :key="cat" :value="cat"
-                              @select.prevent="addNewCategory(cat)">
-                              {{ cat }}
-                            </CommandItem>
-                          </CommandGroup>
-                        </CommandList>
-                      </ComboboxContent>
-                    </ComboboxPortal>
-                  </ComboboxRoot>
-                </TagsInput>
-              </FormControl>
-              <FormDescription />
-              <FormMessage />
-            </FormItem>
-          </FormField>
+          <!-- <FormField :model-value="modelValue" name="productInfo.category"> -->
+          <!--   <FormItem> -->
+          <!--     <FormLabel>Categorias</FormLabel> -->
+          <!--     <FormControl> -->
+          <!--       <TagsInput class="gap-0 px-0" :model-value="modelValue"> -->
+          <!--         <div class="flex flex-wrap items-center gap-2 px-3"> -->
+          <!--           <TagsInputItem v-for="item in modelValue" :key="item" :value="item"> -->
+          <!--             <TagsInputItemText /> -->
+          <!--             <TagsInputItemDelete /> -->
+          <!--           </TagsInputItem> -->
+          <!--         </div> -->
+          <!--         <ComboboxRoot v-model="modelValue" v-model:open="open" v-model:searchTerm="searchTerm" class="w-full"> -->
+          <!--           <ComboboxAnchor as-child> -->
+          <!--             <ComboboxInput placeholder="Categoria..." as-child> -->
+          <!--               <TagsInputInput class="w-full px-3" :class="modelValue.length > 0 ? 'mt-2' : ''" -->
+          <!--                 @keydown.enter.prevent /> -->
+          <!--             </ComboboxInput> -->
+          <!--           </ComboboxAnchor> -->
+          <!--           <ComboboxPortal> -->
+          <!--             <ComboboxContent> -->
+          <!--               <CommandList position="popper" -->
+          <!--                 class="bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-[50] mt-2 w-[--radix-popper-anchor-width] rounded-md border shadow-md outline-none"> -->
+          <!--                 <CommandEmpty /> -->
+          <!--                 <CommandGroup> -->
+          <!--                   <CommandItem v-for="cat in filteredCategories" :key="cat" :value="cat" -->
+          <!--                     @select.prevent="addNewCategory(cat)"> -->
+          <!--                     {{ cat }} -->
+          <!--                   </CommandItem> -->
+          <!--                 </CommandGroup> -->
+          <!--               </CommandList> -->
+          <!--             </ComboboxContent> -->
+          <!--           </ComboboxPortal> -->
+          <!--         </ComboboxRoot> -->
+          <!--       </TagsInput> -->
+          <!--     </FormControl> -->
+          <!--     <FormDescription /> -->
+          <!--     <FormMessage /> -->
+          <!--   </FormItem> -->
+          <!-- </FormField> -->
 
           <FormField v-slot="{ componentField }" name="productInfo.brand">
             <FormItem>

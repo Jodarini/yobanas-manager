@@ -37,9 +37,10 @@ export const useProductsStore = defineStore('products', () => {
     });
   }
   async function addProduct(prod: InsertProduct) {
-    const result = await $fetch('/api/product/add', {
-      method: 'post',
-      body: prod,
+
+    const result = await $fetch(`/api/product/add`, {
+      method: 'POST',
+      body: prod
     });
 
     if (result.product) {

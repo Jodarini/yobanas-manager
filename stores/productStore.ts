@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { Product, ProductWithVariant } from '~/db/schema';
+import type { InsertProduct, Product, ProductVariants, ProductWithVariant } from '~/db/schema';
 
 export const useProductsStore = defineStore('products', () => {
   const products = ref<Product[]>();
@@ -36,17 +36,23 @@ export const useProductsStore = defineStore('products', () => {
       server: true, // Ensures server-side execution
     });
   }
+  async function addProduct(prod: InsertProduct) {
+    const result = await $fetch('/api/product/add', {
+      method: 'post',
+      body: prod,
+    });
 
-  async function addProduct(prod: ProductWithVariant) {
-    const p = {
-      id: prod.productInfo.id,
-      title: prod.productInfo.title,
-      brand: prod.productInfo.brand,
-      price: prod.productInfo.price,
-      category: prod.productInfo.category,
-      thumbnail: prod.productInfo.thumbnail,
-    };
-    products.value?.push(p);
+    if (result.product) {
+      const p = {
+        title: prod.productInfo.title,
+        brand: prod.productInfo.brand,
+        price: prod.productInfo.price,
+        category: prod.productInfo.category,
+        thumbnail: prod.productInfo.thumbnail,
+      };
+      products.value?.push(p);
+    }
+    return result
   }
 
   const filteredProducts = computed(() => {
@@ -55,7 +61,7 @@ export const useProductsStore = defineStore('products', () => {
       filterCategory.value === 'Todos'
         ? prod.title.toLowerCase().includes(filterText.value.toLowerCase())
         : prod.title.toLowerCase().includes(filterText.value.toLowerCase()) &&
-          prod.category?.includes(filterCategory.value)
+        prod.category?.includes(filterCategory.value)
     );
   });
 

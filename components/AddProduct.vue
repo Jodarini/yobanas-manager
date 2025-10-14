@@ -1,133 +1,131 @@
 <script setup lang="ts">
-  import { toTypedSchema } from '@vee-validate/zod';
-  import * as z from 'zod';
-  import { useForm } from 'vee-validate';
-  import { useToast } from './ui/toast/use-toast';
-  import Sheet from './ui/sheet/Sheet.vue';
-  import {
-    TagsInput,
-    TagsInputInput,
-    TagsInputItem,
-    TagsInputItemDelete,
-    TagsInputItemText,
-  } from '@/components/ui/tags-input';
-  import { Button } from '@/components/ui/button';
-  import {
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-  } from '@/components/ui/form';
-  import {
-    ComboboxAnchor,
-    ComboboxContent,
-    ComboboxInput,
-    ComboboxPortal,
-    ComboboxRoot,
-  } from 'radix-vue';
-  import {
-    CommandEmpty,
-    CommandGroup,
-    CommandItem,
-    CommandList,
-  } from '@/components/ui/command';
-  import type { NewProductWithVariant } from '~/types/types';
-  import { insertProductSchema } from '~/db/schema';
+import { toTypedSchema } from '@vee-validate/zod';
+import { useForm } from 'vee-validate';
+import { useToast } from './ui/toast/use-toast';
+import Sheet from './ui/sheet/Sheet.vue';
+import {
+  TagsInput,
+  TagsInputInput,
+  TagsInputItem,
+  TagsInputItemDelete,
+  TagsInputItemText,
+} from '@/components/ui/tags-input';
+import { Button } from '@/components/ui/button';
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  ComboboxAnchor,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxPortal,
+  ComboboxRoot,
+} from 'radix-vue';
+import {
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import type { NewProductWithVariant } from '~/types/types';
+import { insertProductSchema, type InsertProduct } from '~/db/schema';
 
-  const { toast } = useToast();
-  const formSchema = toTypedSchema(insertProductSchema);
+const { toast } = useToast();
+const formSchema = toTypedSchema(insertProductSchema);
 
-  const { handleSubmit, resetForm } = useForm({
-    validationSchema: formSchema,
-    initialValues: {
-      productInfo: {
-        title: 'Colby Extra-Small Burnished Leather Shoulder Bag ',
-        description:
-          '100% leather from tanneries meeting the highest standards of environmental performance',
-        category: ['test'],
-        brand: 'Michael Kors',
-        price: 750000,
-        thumbnail:
-          'https://michaelkors.scene7.com/is/image/MichaelKors/32F4ABAU0T-0201_1?$zoom$',
-      },
-      variantInfo: {
-        size: '1',
-        color: 'Café',
-        stock: 1,
-      },
+const { handleSubmit, resetForm } = useForm({
+  validationSchema: formSchema,
+  initialValues: {
+    productInfo: {
+      title: 'Colby Extra-Small Burnished Leather Shoulder Bag ',
+      description:
+        '100% leather from tanneries meeting the highest standards of environmental performance',
+      category: ['test'],
+      brand: 'Michael Kors',
+      price: 750000,
+      thumbnail:
+        'https://michaelkors.scene7.com/is/image/MichaelKors/32F4ABAU0T-0201_1?$zoom$',
     },
-  });
+    variantInfo: {
+      size: '1',
+      color: 'Café',
+      stock: 1,
+    },
+  },
+});
 
-  const store = useProductsStore();
+const store = useProductsStore();
 
-  const onSubmit = handleSubmit(async (values) => {
-    const product: NewProductWithVariant = {
-      ...values,
-    };
-    try {
-      const result = await $fetch('/api/product/add', {
-        method: 'post',
-        body: product,
-      });
-      // if (error.value) {
-      //   throw new Error(error.value.message);
-      // }
-      if (result.product) {
-        store.addProduct(result.product);
-        toast({
-          title: `${result.message}`,
-          description: `${product.productInfo}`,
-        });
-      }
-      resetForm();
-      modelValue.value = [];
-    } catch (err) {
-      toast({
-        variant: 'destructive',
-        title: `${err}`,
-      });
-      console.error(err);
-    }
-  });
-
-  const modelValue = ref<string[]>([]);
-  const open = ref(false);
-  const searchTerm = ref('');
-
-  const categories = computed(() => {
-    const categories = new Set<string>([]);
-    if (!store.products) return [];
-    store.products.forEach((product) => {
-      product.category?.forEach((cat) => categories.add(cat));
-    });
-    return Array.from(categories);
-  });
-
-  const filteredCategories = computed(() => {
-    const filtered = categories.value.filter(
-      (category) =>
-        !modelValue.value.includes(category) &&
-        category.toLowerCase().includes(searchTerm.value.toLowerCase())
-    );
-    if (
-      searchTerm.value &&
-      !filtered.includes(searchTerm.value) &&
-      !modelValue.value.includes(searchTerm.value)
-    ) {
-      filtered.push(searchTerm.value);
-    }
-    return filtered;
-  });
-
-  const addNewCategory = (category: string) => {
-    if (!modelValue.value.includes(category)) {
-      modelValue.value.push(category);
-    }
-    searchTerm.value = '';
-    open.value = false;
+const onSubmit = handleSubmit(async (values) => {
+  const product: InsertProduct = {
+    ...values,
   };
+  try {
+    store.addProduct(product)
+
+    const result = await $fetch('/api/product/add', {
+      method: 'post',
+      body: product,
+    });
+    // if (error.value) {
+    //   throw new Error(error.value.message);
+    // }
+    toast({
+      title: `${result.message}`,
+      description: `${product.productInfo}`,
+    });
+    resetForm();
+    modelValue.value = [];
+  } catch (err) {
+    toast({
+      variant: 'destructive',
+      title: `${err}`,
+    });
+    console.error(err);
+  }
+});
+
+const modelValue = ref<string[]>([]);
+const open = ref(false);
+const searchTerm = ref('');
+
+const categories = computed(() => {
+  const categories = new Set<string>([]);
+  if (!store.products) return [];
+  store.products.forEach((product) => {
+    product.category?.forEach((cat) => categories.add(cat));
+  });
+  return Array.from(categories);
+});
+
+const filteredCategories = computed(() => {
+  const filtered = categories.value.filter(
+    (category) =>
+      !modelValue.value.includes(category) &&
+      category.toLowerCase().includes(searchTerm.value.toLowerCase())
+  );
+  if (
+    searchTerm.value &&
+    !filtered.includes(searchTerm.value) &&
+    !modelValue.value.includes(searchTerm.value)
+  ) {
+    filtered.push(searchTerm.value);
+  }
+  return filtered;
+});
+
+const addNewCategory = (category: string) => {
+  if (!modelValue.value.includes(category)) {
+    modelValue.value.push(category);
+  }
+  searchTerm.value = '';
+  open.value = false;
+};
 </script>
 
 <template>
@@ -147,12 +145,7 @@
             <FormItem>
               <FormLabel>Nombre</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="text"
-                  placeholder="Nombre"
-                  v-bind="componentField"
-                />
+                <Input required type="text" placeholder="Nombre" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -162,11 +155,7 @@
             <FormItem>
               <FormLabel>Descripcion</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Descripcion"
-                  v-bind="componentField"
-                />
+                <Input type="text" placeholder="Descripcion" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -176,12 +165,7 @@
             <FormItem>
               <FormLabel>Precio</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="number"
-                  placeholder="Precio"
-                  v-bind="componentField"
-                />
+                <Input required type="number" placeholder="Precio" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -191,12 +175,7 @@
             <FormItem>
               <FormLabel>Cantidad</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="number"
-                  placeholder="0"
-                  v-bind="componentField"
-                />
+                <Input required type="number" placeholder="0" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -208,44 +187,26 @@
               <FormControl>
                 <TagsInput class="gap-0 px-0" :model-value="modelValue">
                   <div class="flex flex-wrap items-center gap-2 px-3">
-                    <TagsInputItem
-                      v-for="item in modelValue"
-                      :key="item"
-                      :value="item"
-                    >
+                    <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
                       <TagsInputItemText />
                       <TagsInputItemDelete />
                     </TagsInputItem>
                   </div>
-                  <ComboboxRoot
-                    v-model="modelValue"
-                    v-model:open="open"
-                    v-model:searchTerm="searchTerm"
-                    class="w-full"
-                  >
+                  <ComboboxRoot v-model="modelValue" v-model:open="open" v-model:searchTerm="searchTerm" class="w-full">
                     <ComboboxAnchor as-child>
                       <ComboboxInput placeholder="Categoria..." as-child>
-                        <TagsInputInput
-                          class="w-full px-3"
-                          :class="modelValue.length > 0 ? 'mt-2' : ''"
-                          @keydown.enter.prevent
-                        />
+                        <TagsInputInput class="w-full px-3" :class="modelValue.length > 0 ? 'mt-2' : ''"
+                          @keydown.enter.prevent />
                       </ComboboxInput>
                     </ComboboxAnchor>
                     <ComboboxPortal>
                       <ComboboxContent>
-                        <CommandList
-                          position="popper"
-                          class="bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-[50] mt-2 w-[--radix-popper-anchor-width] rounded-md border shadow-md outline-none"
-                        >
+                        <CommandList position="popper"
+                          class="bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-[50] mt-2 w-[--radix-popper-anchor-width] rounded-md border shadow-md outline-none">
                           <CommandEmpty />
                           <CommandGroup>
-                            <CommandItem
-                              v-for="cat in filteredCategories"
-                              :key="cat"
-                              :value="cat"
-                              @select.prevent="addNewCategory(cat)"
-                            >
+                            <CommandItem v-for="cat in filteredCategories" :key="cat" :value="cat"
+                              @select.prevent="addNewCategory(cat)">
                               {{ cat }}
                             </CommandItem>
                           </CommandGroup>
@@ -264,12 +225,7 @@
             <FormItem>
               <FormLabel>Marca</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="text"
-                  placeholder="Marca"
-                  v-bind="componentField"
-                />
+                <Input required type="text" placeholder="Marca" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -279,12 +235,7 @@
             <FormItem>
               <FormLabel>Talla</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="text"
-                  placeholder="Talla"
-                  v-bind="componentField"
-                />
+                <Input required type="text" placeholder="Talla" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -294,12 +245,7 @@
             <FormItem>
               <FormLabel>Color</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="text"
-                  placeholder="Color"
-                  v-bind="componentField"
-                />
+                <Input required type="text" placeholder="Color" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -309,12 +255,7 @@
             <FormItem>
               <FormLabel>Imagen</FormLabel>
               <FormControl>
-                <Input
-                  required
-                  type="text"
-                  placeholder="Imagen"
-                  v-bind="componentField"
-                />
+                <Input required type="text" placeholder="Imagen" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>

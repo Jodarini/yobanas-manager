@@ -62,7 +62,7 @@ export type ProductEdit = {
 export const insertProductSchema = z.object({
   productInfo: z.object({
     title: z.string().min(1, 'Debe ingresar un titulo'),
-    description: z.string().optional().nullable(),
+    description: z.string({ message: 'Su producto debe tener una descripción' }),
     price: z
       .number({ message: 'Debe ser un numero' })
       .positive('El precio debe ser positivo'),
@@ -86,6 +86,8 @@ export const insertProductSchema = z.object({
       .nonnegative('La cantidad debe ser positiva'),
   }),
 });
+
+export type InsertProduct = z.infer<typeof insertProductSchema>;
 
 export const editProductSchema2 = z.object({
   productInfo: z.object({

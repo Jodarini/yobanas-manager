@@ -1,10 +1,11 @@
 <script setup lang="ts">
-  import { columns } from '@/components/columns';
-  const store = useProductsStore();
-  const { status, error } = await store.fetchProducts();
+import { columns } from '@/components/columns';
+const store = useProductsStore();
+const { status, error } = await store.fetchProducts();
 </script>
 
 <template>
+
   <div>
     <div class="flex justify-between">
       <h1 class="mb-6 text-2xl">Productos</h1>
@@ -13,13 +14,9 @@
     <p v-if="status === 'pending'">{{ status }}</p>
     <p v-else-if="error">{{ error }}</p>
 
-    <div
-      v-else-if="store.filteredProducts && store.filteredProducts.length > 0"
-    >
+    <div v-else-if="store.filteredProducts && store.filteredProducts.length > 0">
       <DataTable :columns="columns" :data="store.filteredProducts" />
-      <div
-        class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-      >
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <!-- <ProductCard
           v-for="product in store.filteredProducts"
           :key="product.id"

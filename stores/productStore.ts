@@ -71,6 +71,8 @@ export const useProductsStore = defineStore('products', () => {
     products.value?.forEach((prod) => {
       prod.category?.forEach((cat) => categories.add(cat));
     });
+    console.log({ categories })
+    console.log(Array.from(categories))
     return Array.from(categories);
   });
 

@@ -5,7 +5,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import AppSidebar from '@/components/AppSidebar.vue';
-import { Sun, Moon } from 'lucide-vue-next'
+import { SunIcon, MoonIcon } from 'lucide-vue-next'
 
 const colorMode = useColorMode();
 </script>
@@ -23,8 +23,8 @@ const colorMode = useColorMode();
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
             <Button variant="outline">
-              <Sun class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon
+              <SunIcon class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <MoonIcon
                 class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               <span class="sr-only">Toggle theme</span>
             </Button>

@@ -14,6 +14,7 @@ const productData = props.product;
 const { toast } = useToast();
 const route = useRoute();
 const searchTerm = ref('');
+const store = useProductsStore()
 
 const { data, pending, error, refresh } = await useFetch('/api/products', {
   key: 'products',
@@ -99,6 +100,7 @@ const removeVariant = (index: number) => {
   const newVariants = [...currentVariants.value];
   newVariants.splice(index, 1);
   setFieldValue('variantInfo', newVariants);
+  currentVariants.value = [...newVariants]
 };
 
 const deleteProduct = async (index: number) => {

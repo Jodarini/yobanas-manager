@@ -7,6 +7,8 @@ import { toTypedSchema } from '@vee-validate/zod';
 import { Check, ChevronsUpDown } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 
+const store = useProductsStore()
+
 const { toast } = useToast();
 
 const { data, pending, error, refresh, clear } = await useFetch('/api/products', {
@@ -48,7 +50,7 @@ const onSubmit = handleSubmit(
   async (values) => {
     const product: InsertProduct = { ...values };
     try {
-      // store.addProduct(product);
+      store.addProduct(product);
       toast({ title: 'Producto agregado exitosamente' });
       resetForm();
     } catch (err) {

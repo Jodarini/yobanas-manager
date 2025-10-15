@@ -8,7 +8,6 @@ const { data: filteredProducts, status: productsStatus, error: productsError, re
 </script>
 
 <template>
-
   <div>
     <div class="flex justify-between">
       <h1 class="mb-6 text-2xl">Productos</h1>

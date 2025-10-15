@@ -14,14 +14,27 @@ export const columns: ColumnDef<Payment>[] = [
           class: 'capitalize font-medium',
           to: `/product/${row.original.id}`,
         },
-        () => row.getValue('title') // function slot, not raw value
+        () => String(row.getValue('title'))
       ),
+  },
+
+  {
+    accessorKey: 'brand',
+    header: () => h('div', { class: 'text-left' }, 'Marca'),
+    cell: ({ row }) => h('div', { class: 'capitalize' }, row.getValue('brand')),
   },
   {
     accessorKey: 'category',
-    header: () => h('div', { class: 'text-left' }, 'Categoría'),
-    cell: ({ row }) =>
-      h('div', { class: 'capitalize' }, row.getValue('category')),
+    header: () => h('div', { class: 'text-left' }, 'Categorías'),
+
+    cell: ({ row }) => {
+      const categories = row.getValue('category') as string[];
+      return h(
+        'div',
+        {
+          class: 'capitalize',
+        }, categories.join(', '))
+    }
   },
   {
     accessorKey: 'price',

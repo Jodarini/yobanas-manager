@@ -5,20 +5,6 @@ export const useProductsStore = defineStore('products', () => {
   const filterText = ref('');
   const filterCategory = ref('Todos');
 
-  const { data: productsData, status: productsStatus, error: productsError, refresh: refreshProducts } =
-    useFetch(`/api/products`,
-      { key: 'products' });
-
-  const productCategories = computed(() => {
-
-    const s = new Set<string>()
-
-    productsData.value?.forEach(product => product.category?.forEach(c => { s.add(c) }))
-
-    return Array.from(s)
-
-  })
-
   async function addProduct(prod: InsertProduct) {
 
     const result = await $fetch(`/api/product/add`, {
@@ -34,7 +20,6 @@ export const useProductsStore = defineStore('products', () => {
         category: prod.productInfo.category,
         thumbnail: prod.productInfo.thumbnail,
       };
-      productsData.value?.push(p);
     }
     return result
   }
@@ -53,25 +38,12 @@ export const useProductsStore = defineStore('products', () => {
     );
   });
 
-  const productBrands = computed(() => {
-    const brands = new Set<string>([]);
-    productsData.value?.forEach((prod) => {
-      brands.add(prod.brand);
-    });
-    return Array.from(brands);
-  });
 
   return {
-    productsData,
-    productsError,
-    productsStatus,
-    refreshProducts,
     addProduct,
     deleteProduct,
     filteredProducts,
     filterText,
-    productCategories,
-    productBrands,
     filterCategory,
   };
 });

@@ -6,31 +6,23 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { Check, ChevronsUpDown } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
-import {
-  Combobox,
-  ComboboxAnchor,
-  ComboboxEmpty,
-  ComboboxGroup,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxItemIndicator,
-  ComboboxList,
-  ComboboxTrigger,
-} from '@/components/ui/combobox';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 
 const { toast } = useToast();
-const store = useProductsStore();
 
-// if (!store.products) {
-//   await store.fetchProducts();
-// }
+const { data, pending, error, refresh, clear } = await useFetch('/api/products', {
+  key: "products",
+  lazy: true,
+});
+
+const categories = computed(() => {
+  const cats = data.value?.flatMap((product) => product.category);
+  return [...new Set(cats)].sort();
+});
+
+const brands = computed(() => {
+  if (!data.value) return []
+  return [...new Set(data.value.map(product => product.brand))].sort()
+})
 
 const formSchema = toTypedSchema(insertProductSchema);
 type FormValues = z.infer<typeof addProductSchema>;
@@ -49,8 +41,6 @@ const { handleSubmit, values, setFieldValue, resetForm } = useForm<FormValues>({
   },
 });
 
-const brands = store.productBrands;
-const categories = store.productCategories;
 const newProduct = ref(values);
 const searchTerm = ref('');
 
@@ -58,7 +48,7 @@ const onSubmit = handleSubmit(
   async (values) => {
     const product: InsertProduct = { ...values };
     try {
-      store.addProduct(product);
+      // store.addProduct(product);
       toast({ title: 'Producto agregado exitosamente' });
       resetForm();
     } catch (err) {
@@ -85,6 +75,7 @@ const removeVariant = (index: number) => {
   newVariants.splice(index, 1);
   setFieldValue('variantInfo', newVariants);
 };
+
 </script>
 
 <template>
@@ -144,10 +135,16 @@ const removeVariant = (index: number) => {
             <FormLabel>Categorías</FormLabel>
 
             <FormControl>
-              <Combobox :model-value="value || []" @update:model-value="(next) => {
-                const arr = Array.isArray(next) ? next : (next == null ? [] : [String(next)])
-                setFieldValue('productInfo.category', arr)
-              }" v-model:search-term="searchTerm" multiple>
+              <Combobox :model-value="value || []" @update:model-value="
+                (next) => {
+                  const arr = Array.isArray(next)
+                    ? next
+                    : next == null
+                      ? []
+                      : [String(next)];
+                  setFieldValue('productInfo.category', arr);
+                }
+              " v-model:search-term="searchTerm" multiple>
                 <ComboboxAnchor class="relative w-full">
                   <div class="min-h-10 w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm">
                     <div class="flex items-center gap-2">

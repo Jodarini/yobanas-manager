@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { columns } from '@/components/columns';
-const { filteredProducts, productsStatus, productsError } = useProductsStore();
+
+const { data: filteredProducts, status: productsStatus, error: productsError, refresh } = await useFetch('/api/products', {
+  key: "products",
+  lazy: true
+})
 </script>
 
 <template>

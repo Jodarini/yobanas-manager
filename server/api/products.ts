@@ -33,11 +33,5 @@ export default defineEventHandler(async () => {
       productsTable.thumbnail
     );
 
-  // If it still drops at runtime, normalize the rows:
-  const normalized = allProducts.map((r) => ({
-    ...r,
-    totalStock: Number((r as any).total_stock ?? (r as any).totalStock ?? 0),
-  }));
-
   return allProducts;
 });

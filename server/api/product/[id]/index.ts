@@ -43,7 +43,6 @@ export default defineEventHandler(async (event) => {
 
   const { id } = getRouterParams(event);
   const productId = parseInt(id);
-  console.log({ productId })
 
   try {
     return await getProductWithVariants(productId, db);

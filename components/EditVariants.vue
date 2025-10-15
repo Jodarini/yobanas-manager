@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { editProductSchema2 } from '~/db/schema';
+
 import { useToast } from '@/components/ui/toast/use-toast';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
-
+import { Check, ChevronsUpDown } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
 import {
   Combobox,
   ComboboxAnchor,
@@ -11,6 +13,7 @@ import {
   ComboboxGroup,
   ComboboxInput,
   ComboboxItem,
+  ComboboxItemIndicator,
   ComboboxList,
   ComboboxTrigger,
 } from '@/components/ui/combobox';
@@ -103,6 +106,21 @@ const removeVariant = (index: number) => {
   newVariants.splice(index, 1);
   setFieldValue('variantInfo', newVariants);
 };
+
+const deleteProduct = async (index: number) => {
+  try {
+    // TODO: add user validation
+    store.deleteProduct(index)
+    toast({ title: 'ELemento eliminado' })
+    navigateTo('/')
+  } catch (error) {
+    toast({
+      variant: 'destructive', title: 'Algo anduvo mal'
+    })
+  }
+
+}
+
 </script>
 <template>
   <form class="w-full" @submit="onSubmit">
@@ -290,4 +308,7 @@ const removeVariant = (index: number) => {
 
     <Button type="submit" class="mt-6 self-end">Actualizar producto</Button>
   </form>
+  <Button variant="destructive" class="mt-6 self-end" @click.prevent="deleteProduct(+route.params.id)">Eliminar
+    producto</Button>
+
 </template>

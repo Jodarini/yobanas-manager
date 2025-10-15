@@ -41,8 +41,9 @@ export default defineEventHandler(async (event) => {
   const client = postgres(connectionString);
   const db = drizzle(client);
 
-  const { id } = getRouterParams(event);
-  const productId = parseInt(id);
+  const id = getRouterParam(event, 'id')
+
+  const productId = parseInt(id || '', 10)
 
   try {
     return await getProductWithVariants(productId, db);

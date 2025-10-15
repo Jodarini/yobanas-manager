@@ -28,9 +28,9 @@ import {
 const { toast } = useToast();
 const store = useProductsStore();
 
-if (!store.products) {
-  await store.fetchProducts();
-}
+// if (!store.products) {
+//   await store.fetchProducts();
+// }
 
 const formSchema = toTypedSchema(insertProductSchema);
 type FormValues = z.infer<typeof addProductSchema>;

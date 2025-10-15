@@ -1,27 +1,15 @@
 <script setup lang="ts">
 const route = useRoute();
-const { data, error, pending, refresh } = await useFetch(
-  `/api/product/${+route.params.id}`,
-  { key: 'product' }
-);
 
-const product = computed(() => data.value?.productInfo ?? null);
-// const variants = computed(() => data.value?.variantInfo ?? []);
-// const colors = computed(
-//   () => new Set(variants.value.map((v) => v.color).filter(Boolean))
-// );
-// const sizes = computed(
-//   () => new Set(variants.value.map((v) => v.size).filter(Boolean))
-// );
-// const totalStock = computed(() =>
-//   variants.value.reduce((t, v) => t + (v.stock ?? 0), 0)
-// );
+const { data: productData, pending: productStatus, error: productError } = await useFetch(`/api/product/${route.params.id}`, {
+  key: `product-${route.params.id}`
+})
+
 </script>
 
 <template>
   <div>
-    <!-- Loading State -->
-    <div v-if="pending" class="flex min-h-[400px] items-center justify-center">
+    <div v-if="productStatus === 'pending'" class="flex min-h-[400px] items-center justify-center">
       <div class="flex flex-col items-center gap-4">
         <div class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900" />
         <p class="text-gray-600">Cargando producto...</p>
@@ -29,18 +17,19 @@ const product = computed(() => data.value?.productInfo ?? null);
     </div>
 
     <!-- Error State -->
-    <div v-else-if="error" class="flex min-h-[400px] flex-col items-center justify-center gap-4" style="bottom: 0">
+    <div v-else-if="productError" class="flex min-h-[400px] flex-col items-center justify-center gap-4"
+      style="bottom: 0">
       <div class="text-center text-red-500">
         <h2 class="mb-2 text-2xl font-bold">Error al cargar el producto</h2>
         <p class="mb-4 text-gray-600">
-          {{ error.message || 'Ha ocurrido un error inesperado' }}
+          {{ productError.message || 'Ha ocurrido un error inesperado' }}
         </p>
-        <Button variant="outline" @click="refresh">Intentar de nuevo</Button>
+        <Button variant="outline" @click="refreshProduct">Intentar de nuevo</Button>
       </div>
     </div>
 
     <!-- Product Not Found -->
-    <div v-else-if="!product" class="flex min-h-[400px] flex-col items-center justify-center">
+    <div v-else-if="!productData" class="flex min-h-[400px] flex-col items-center justify-center">
       <h2 class="mb-4 text-2xl font-bold text-gray-800">
         Producto no encontrado
       </h2>
@@ -50,10 +39,10 @@ const product = computed(() => data.value?.productInfo ?? null);
       <NuxtLink to="/">
         <Button variant="outline">Ver todos los productos</Button>
       </NuxtLink>
-      <Button variant="outline" @click="refresh">Intentar de nuevo</Button>
+      <Button variant="outline" @click="refreshProduct">Intentar de nuevo</Button>
     </div>
 
-    <div v-else-if="product" class="flex w-full flex-col gap-6 md:flex-row">
+    <div v-if="productData" class="flex w-full flex-col gap-6 md:flex-row">
       <!-- <NuxtImg
         :src="product.thumbnail || undefined"
         :alt="product.title"
@@ -118,7 +107,7 @@ const product = computed(() => data.value?.productInfo ?? null);
   </ClientOnly>
 </div>
 </div> -->
-      <EditVariants />
+      <EditVariants :product="productData" />
     </div>
   </div>
 </template>

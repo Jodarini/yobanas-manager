@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { editProductSchema2 } from '~/db/schema';
+import { editProductSchema2, type InsertProduct } from '~/db/schema';
 
 import { useToast } from '@/components/ui/toast/use-toast';
 import { useForm } from 'vee-validate';
@@ -25,21 +25,21 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
+const props = defineProps<{
+  product: InsertProduct
+}>()
+const productData = props.product
 const { toast } = useToast();
 const route = useRoute();
 const searchTerm = ref('');
 
 const formSchema = toTypedSchema(editProductSchema2);
 
-const store = useProductsStore();
+const store = useProductsStore()
+const categories = ref<string[]>([]);
 
-if (!store.products) {
-  await store.fetchProducts();
-}
-
-const categories = store.productCategories
 const brands = store.productBrands
-const { data: productData } = await store.fetchProduct(+route.params.id)
+const currentVariants = ref(productData?.variantInfo)
 
 
 const { handleSubmit, values, setFieldValue } = useForm({
@@ -47,13 +47,13 @@ const { handleSubmit, values, setFieldValue } = useForm({
   initialValues: {
     productInfo: {
       id: +route.params.id,
-      title: productData.value?.productInfo?.title || '',
-      description: productData.value?.productInfo?.description || '',
-      price: productData.value?.productInfo?.price || 0,
-      brand: productData.value?.productInfo?.brand,
-      category: productData.value?.productInfo?.category
+      title: productData.productInfo?.title || '',
+      description: productData.productInfo?.description || '',
+      price: productData.productInfo?.price || 0,
+      brand: productData.productInfo?.brand,
+      category: productData.productInfo?.category
     },
-    variantInfo: productData.value?.variantInfo || [],
+    variantInfo: productData.variantInfo || [],
   },
 });
 
@@ -62,7 +62,6 @@ const onSubmit = handleSubmit(
   async (values) => {
     try {
       const newProduct = ref(values);
-      console.log(newProduct)
       await $fetch(`/api/product/${route.params.id}`, {
         method: 'put',
         body: newProduct.value,
@@ -90,19 +89,18 @@ const onSubmit = handleSubmit(
 );
 
 const addVariant = () => {
-  const currentVariants = values.variantInfo || [];
+  currentVariants.value = values.variantInfo || []
   const newVariant = {
     title: '',
     description: '',
     price: 0,
     stock: 0,
   };
-  setFieldValue('variantInfo', [newVariant, ...currentVariants]);
+  setFieldValue('variantInfo', [newVariant, ...currentVariants.value]);
 };
 
 const removeVariant = (index: number) => {
-  const currentVariants = values.variantInfo || [];
-  const newVariants = [...currentVariants];
+  const newVariants = [...currentVariants.value];
   newVariants.splice(index, 1);
   setFieldValue('variantInfo', newVariants);
 };
@@ -267,8 +265,7 @@ const deleteProduct = async (index: number) => {
         <Button @click.prevent="addVariant">Agregar variante</Button>
       </div>
 
-      <div v-for="(variant, index) in productData.variantInfo" :key="variant.id"
-        class="space-y-4 rounded-lg bg-gray-800/8 p-4">
+      <div v-for="(variant, index) in currentVariants" :key="variant.id" class="space-y-4 rounded-lg bg-gray-800/8 p-4">
         <div class="flex flex-col gap-4 md:flex-row">
           <FormField v-slot="{ componentField }" class="w-full" :name="`variantInfo[${index}].size`">
             <FormItem class="w-full">

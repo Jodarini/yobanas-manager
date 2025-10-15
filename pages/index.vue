@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { columns } from '@/components/columns';
-const store = useProductsStore();
-const { status, error } = await store.fetchProducts();
+const { filteredProducts, productsStatus, productsError } = useProductsStore();
 </script>
 
 <template>
@@ -11,19 +10,15 @@ const { status, error } = await store.fetchProducts();
       <h1 class="mb-6 text-2xl">Productos</h1>
       <NuxtLink to="add-product">Agregar Producto</NuxtLink>
     </div>
-    <p v-if="status === 'pending'">{{ status }}</p>
-    <p v-else-if="error">{{ error }}</p>
+    <p v-if="productsStatus === 'pending'">{{ productsStatus }}</p>
+    <p v-else-if="productsError">{{ productsError }}</p>
 
-    <div v-else-if="store.filteredProducts && store.filteredProducts.length > 0">
-      <DataTable :columns="columns" :data="store.filteredProducts" />
+    <div v-else-if="filteredProducts && filteredProducts.length > 0">
+      <DataTable :columns="columns" :data="filteredProducts" />
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <!-- <ProductCard
-          v-for="product in store.filteredProducts"
-          :key="product.id"
-          :product="product"
-        /> -->
       </div>
     </div>
     <div v-else>¡Agrega nuevos items a tu inventario!</div>
+
   </div>
 </template>

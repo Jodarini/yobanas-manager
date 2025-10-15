@@ -86,26 +86,21 @@ const onSubmit = handleSubmit(
 );
 
 const addVariant = () => {
-  currentVariants.value = values.variantInfo || [];
-  const newVariant = {
-    title: '',
-    description: '',
-    price: 0,
-    stock: 0,
-  };
-  setFieldValue('variantInfo', [newVariant, ...currentVariants.value]);
+  currentVariants.value = [...values.variantInfo]
+  const newVariant = { id: Math.floor(Math.random() * 1000000), size: '', color: '', stock: 0 };
+  currentVariants.value.push(newVariant)
+  setFieldValue('variantInfo', currentVariants.value);
 };
 
 const removeVariant = (index: number) => {
-  const newVariants = [...currentVariants.value];
-  newVariants.splice(index, 1);
-  setFieldValue('variantInfo', newVariants);
-  currentVariants.value = [...newVariants]
+  currentVariants.value = [...values.variantInfo]
+  currentVariants.value.splice(index, 1);
+  setFieldValue('variantInfo', currentVariants.value);
 };
 
 const deleteProduct = async (index: number) => {
   try {
-    // TODO: add user validation
+    // TODO: add user confirmation
     store.deleteProduct(index);
     toast({ title: 'ELemento eliminado' });
     navigateTo('/');

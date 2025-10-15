@@ -67,7 +67,8 @@ const onSubmit = handleSubmit(
 
 const addVariant = () => {
   const currentVariants = values.variantInfo || [];
-  const newVariant = { title: '', description: '', price: 0, stock: 0 };
+  const newVariant = { id: Math.floor(Math.random() * 1000000), size: '', color: '', stock: 0 };
+  currentVariants.push(newVariant)
   setFieldValue('variantInfo', [newVariant, ...currentVariants]);
 };
 

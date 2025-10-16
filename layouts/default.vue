@@ -46,7 +46,7 @@ const colorMode = useColorMode();
         <!-- </div> -->
       </header>
 
-      <main class="flex flex-1 flex-col gap-4 overflow-auto p-4">
+      <main class="flex flex-1 flex-col gap-4 overflow-auto p-4 max-w-6xl">
         <slot />
       </main>
     </SidebarInset>

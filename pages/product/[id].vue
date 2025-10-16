@@ -11,48 +11,46 @@ const { data: productData, status: productStatus, error: productError, refresh: 
 </script>
 
 <template>
-  <div class="max-w-5xl">
-    <div v-if="productStatus === 'pending'" class="flex min-h-[400px] items-center justify-center">
-      <div class="flex flex-col items-center gap-4">
-        <div class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900" />
-        <p class="text-gray-600">Cargando producto...</p>
-      </div>
+  <div v-if="productStatus === 'pending'" class="flex min-h-[400px] items-center justify-center">
+    <div class="flex flex-col items-center gap-4">
+      <div class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900" />
+      <p class="text-gray-600">Cargando producto...</p>
     </div>
+  </div>
 
-    <!-- Error State -->
-    <div v-else-if="productError" class="flex min-h-[400px] flex-col items-center justify-center gap-4"
-      style="bottom: 0">
-      <div class="text-center text-red-500">
-        <h2 class="mb-2 text-2xl font-bold">Error al cargar el producto</h2>
-        <p class="mb-4 text-gray-600">
-          {{ productError.message || 'Ha ocurrido un error inesperado' }}
-        </p>
-        <Button variant="outline" @click="refreshProduct">Intentar de nuevo</Button>
-      </div>
-    </div>
-
-    <!-- Product Not Found -->
-    <div v-else-if="!productData" class="flex min-h-[400px] flex-col items-center justify-center">
-      <h2 class="mb-4 text-2xl font-bold text-gray-800">
-        Producto no encontrado
-      </h2>
+  <!-- Error State -->
+  <div v-else-if="productError" class="flex min-h-[400px] flex-col items-center justify-center gap-4" style="bottom: 0">
+    <div class="text-center text-red-500">
+      <h2 class="mb-2 text-2xl font-bold">Error al cargar el producto</h2>
       <p class="mb-4 text-gray-600">
-        El producto que buscas no existe o ha sido eliminado.
+        {{ productError.message || 'Ha ocurrido un error inesperado' }}
       </p>
-      <NuxtLink to="/">
-        <Button variant="outline">Ver todos los productos</Button>
-      </NuxtLink>
       <Button variant="outline" @click="refreshProduct">Intentar de nuevo</Button>
     </div>
+  </div>
 
-    <div v-if="productData" class="flex w-full flex-col gap-6 md:flex-row">
-      <!-- <NuxtImg
+  <!-- Product Not Found -->
+  <div v-else-if="!productData" class="flex min-h-[400px] flex-col items-center justify-center">
+    <h2 class="mb-4 text-2xl font-bold text-gray-800">
+      Producto no encontrado
+    </h2>
+    <p class="mb-4 text-gray-600">
+      El producto que buscas no existe o ha sido eliminado.
+    </p>
+    <NuxtLink to="/">
+      <Button variant="outline">Ver todos los productos</Button>
+    </NuxtLink>
+    <Button variant="outline" @click="refreshProduct">Intentar de nuevo</Button>
+  </div>
+
+  <div v-if="productData" class="flex w-full flex-col gap-6 md:flex-row">
+    <!-- <NuxtImg
         :src="product.thumbnail || undefined"
         :alt="product.title"
         loading="eager"
         class="h-full rounded-md object-contain md:max-w-lg"
       /> -->
-      <!-- <div class="flex max-w-lg flex-col gap-4">
+    <!-- <div class="flex max-w-lg flex-col gap-4">
         <div>
           <h3 class="mb-2 text-4xl font-semibold">
             {{ product.title }}
@@ -110,7 +108,6 @@ const { data: productData, status: productStatus, error: productError, refresh: 
   </ClientOnly>
 </div>
 </div> -->
-      <EditVariants :product="productData" />
-    </div>
+    <EditVariants :product="productData" />
   </div>
 </template>

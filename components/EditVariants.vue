@@ -3,7 +3,7 @@ import { editProductSchema2, type ProductWithVariant } from '~/db/schema';
 import { useToast } from '@/components/ui/toast/use-toast';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
-import { Check, ChevronsUpDown, Trash2Icon } from 'lucide-vue-next';
+import { Check, ChevronsUpDown, PlusCircleIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 
 
@@ -154,15 +154,12 @@ const deleteProduct = async (index: number) => {
               <Combobox v-bind="componentField">
                 <FormControl class="w-full">
                   <ComboboxAnchor>
-                    <div
-                      class="border-input bg-background ring-offset-background focus-within:ring-ring min-h-10 rounded-md border px-2 py-2 text-sm focus-within:ring-1 focus-within:outline-none">
-                      <div class="relative max-w-sm min-w-full items-center">
-                        <ComboboxInput :value="value" :display-value="(val) => val?.name ?? ''"
-                          placeholder="Seleccione una marca..." />
-                        <ComboboxTrigger class="absolute inset-y-0 end-0 flex items-center justify-center px-3">
-                          <ChevronsUpDown class="text-muted-foreground size-4" />
-                        </ComboboxTrigger>
-                      </div>
+                    <div class="relative min-w-full max-w-sm items-center">
+                      <ComboboxInput :value="value" :display-value="(val) => val?.name ?? ''"
+                        placeholder="Seleccione una marca..." />
+                      <ComboboxTrigger class="absolute inset-y-0 end-0 flex items-center justify-center px-3">
+                        <ChevronsUpDown class="text-muted-foreground size-4" />
+                      </ComboboxTrigger>
                     </div>
                   </ComboboxAnchor>
                 </FormControl>
@@ -182,6 +179,8 @@ const deleteProduct = async (index: number) => {
               <FormMessage />
             </FormItem>
           </FormField>
+
+
           <FormField v-slot="{ value }" class="flex-1" name="productInfo.category">
             <FormItem class="flex w-full flex-col">
               <FormLabel>Categorías</FormLabel>
@@ -198,32 +197,30 @@ const deleteProduct = async (index: number) => {
                   }
                 " v-model:search-term="searchTerm" multiple>
                   <ComboboxAnchor class="relative w-full">
-                    <div class="border-input bg-background min-h-10 w-full rounded-md border px-2 py-1.5 text-sm">
-                      <div class="flex items-center gap-2">
-                        <div class="flex flex-1 flex-wrap items-center gap-1.5">
-                          <template v-for="item in value || []" :key="`cat-${item}`">
-                            <span
-                              class="bg-secondary/70 text-secondary-foreground inline-flex items-center gap-1 rounded-md px-1.5 py-0.5">
-                              <span class="text-[12px]">{{ item }}</span>
-                              <button type="button" class="grid h-4 w-4 place-items-center rounded-[4px]" @click.stop="
+                    <div class="flex items-center gap-2">
+                      <div class="flex flex-1 flex-wrap items-center gap-1.5">
+                        <template v-for="item in value || []" :key="`cat-${item}`">
+                          <span
+                            class="inline-flex items-center gap-1 rounded-md bg-secondary/70 px-1.5 py-0.5 text-secondary-foreground">
+                            <span class="text-[12px]">{{ item }}</span>
+                            <button type="button" class="grid place-items-center rounded-[4px] hover:cursor-pointer"
+                              @click.stop="
                                 setFieldValue(
                                   'productInfo.category',
-                                  (value || []).filter((v) => v !== item)
+                                  (value || []).filter(v => v !== item)
                                 )
                                 " aria-label="Eliminar">
-                                ×
-                              </button>
-                            </span>
-                          </template>
+                              ×
+                            </button>
+                          </span>
+                        </template>
 
-                          <ComboboxInput :value="''" :display-value="() => ''" placeholder="Seleccione categorías..."
-                            @keydown.enter.prevent />
-                        </div>
-
-                        <ComboboxTrigger class="shrink-0 rounded-md p-1.5">
-                          <ChevronsUpDown class="h-4 w-4" />
-                        </ComboboxTrigger>
+                        <ComboboxInput :value="''" :display-value="() => ''" placeholder="Seleccione categorías..."
+                          @keydown.enter.prevent />
                       </div>
+                      <ComboboxTrigger class="absolute inset-y-0 end-0 flex items-center justify-center px-3">
+                        <ChevronsUpDown class="text-muted-foreground size-4" />
+                      </ComboboxTrigger>
                     </div>
                   </ComboboxAnchor>
 
@@ -235,18 +232,14 @@ const deleteProduct = async (index: number) => {
                     <ComboboxGroup>
                       <ComboboxItem v-for="category in categories" :key="`opt-${category}`" :value="category" @select="
                         () => {
-                          const curr = Array.isArray(value) ? value : [];
-                          const has = curr.includes(category);
-                          const next = has
-                            ? curr.filter((v) => v !== category)
-                            : [...curr, category];
-                          setFieldValue('productInfo.category', next);
+                          const curr = Array.isArray(value) ? value : []
+                          const has = curr.includes(category)
+                          const next = has ? curr.filter(v => v !== category) : [...curr, category]
+                          setFieldValue('productInfo.category', next)
                         }
                       ">
-                        <Check class="h-4 w-4" :class="(value || []).includes(category)
-                          ? 'opacity-100'
-                          : 'opacity-0'
-                          " />
+                        <Check class="h-4 w-4"
+                          :class="(value || []).includes(category) ? 'opacity-100' : 'opacity-0'" />
                         <span class="truncate">{{ category }}</span>
                       </ComboboxItem>
                     </ComboboxGroup>
@@ -257,6 +250,7 @@ const deleteProduct = async (index: number) => {
               <FormMessage />
             </FormItem>
           </FormField>
+
           <FormField v-slot="{ componentField }" class="w-full" name="productInfo.description">
             <FormItem class="w-full">
               <FormLabel>Descripción</FormLabel>
@@ -276,46 +270,57 @@ const deleteProduct = async (index: number) => {
       <CardHeader>
         <div class="flex justify-between">
           <CardTitle>Variantes</CardTitle>
-          <Button @click.prevent="addVariant">Agregar variante</Button>
+          <Button variant="secondary" class="flex gap-2" @click.prevent="addVariant">
+            <PlusCircleIcon /> Agregar variante
+          </Button>
         </div>
       </CardHeader>
 
 
-      <CardContent v-for="(variant, index) in currentVariants" :key="variant.id">
-        <div class="flex flex-col gap-4 md:flex-row">
-          <FormField v-slot="{ componentField }" class="w-full" :name="`variantInfo[${index}].size`">
-            <FormItem class="w-full">
-              <FormLabel>Tamaño</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="Tamaño" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
+      <CardContent>
+        <ItemGroup>
+          <template v-for="(variant, index) in currentVariants" :key="variant.id">
+            <Item class="flex flex-col p-0 py-4 md:flex-row">
+              <ItemContent class="flex gap-4 md:flex-row">
+                <FormField v-slot="{ componentField }" class="w-full" :name="`variantInfo[${index}].size`">
+                  <FormItem class="w-full">
+                    <FormLabel>Tamaño</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Tamaño" v-bind="componentField" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
 
-          <FormField v-slot="{ componentField }" class="w-full" :name="`variantInfo[${index}].color`">
-            <FormItem class="w-full">
-              <FormLabel>Color</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="Color" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
+                <FormField v-slot="{ componentField }" class="w-full" :name="`variantInfo[${index}].color`">
+                  <FormItem class="w-full">
+                    <FormLabel>Color</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Color" v-bind="componentField" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
 
-          <FormField v-slot="{ componentField }" class="w-full" :name="`variantInfo[${index}].stock`">
-            <FormItem class="w-full">
-              <FormLabel>Stock</FormLabel>
-              <FormControl>
-                <Input type="number" step="1" placeholder="0" v-bind="componentField" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </FormField>
-          <Button class="w-fit self-end" variant="ghost" @click.prevent="removeVariant(index)">
-            <Trash2Icon class="text-red-400" />
-          </Button>
-        </div>
+                <FormField v-slot="{ componentField }" class="w-full" :name="`variantInfo[${index}].stock`">
+                  <FormItem class="w-full">
+                    <FormLabel>Stock</FormLabel>
+                    <FormControl>
+                      <Input type="number" step="1" placeholder="0" v-bind="componentField" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+              </ItemContent>
+              <ItemActions>
+                <Button class="w-fit md:self-end" variant="ghost" @click.prevent="removeVariant(index)">
+                  <Trash2Icon class="text-red-400" />
+                </Button>
+              </ItemActions>
+            </Item>
+            <ItemSeparator v-if="index !== currentVariants.length - 1" />
+          </template>
+        </ItemGroup>
       </CardContent>
     </Card>
 

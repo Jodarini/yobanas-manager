@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { editProductSchema2, type InsertProduct } from '~/db/schema';
+import { editProductSchema2, type ProductWithVariant } from '~/db/schema';
 import { useToast } from '@/components/ui/toast/use-toast';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
-import { Check, ChevronsUpDown, TrashIcon, Trash2Icon } from 'lucide-vue-next';
+import { Check, ChevronsUpDown, Trash2Icon } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 
 
 const props = defineProps<{
-  product: InsertProduct;
+  product: ProductWithVariant;
 }>();
 
 const productData = props.product;
@@ -44,8 +44,8 @@ const { handleSubmit, values, setFieldValue } = useForm({
       title: productData.productInfo?.title || '',
       description: productData.productInfo?.description || '',
       price: productData.productInfo?.price || 0,
-      brand: productData.productInfo?.brand,
-      category: productData.productInfo?.category,
+      brand: productData.productInfo?.brand || '',
+      category: productData.productInfo?.category || [],
     },
     variantInfo: productData.variantInfo || [],
   },

@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import type { ProductWithVariant } from '~/db/schema';
+
 const route = useRoute();
 
-const { data: productData, pending: productStatus, error: productError } = await useFetch(`/api/product/${route.params.id}`, {
-  key: `product-${route.params.id}`
+const { data: productData, status: productStatus, error: productError, refresh: refreshProduct } = await useFetch<ProductWithVariant>(`/api/product/${route.params.id}`, {
+  key: `product-${route.params.id}`,
+  lazy: true
 })
 
 </script>

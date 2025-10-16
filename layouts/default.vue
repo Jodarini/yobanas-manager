@@ -17,7 +17,7 @@ const colorMode = useColorMode();
     </ClientOnly>
     <AppSidebar />
     <SidebarInset class="flex flex-1 flex-col">
-      <header class="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4">
+      <header class="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 border-gray-200">
         <SidebarTrigger class="-ml-1" />
 
         <DropdownMenu>

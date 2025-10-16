@@ -8,7 +8,7 @@ const { data: productData, pending: productStatus, error: productError } = await
 </script>
 
 <template>
-  <div>
+  <div class="max-w-5xl">
     <div v-if="productStatus === 'pending'" class="flex min-h-[400px] items-center justify-center">
       <div class="flex flex-col items-center gap-4">
         <div class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900" />

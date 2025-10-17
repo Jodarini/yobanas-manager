@@ -1,28 +1,20 @@
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { drizzle } from 'drizzle-orm/postgres-js';
 import { eq } from 'drizzle-orm';
-import postgres from 'postgres';
 import type { ProductWithVariant } from '~/db/schema';
 import { productsTable, productVariants } from '~/db/schema';
 import { createError, defineEventHandler, getRouterParam } from 'h3';
+import { useDB } from '~/server/utils/db';
 
-const connectionString = process.env.TEST_SUPABASE_URL!;
-const sqlClient = postgres(connectionString, { max: 1 }); // module scope, shared
-const db = drizzle(sqlClient);
-
-// Utility for validating and parsing number input
 function parseId(param: string | undefined): number | null {
   const id = Number(param);
   return Number.isFinite(id) ? id : null;
 }
 
-// Composable for fetching a product and its variants
 async function getProductWithVariants(
   productId: number,
   db: PostgresJsDatabase
 ): Promise<ProductWithVariant | null> {
 
-  // Get product
   const productRow = await db
     .select()
     .from(productsTable)
@@ -43,6 +35,7 @@ async function getProductWithVariants(
 }
 
 export default defineEventHandler(async (event) => {
+  const db = useDB()
   const param = getRouterParam(event, 'id');
   const productId = parseId(param);
 
@@ -62,5 +55,5 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  return data; // Types automatically inferred (good for Nuxt typed $fetch)
+  return data;
 });

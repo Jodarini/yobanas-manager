@@ -1,12 +1,8 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
 import { addVariantSchema, productVariants } from '~/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { useDB } from '~/server/utils/db';
 
 export default defineEventHandler(async (event) => {
-  const connectionString = process.env.TEST_SUPABASE_URL!;
-  const client = postgres(connectionString);
-  const db = drizzle(client);
+  const db = useDB()
 
   const body = await readBody(event);
   const product = addVariantSchema.parse(body);

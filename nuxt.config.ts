@@ -3,6 +3,19 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
+  runtimeConfig: {
+    // Private keys (server-only - never exposed to client)
+    supabaseServiceKey: '',
+    sessionSecret: '',
+    supabaseUrl: '',
+
+    // Public keys (exposed to client)
+    public: {
+      supabaseUrl: '',
+      supabaseKey: '',
+      siteUrl: ''
+    }
+  },
   css: ['~/assets/css/tailwind.css'],
   vite: {
     plugins: [tailwindcss()],

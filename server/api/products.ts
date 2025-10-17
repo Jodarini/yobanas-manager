@@ -1,13 +1,10 @@
 import { sql, eq } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
 import { productsTable, productVariants } from '~/db/schema';
+import { useDB } from '../utils/db';
 
-export default defineEventHandler(async () => {
-  const connectionString = process.env.TEST_SUPABASE_URL!;
+export default defineEventHandler(async (event) => {
 
-  const client = postgres(connectionString);
-  const db = drizzle(client);
+  const db = useDB();
 
   const allProducts = await db
     .select({

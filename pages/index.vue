@@ -11,13 +11,20 @@ const { data: filteredProducts, status: productsStatus, error: productsError, re
   <div>
     <div class="flex justify-between">
       <h1 class="mb-6 text-2xl">Productos</h1>
-      <NuxtLink to="add-product">Agregar Producto</NuxtLink>
+      <Button as-child>
+        <NuxtLink to="add-product">Agregar Producto</NuxtLink>
+      </Button>
     </div>
     <p v-if="productsStatus === 'pending'">{{ productsStatus }}</p>
     <p v-else-if="productsError">{{ productsError }}</p>
 
     <div v-else-if="filteredProducts && filteredProducts.length > 0">
-      <DataTable :columns="columns" :data="filteredProducts" />
+      <Card>
+        <CardContent class="p-0 pt-0">
+          <DataTable :columns="columns" :data="filteredProducts" />
+        </CardContent>
+      </Card>
+
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       </div>
     </div>

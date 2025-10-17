@@ -6,7 +6,8 @@ let client: ReturnType<typeof postgres> | null = null;
 
 export const useDB = () => {
   const config = useRuntimeConfig();
-
+  console.log('DB URL exists:', !!config.databaseUrl);
+  console.log('DB URL starts with:', config.databaseUrl?.substring(0, 20));
   if (!client) {
     client = postgres(config.supabaseUrl);
     db = drizzle(client);

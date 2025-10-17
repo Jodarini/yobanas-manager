@@ -12,7 +12,7 @@ const { data: filteredProducts, status: productsStatus, error: productsError, re
     <div class="flex justify-between">
       <h1 class="mb-6 text-2xl">Productos</h1>
       <Button as-child>
-        <NuxtLink to="add-product">Agregar Producto</NuxtLink>
+        <NuxtLink to="add-product">Agregar producto</NuxtLink>
       </Button>
     </div>
     <p v-if="productsStatus === 'pending'">{{ productsStatus }}</p>

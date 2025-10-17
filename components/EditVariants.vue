@@ -125,7 +125,7 @@ const deleteProduct = async (index: number) => {
 
       <CardContent>
 
-        <div class="flex gap-4 mb-4">
+        <div class="flex flex-col gap-4 mb-4 md:flex-row ">
           <FormField v-slot="{ componentField }" class="flex-1" name="productInfo.title">
             <FormItem class="w-full">
               <FormLabel>Nombre</FormLabel>
@@ -267,15 +267,12 @@ const deleteProduct = async (index: number) => {
 
     <!-- Variants Section -->
     <Card>
-      <CardHeader>
-        <div class="flex justify-between">
-          <CardTitle>Variantes</CardTitle>
-          <Button variant="secondary" class="flex gap-2" @click.prevent="addVariant">
-            <PlusCircleIcon /> Agregar variante
-          </Button>
-        </div>
+      <CardHeader class="flex flex-col pb-0 md:pb-6 justify-between md:flex-row">
+        <CardTitle class="text-xl font-semibold">Variantes</CardTitle>
+        <Button variant="secondary" class="flex gap-2 w-full mt-4 md:mt-0 md:w-fit" @click.prevent="addVariant">
+          <PlusCircleIcon /> Agregar variante
+        </Button>
       </CardHeader>
-
 
       <CardContent>
         <ItemGroup>

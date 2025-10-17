@@ -92,7 +92,7 @@ const removeVariant = (index: number) => {
 
       <CardContent>
 
-        <div class="flex gap-4 mb-4">
+        <div class="flex flex-col gap-4 mb-4 md:flex-row ">
           <FormField v-slot="{ componentField }" class="flex-1" name="productInfo.title">
             <FormItem class="w-full">
               <FormLabel>Nombre</FormLabel>
@@ -233,9 +233,9 @@ const removeVariant = (index: number) => {
 
     <!-- Variants Section -->
     <Card>
-      <CardHeader class="flex justify-between flex-row">
+      <CardHeader class="flex flex-col pb-0 md:pb-6 justify-between md:flex-row">
         <CardTitle class="text-xl font-semibold">Variantes</CardTitle>
-        <Button variant="secondary" class="flex gap-2" @click.prevent="addVariant">
+        <Button variant="secondary" class="flex gap-2 w-full mt-4 md:mt-0 md:w-fit" @click.prevent="addVariant">
           <PlusCircleIcon /> Agregar variante
         </Button>
       </CardHeader>

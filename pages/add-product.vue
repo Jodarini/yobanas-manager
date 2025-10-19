@@ -185,12 +185,21 @@ function handleCategoryRemove(category: string) {
   );
 }
 
-const brandSearchTerm2 = ref('')
+const brandSearchTerm2 = ref('');
 const createBrand = () => {
-  console.log('creating: ', brandSearchTerm2.value)
-  setFieldValue('productInfo.brand', brandSearchTerm2.value)
-  brandOpen.value = false
-}
+  console.log('creating: ', brandSearchTerm2.value);
+  setFieldValue('productInfo.brand', brandSearchTerm2.value);
+  brandOpen.value = false;
+};
+
+const createCategory = () => {
+  const currentValue = values.productInfo?.category || [];
+  setFieldValue('productInfo.category', [
+    ...currentValue,
+    categorySearchTerm.value,
+  ]);
+  categorySearchTerm.value = '';
+};
 </script>
 
 <template>
@@ -224,7 +233,6 @@ const createBrand = () => {
           </FormField>
         </div>
         <div class="grid w-full items-center gap-4">
-
           <FormField v-slot="{ componentField }" name="productInfo.brand">
             <FormItem class="flex flex-col">
               <FormLabel>Marca</FormLabel>
@@ -232,16 +240,19 @@ const createBrand = () => {
                 <Popover v-model:open="brandOpen">
                   <PopoverTrigger as-child>
                     <Button variant="outline" class="w-full justify-between">
-                      {{ componentField.modelValue || 'Select a brand' }}
+                      {{ componentField.modelValue || 'Seleccione una marca' }}
                       <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent class="p-0">
-                    <Command v-model:searchTerm="brandSearchTerm2">
+                    <Command v-model:searchTerm="brandSearchTerm2" @keydown.enter.prevent="createBrand">
                       <CommandInput placeholder="Search brand..." />
 
-                      <div v-if="brandSearchTerm2 && !filteredBrands.includes(brandSearchTerm2)"
-                        class="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none">
+                      <div v-if="
+                        brandSearchTerm2 &&
+                        !filteredBrands.includes(brandSearchTerm2)
+                      "
+                        class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none">
                         <Button variant="ghost" size="sm" class="w-full justify-start" @click="createBrand">
                           <Plus class="mr-2 h-4 w-4" />
                           Crear "{{ brandSearchTerm2 }}"
@@ -264,7 +275,6 @@ const createBrand = () => {
             </FormItem>
           </FormField>
 
-          <!-- CATEGORY FIELD -->
           <FormField v-slot="{ value }" name="productInfo.category">
             <FormItem class="flex flex-col">
               <FormLabel>Categorías</FormLabel>
@@ -296,6 +306,17 @@ const createBrand = () => {
                 <PopoverContent class="w-full p-0" align="start">
                   <Command v-model:search-term="categorySearchTerm">
                     <CommandInput placeholder="Buscar categorías..." />
+
+                    <div v-if="
+                      categorySearchTerm &&
+                      !filteredCategories.includes(categorySearchTerm)
+                    "
+                      class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none">
+                      <Button variant="ghost" size="sm" class="w-full justify-start" @click="createCategory">
+                        <Plus class="mr-2 h-4 w-4" />
+                        Crear "{{ categorySearchTerm }}"
+                      </Button>
+                    </div>
                     <CommandList>
                       <CommandEmpty>
                         <p class="text-muted-foreground py-6 text-center text-sm">
@@ -303,11 +324,6 @@ const createBrand = () => {
                         </p>
                       </CommandEmpty>
                       <CommandGroup>
-                        <CommandItem v-if="canCreateCategory" :value="`__create_${categorySearchTerm}`"
-                          @select="handleCategoryCreate" class="text-primary font-medium">
-                          <Plus class="mr-2 h-4 w-4" />
-                          Crear "{{ categorySearchTerm.trim() }}"
-                        </CommandItem>
                         <CommandItem v-for="category in filteredCategories" :key="category" :value="category"
                           @select="handleCategoryToggle(category)">
                           <Check :class="cn(

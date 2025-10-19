@@ -44,10 +44,8 @@
 
   const categories = computed(() => {
     const cats = data.value?.flatMap((product) => product.category);
-    console.log(cats);
     return [...new Set(cats)].sort();
   });
-  console.log(categories.value);
 
   const brands = computed(() => {
     if (!data.value) return [];

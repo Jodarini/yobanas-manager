@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { columns } from '@/components/columns';
+  import { columns } from '@/components/columns';
 
-const { data: filteredProducts, status: productsStatus, error: productsError, refresh } = await useFetch('/api/products', {
-  key: "products",
-  lazy: true
-})
+  const {
+    data: filteredProducts,
+    status: productsStatus,
+    error: productsError,
+  } = await useFetch('/api/products', {
+    key: 'products',
+    lazy: true,
+  });
 </script>
 
 <template>
@@ -15,7 +19,18 @@ const { data: filteredProducts, status: productsStatus, error: productsError, re
         <NuxtLink to="add-product">Agregar producto</NuxtLink>
       </Button>
     </div>
-    <p v-if="productsStatus === 'pending'">{{ productsStatus }}</p>
+
+    <div
+      v-if="productsStatus === 'pending'"
+      class="flex min-h-[400px] items-center justify-center"
+    >
+      <div class="flex flex-col items-center gap-4">
+        <div
+          class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900"
+        />
+        <p class="text-gray-600">Cargando producto...</p>
+      </div>
+    </div>
     <p v-else-if="productsError">{{ productsError }}</p>
 
     <div v-else-if="filteredProducts && filteredProducts.length > 0">
@@ -25,10 +40,10 @@ const { data: filteredProducts, status: productsStatus, error: productsError, re
         </CardContent>
       </Card>
 
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      </div>
+      <div
+        class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      ></div>
     </div>
     <div v-else>¡Agrega nuevos items a tu inventario!</div>
-
   </div>
 </template>

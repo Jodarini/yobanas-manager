@@ -1,51 +1,75 @@
 <script setup lang="ts">
 import { z } from 'zod';
-import { addProductSchema, insertProductSchema, type InsertProduct } from '~/db/schema';
+import {
+  addProductSchema,
+  insertProductSchema,
+  type InsertProduct,
+} from '~/db/schema';
 import { useToast } from '@/components/ui/toast/use-toast';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
-import { Check, ChevronsUpDown } from 'lucide-vue-next';
+import { PlusCircleIcon, Trash2Icon } from 'lucide-vue-next';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import { Button } from '@/components/ui/button';
-import { PlusCircleIcon, Trash2Icon } from 'lucide-vue-next'
+import { Badge } from '@/components/ui/badge';
+import { Check, ChevronsUpDown, Plus, X } from 'lucide-vue-next';
+import { cn } from '@/lib/utils';
 
-const store = useProductsStore()
+const store = useProductsStore();
 
 const { toast } = useToast();
 
-const { data, pending, error, refresh, clear } = await useFetch('/api/products', {
-  key: "products",
-  lazy: true,
-});
+const { data, pending, error, refresh, clear } = await useFetch(
+  '/api/products',
+  {
+    key: 'products',
+    lazy: true,
+  }
+);
 
-const categories = computed(() => {
-  const cats = data.value?.flatMap((product) => product.category);
-  return [...new Set(cats)].sort();
-});
+// Create reactive refs instead of computed
+const categoriesList = ref<string[]>([]);
+const brandsList = ref<string[]>([]);
 
-const brands = computed(() => {
-  if (!data.value) return []
-  return [...new Set(data.value.map(product => product.brand))].sort()
-})
+// Watch data and update the lists
+watch(
+  data,
+  (newData) => {
+    if (newData) {
+      const cats = newData.flatMap((product) => product.category);
+      categoriesList.value = [...new Set(cats)].sort();
+
+      const brandNames = newData.map((product) => product.brand);
+      brandsList.value = [...new Set(brandNames)].sort();
+    }
+  },
+  { immediate: true }
+);
 
 const formSchema = toTypedSchema(insertProductSchema);
 type FormValues = z.infer<typeof addProductSchema>;
 
-const { handleSubmit, values, setFieldValue, resetForm } = useForm<FormValues>({
-  validationSchema: formSchema,
-  initialValues: {
-    //   productInfo: {
-    //     title: 'title',
-    //     brand: 'brand',
-    //     price: 1000,
-    //     description: 'description',
-    //     category: []
-    //   },
-    variantInfo: [{ size: '', stock: 0, color: '' }],
-  },
-});
+const { handleSubmit, values, setFieldValue, resetForm } =
+  useForm<FormValues>({
+    validationSchema: formSchema,
+    initialValues: {
+      variantInfo: [{ size: '', stock: 0, color: '' }],
+    },
+  });
 
 const newProduct = ref(values);
-const searchTerm = ref('');
 
 const onSubmit = handleSubmit(
   async (values) => {
@@ -68,9 +92,13 @@ const onSubmit = handleSubmit(
 
 const addVariant = () => {
   const currentVariants = values.variantInfo || [];
-  const newVariant = { id: Math.floor(Math.random() * 1000000), size: '', color: '', stock: 0 };
-  currentVariants.push(newVariant)
-  setFieldValue('variantInfo', [newVariant, ...currentVariants]);
+  const newVariant = {
+    id: Math.floor(Math.random() * 1000000),
+    size: '',
+    color: '',
+    stock: 0,
+  };
+  setFieldValue('variantInfo', [...currentVariants, newVariant]);
 };
 
 const removeVariant = (index: number) => {
@@ -80,10 +108,102 @@ const removeVariant = (index: number) => {
   setFieldValue('variantInfo', newVariants);
 };
 
+const brandOpen = ref(false);
+const brandSearchTerm = ref('');
+
+const filteredBrands = computed(() => {
+  if (!brandSearchTerm.value) return brandsList.value;
+  return brandsList.value.filter((b) =>
+    b.toLowerCase().includes(brandSearchTerm.value.toLowerCase())
+  );
+});
+
+// Category Management - Multi Select with Create
+const categoryOpen = ref(false);
+const categorySearchTerm = ref('');
+
+const filteredCategories = computed(() => {
+  if (!categorySearchTerm.value) return categoriesList.value;
+  return categoriesList.value.filter((c) =>
+    c.toLowerCase().includes(categorySearchTerm.value.toLowerCase())
+  );
+});
+
+const canCreateCategory = computed(() => {
+  const search = categorySearchTerm.value.trim();
+  if (!search) return false;
+
+  const currentValue = values.productInfo?.category || [];
+  const searchLower = search.toLowerCase();
+
+  // Check for exact match in existing categories list
+  const existsInList = categoriesList.value.some(
+    (c) => c.toLowerCase() === searchLower
+  );
+
+  // Check for exact match in currently selected values
+  const alreadySelected = currentValue.some(
+    (v) => v.toLowerCase() === searchLower
+  );
+
+  // Show create button only if no exact match found
+  return !existsInList && !alreadySelected;
+});
+
+function handleCategoryToggle(category: string) {
+  const currentValue = values.productInfo?.category || [];
+  const isSelected = currentValue.includes(category);
+
+  const next = isSelected
+    ? currentValue.filter((v) => v !== category)
+    : [...currentValue, category];
+
+  setFieldValue('productInfo.category', next);
+}
+
+function handleCategoryCreate() {
+  const newCategory = categorySearchTerm.value.trim();
+  if (!newCategory) return;
+
+  if (!categoriesList.value.includes(newCategory)) {
+    categoriesList.value = [...categoriesList.value, newCategory].sort();
+  }
+
+  const currentValue = values.productInfo?.category || [];
+  if (!currentValue.includes(newCategory)) {
+    setFieldValue('productInfo.category', [...currentValue, newCategory]);
+  }
+
+  categorySearchTerm.value = '';
+}
+
+function handleCategoryRemove(category: string) {
+  const currentValue = values.productInfo?.category || [];
+  setFieldValue(
+    'productInfo.category',
+    currentValue.filter((v) => v !== category)
+  );
+}
+
+const brandSearchTerm2 = ref('');
+const createBrand = () => {
+  console.log('creating: ', brandSearchTerm2.value);
+  setFieldValue('productInfo.brand', brandSearchTerm2.value);
+  brandOpen.value = false;
+};
+
+const createCategory = () => {
+  const currentValue = values.productInfo?.category || [];
+  setFieldValue('productInfo.category', [
+    ...currentValue,
+    categorySearchTerm.value,
+  ]);
+  categorySearchTerm.value = '';
+};
 </script>
 
 <template>
-  <form class="flex flex-col w-full gap-4" @submit.prevent="onSubmit">
+  <form class="flex w-full flex-col gap-4" @submit.prevent="onSubmit">
     <!-- Product Info Fields -->
     <Card>
       <CardHeader>
@@ -91,8 +211,7 @@ const removeVariant = (index: number) => {
       </CardHeader>
 
       <CardContent>
-
-        <div class="flex flex-col gap-4 mb-4 md:flex-row ">
+        <div class="mb-4 flex flex-col gap-4 md:flex-row">
           <FormField v-slot="{ componentField }" class="flex-1" name="productInfo.title">
             <FormItem class="w-full">
               <FormLabel>Nombre</FormLabel>
@@ -113,107 +232,114 @@ const removeVariant = (index: number) => {
             </FormItem>
           </FormField>
         </div>
-
-        <div class="grid items-center w-full gap-4">
-
-          <FormField v-slot="{ value, componentField }" class="flex-1" name="productInfo.brand">
-            <FormItem class="flex w-full flex-col">
+        <div class="grid w-full items-center gap-4">
+          <FormField v-slot="{ componentField }" name="productInfo.brand">
+            <FormItem class="flex flex-col">
               <FormLabel>Marca</FormLabel>
-              <Combobox v-bind="componentField">
-                <FormControl class="w-full">
-                  <ComboboxAnchor>
-                    <div class="relative min-w-full max-w-sm items-center">
-                      <ComboboxInput :value="value" :display-value="(val) => val?.name ?? ''"
-                        placeholder="Seleccione una marca..." />
-                      <ComboboxTrigger class="absolute inset-y-0 end-0 flex items-center justify-center px-3">
-                        <ChevronsUpDown class="text-muted-foreground size-4" />
-                      </ComboboxTrigger>
-                    </div>
-                  </ComboboxAnchor>
-                </FormControl>
-                <ComboboxList>
-                  <ComboboxEmpty>Nothing found.</ComboboxEmpty>
-                  <ComboboxGroup>
-                    <ComboboxItem v-for="opt in brands" :key="opt" :value="opt"
-                      @select="() => setFieldValue('productInfo.brand', opt)">
-                      {{ opt }}
-                      <ComboboxItemIndicator>
-                        <Check class="ml-auto h-4 w-4" />
-                      </ComboboxItemIndicator>
-                    </ComboboxItem>
-                  </ComboboxGroup>
-                </ComboboxList>
-              </Combobox>
+              <FormControl>
+                <Popover v-model:open="brandOpen">
+                  <PopoverTrigger as-child>
+                    <Button variant="outline" class="w-full justify-between">
+                      {{ componentField.modelValue || 'Seleccione una marca' }}
+                      <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent class="p-0">
+                    <Command v-model:searchTerm="brandSearchTerm2" @keydown.enter.prevent="createBrand">
+                      <CommandInput placeholder="Search brand..." />
+
+                      <div v-if="
+                        brandSearchTerm2 &&
+                        !filteredBrands.includes(brandSearchTerm2)
+                      "
+                        class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none">
+                        <Button variant="ghost" size="sm" class="w-full justify-start" @click="createBrand">
+                          <Plus class="mr-2 h-4 w-4" />
+                          Crear "{{ brandSearchTerm2 }}"
+                        </Button>
+                      </div>
+                      <CommandList>
+                        <CommandEmpty>No se encontraron marcas...</CommandEmpty>
+                        <CommandGroup>
+                          <CommandItem v-for="brand in filteredBrands" :key="brand" :value="brand"
+                            @select="() => componentField.onChange(brand)">
+                            <span>{{ brand }}</span>
+                          </CommandItem>
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </FormControl>
               <FormMessage />
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ value }" class="flex-1" name="productInfo.category">
-            <FormItem class="flex w-full flex-col">
+          <FormField v-slot="{ value }" name="productInfo.category">
+            <FormItem class="flex flex-col">
               <FormLabel>Categorías</FormLabel>
-
-              <FormControl>
-                <Combobox :model-value="value || []" @update:model-value="
-                  (next) => {
-                    const arr = Array.isArray(next)
-                      ? next
-                      : next == null
-                        ? []
-                        : [String(next)];
-                    setFieldValue('productInfo.category', arr);
-                  }
-                " v-model:search-term="searchTerm" multiple>
-                  <ComboboxAnchor class="relative w-full">
-                    <div class="flex items-center gap-2">
-                      <div class="flex flex-1 flex-wrap items-center gap-1.5">
-                        <template v-for="item in value || []" :key="`cat-${item}`">
-                          <span
-                            class="inline-flex items-center gap-1 rounded-md bg-secondary/70 px-1.5 py-0.5 text-secondary-foreground">
-                            <span class="text-[12px]">{{ item }}</span>
-                            <button type="button" class="grid place-items-center rounded-[4px] hover:cursor-pointer"
-                              @click.stop="
-                                setFieldValue(
-                                  'productInfo.category',
-                                  (value || []).filter(v => v !== item)
-                                )
-                                " aria-label="Eliminar">
-                              ×
-                            </button>
+              <Popover v-model:open="categoryOpen">
+                <PopoverTrigger as-child>
+                  <FormControl>
+                    <Button variant="outline" role="combobox" :aria-expanded="categoryOpen"
+                      class="h-auto min-h-10 w-full justify-start">
+                      <div class="flex flex-1 flex-wrap gap-1.5">
+                        <template v-if="!value || value.length === 0">
+                          <span class="text-muted-foreground">
+                            Seleccionar categorías...
                           </span>
                         </template>
-
-                        <ComboboxInput :value="''" :display-value="() => ''" placeholder="Seleccione categorías..."
-                          @keydown.enter.prevent />
+                        <template v-else>
+                          <Badge v-for="item in value" :key="item" variant="secondary" class="gap-1">
+                            {{ item }}
+                            <button type="button" class="hover:bg-secondary-foreground/20 ml-1 rounded-sm p-0.5"
+                              @click.stop="handleCategoryRemove(item)">
+                              <X class="h-3 w-3" />
+                            </button>
+                          </Badge>
+                        </template>
                       </div>
-                      <ComboboxTrigger class="absolute inset-y-0 end-0 flex items-center justify-center px-3">
-                        <ChevronsUpDown class="text-muted-foreground size-4" />
-                      </ComboboxTrigger>
+                      <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent class="w-full p-0" align="start">
+                  <Command v-model:search-term="categorySearchTerm">
+                    <CommandInput placeholder="Buscar categorías..." />
+
+                    <div v-if="
+                      categorySearchTerm &&
+                      !filteredCategories.includes(categorySearchTerm)
+                    "
+                      class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none">
+                      <Button variant="ghost" size="sm" class="w-full justify-start" @click="createCategory">
+                        <Plus class="mr-2 h-4 w-4" />
+                        Crear "{{ categorySearchTerm }}"
+                      </Button>
                     </div>
-                  </ComboboxAnchor>
-
-                  <ComboboxList>
-                    <ComboboxEmpty class="">
-                      No se encontraron resultados
-                    </ComboboxEmpty>
-
-                    <ComboboxGroup>
-                      <ComboboxItem v-for="category in categories" :key="`opt-${category}`" :value="category" @select="
-                        () => {
-                          const curr = Array.isArray(value) ? value : []
-                          const has = curr.includes(category)
-                          const next = has ? curr.filter(v => v !== category) : [...curr, category]
-                          setFieldValue('productInfo.category', next)
-                        }
-                      ">
-                        <Check class="h-4 w-4"
-                          :class="(value || []).includes(category) ? 'opacity-100' : 'opacity-0'" />
-                        <span class="truncate">{{ category }}</span>
-                      </ComboboxItem>
-                    </ComboboxGroup>
-                  </ComboboxList>
-                </Combobox>
-              </FormControl>
-
+                    <CommandList>
+                      <CommandEmpty>
+                        <p class="text-muted-foreground py-6 text-center text-sm">
+                          No se encontraron categorías
+                        </p>
+                      </CommandEmpty>
+                      <CommandGroup>
+                        <CommandItem v-for="category in filteredCategories" :key="category" :value="category"
+                          @select="handleCategoryToggle(category)">
+                          <Check :class="cn(
+                            'mr-2 h-4 w-4',
+                            value?.includes(category)
+                              ? 'opacity-100'
+                              : 'opacity-0'
+                          )
+                            " />
+                          {{ category }}
+                        </CommandItem>
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           </FormField>
@@ -233,10 +359,12 @@ const removeVariant = (index: number) => {
 
     <!-- Variants Section -->
     <Card>
-      <CardHeader class="flex flex-col pb-0 md:pb-6 justify-between md:flex-row">
+      <CardHeader class="flex flex-col justify-between pb-0 md:flex-row md:pb-6">
         <CardTitle class="text-xl font-semibold">Variantes</CardTitle>
-        <Button variant="secondary" class="flex gap-2 w-full mt-4 md:mt-0 md:w-fit" @click.prevent="addVariant">
-          <PlusCircleIcon /> Agregar variante
+        <Button type="button" variant="secondary" class="mt-4 flex w-full gap-2 md:mt-0 md:w-fit"
+          @click.prevent="addVariant">
+          <PlusCircleIcon />
+          Agregar variante
         </Button>
       </CardHeader>
 
@@ -275,7 +403,7 @@ const removeVariant = (index: number) => {
                   </FormItem>
                 </FormField>
 
-                <Button class="w-fit self-end" variant="ghost" @click.prevent="removeVariant(index)">
+                <Button type="button" class="w-fit self-end" variant="ghost" @click.prevent="removeVariant(index)">
                   <Trash2Icon class="text-red-400" />
                 </Button>
               </ItemContent>

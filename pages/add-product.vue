@@ -39,24 +39,8 @@ const { data, pending, error, refresh, clear } = await useFetch(
   }
 );
 
-// Create reactive refs instead of computed
-const categoriesList = ref<string[]>([]);
-const brandsList = ref<string[]>([]);
-
-// Watch data and update the lists
-watch(
-  data,
-  (newData) => {
-    if (newData) {
-      const cats = newData.flatMap((product) => product.category);
-      categoriesList.value = [...new Set(cats)].sort();
-
-      const brandNames = newData.map((product) => product.brand);
-      brandsList.value = [...new Set(brandNames)].sort();
-    }
-  },
-  { immediate: true }
-);
+const categoriesList = ref<string[]>([...new Set(data.value?.flatMap(product => product.category))]);
+const brandsList = ref<string[]>([...new Set(data.value?.map(product => product.brand))]);
 
 const formSchema = toTypedSchema(insertProductSchema);
 type FormValues = z.infer<typeof addProductSchema>;
@@ -129,26 +113,6 @@ const filteredCategories = computed(() => {
   );
 });
 
-const canCreateCategory = computed(() => {
-  const search = categorySearchTerm.value.trim();
-  if (!search) return false;
-
-  const currentValue = values.productInfo?.category || [];
-  const searchLower = search.toLowerCase();
-
-  // Check for exact match in existing categories list
-  const existsInList = categoriesList.value.some(
-    (c) => c.toLowerCase() === searchLower
-  );
-
-  // Check for exact match in currently selected values
-  const alreadySelected = currentValue.some(
-    (v) => v.toLowerCase() === searchLower
-  );
-
-  // Show create button only if no exact match found
-  return !existsInList && !alreadySelected;
-});
 
 function handleCategoryToggle(category: string) {
   const currentValue = values.productInfo?.category || [];
@@ -161,22 +125,6 @@ function handleCategoryToggle(category: string) {
   setFieldValue('productInfo.category', next);
 }
 
-function handleCategoryCreate() {
-  const newCategory = categorySearchTerm.value.trim();
-  if (!newCategory) return;
-
-  if (!categoriesList.value.includes(newCategory)) {
-    categoriesList.value = [...categoriesList.value, newCategory].sort();
-  }
-
-  const currentValue = values.productInfo?.category || [];
-  if (!currentValue.includes(newCategory)) {
-    setFieldValue('productInfo.category', [...currentValue, newCategory]);
-  }
-
-  categorySearchTerm.value = '';
-}
-
 function handleCategoryRemove(category: string) {
   const currentValue = values.productInfo?.category || [];
   setFieldValue(
@@ -187,7 +135,6 @@ function handleCategoryRemove(category: string) {
 
 const brandSearchTerm2 = ref('');
 const createBrand = () => {
-  console.log('creating: ', brandSearchTerm2.value);
   setFieldValue('productInfo.brand', brandSearchTerm2.value);
   brandOpen.value = false;
 };
@@ -232,7 +179,9 @@ const createCategory = () => {
             </FormItem>
           </FormField>
         </div>
+
         <div class="grid w-full items-center gap-4">
+
           <FormField v-slot="{ componentField }" name="productInfo.brand">
             <FormItem class="flex flex-col">
               <FormLabel>Marca</FormLabel>

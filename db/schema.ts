@@ -21,7 +21,7 @@ export const productsTable = pgTable('products', {
   price: real('price').notNull(),
   thumbnail: text('thumbnail'),
   brand: text('brand').notNull(),
-  category: text('category').array(),
+  category: text('category').array().notNull(),
 });
 
 export const productVariants = pgTable('product_variants', {
@@ -62,7 +62,9 @@ export type ProductEdit = {
 export const insertProductSchema = z.object({
   productInfo: z.object({
     title: z.string().min(1, 'Debe ingresar un titulo'),
-    description: z.string({ message: 'Su producto debe tener una descripción' }),
+    description: z.string({
+      message: 'Su producto debe tener una descripción',
+    }),
     price: z
       .number({ message: 'Debe ser un numero' })
       .positive('El precio debe ser positivo'),
@@ -77,18 +79,19 @@ export const insertProductSchema = z.object({
       .nullable(),
     brand: z.string().min(1, 'La marca debe tener al menos un caracter'),
   }),
-  variantInfo:
-    z.array(
-      z.object({
-        size: z.string(),
-        color: z.string().min(1, 'Debe agregar al menos un color'),
-        stock: z
-          .number({ message: 'Debe ser un numero' })
-          .int()
-          .nonnegative('La cantidad debe ser positiva'),
-      }),
-    )
-
+  variantInfo: z.array(
+    z.object({
+      size: z
+        .string()
+        .min(1, 'Debe agregar al menos un tamaño')
+        .max(10, 'El tamaño no puede tener mas de 10 caracteres'),
+      color: z.string().min(1, 'Debe agregar al menos un color'),
+      stock: z
+        .number({ message: 'Debe ser un numero' })
+        .int()
+        .nonnegative('La cantidad debe ser positiva'),
+    })
+  ),
 });
 
 export type InsertProduct = z.infer<typeof insertProductSchema>;

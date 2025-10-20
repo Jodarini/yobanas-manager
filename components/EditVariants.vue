@@ -127,7 +127,7 @@
     try {
       // TODO: add user confirmation
       store.deleteProduct(index);
-      toast({ title: 'ELemento eliminado' });
+      toast({ title: 'Elemento eliminado' });
       navigateTo('/');
     } catch (error) {
       toast({
@@ -220,21 +220,48 @@
             </FormItem>
           </FormField>
 
-          <FormField
-            v-slot="{ componentField }"
-            class="flex-1"
-            name="productInfo.price"
-          >
+          <FormField v-slot="{ value }" class="flex-1" name="productInfo.price">
             <FormItem class="w-full">
               <FormLabel>Precio</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  step="1000"
-                  placeholder="Precio"
-                  v-bind="componentField"
-                />
-              </FormControl>
+              <NumberField
+                class="gap-2"
+                :min="0"
+                :format-options="{
+                  style: 'currency',
+                  currency: 'COP',
+                  currencyDisplay: 'symbol',
+                  currencySign: 'accounting',
+                  trailingZeroDisplay: 'stripIfInteger',
+                  useGrouping: true,
+                  signDisplay: 'auto',
+                }"
+                :model-value="value"
+                @update:model-value="
+                  (v) => {
+                    if (v) {
+                      setFieldValue('productInfo.price', v);
+                    } else {
+                      setFieldValue('productInfo.price', undefined);
+                    }
+                  }
+                "
+              >
+                <NumberFieldContent>
+                  <NumberFieldDecrement />
+                  <FormControl>
+                    <NumberFieldInput />
+                  </FormControl>
+                  <NumberFieldIncrement />
+                </NumberFieldContent>
+              </NumberField>
+              <!-- <FormControl>
+                  <Input
+                    type="number"
+                    step="1000"
+                    placeholder="Precio"
+                    v-bind="componentField"
+                  />
+                </FormControl> -->
               <FormMessage />
             </FormItem>
           </FormField>
@@ -247,7 +274,11 @@
               <FormControl>
                 <Popover v-model:open="brandOpen">
                   <PopoverTrigger as-child>
-                    <Button variant="outline" class="w-full justify-between">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      class="w-full justify-between"
+                    >
                       {{ componentField.modelValue || 'Seleccione una marca' }}
                       <ChevronsUpDown
                         class="ml-2 h-4 w-4 shrink-0 opacity-50"
@@ -269,6 +300,7 @@
                         class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none"
                       >
                         <Button
+                          type="button"
                           variant="ghost"
                           size="sm"
                           class="w-full justify-start"
@@ -306,6 +338,7 @@
                 <PopoverTrigger as-child>
                   <FormControl>
                     <Button
+                      type="button"
                       variant="outline"
                       role="combobox"
                       :aria-expanded="categoryOpen"
@@ -348,6 +381,7 @@
                       class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none"
                     >
                       <Button
+                        type="button"
                         variant="ghost"
                         size="sm"
                         class="w-full justify-start"
@@ -421,7 +455,8 @@
       >
         <CardTitle class="text-xl font-semibold">Variantes</CardTitle>
         <Button
-          variant="secondary"
+          type="button"
+          variant="outline"
           class="mt-4 flex w-full gap-2 md:mt-0 md:w-fit"
           @click.prevent="addVariant"
         >
@@ -495,11 +530,12 @@
               </ItemContent>
               <ItemActions>
                 <Button
+                  type="button"
                   class="w-fit md:self-end"
                   variant="ghost"
                   @click.prevent="removeVariant(index)"
                 >
-                  <Trash2Icon class="text-red-400" />
+                  <Trash2Icon class="text-destructive-foreground" />
                 </Button>
               </ItemActions>
             </Item>
@@ -511,6 +547,7 @@
 
     <div class="flex max-h-fit justify-end gap-4">
       <Button
+        type="button"
         variant="destructive"
         class=""
         @click.prevent="deleteProduct(+route.params.id)"

@@ -186,21 +186,45 @@
             </FormItem>
           </FormField>
 
-          <FormField
-            v-slot="{ componentField }"
-            class="flex-1"
-            name="productInfo.price"
-          >
+          <FormField v-slot="{ value }" class="flex-1" name="productInfo.price">
             <FormItem class="w-full">
               <FormLabel>Precio</FormLabel>
-              <FormControl>
+              <NumberField
+                class="gap-2"
+                :min="0"
+                :format-options="{
+                  style: 'currency',
+                  currency: 'COP',
+                  currencyDisplay: 'code',
+                  currencySign: 'accounting',
+                }"
+                :model-value="value"
+                @update:model-value="
+                  (v) => {
+                    if (v) {
+                      setFieldValue('productInfo.price', v);
+                    } else {
+                      setFieldValue('productInfo.price', undefined);
+                    }
+                  }
+                "
+              >
+                <NumberFieldContent>
+                  <NumberFieldDecrement />
+                  <FormControl>
+                    <NumberFieldInput />
+                  </FormControl>
+                  <NumberFieldIncrement />
+                </NumberFieldContent>
+              </NumberField>
+              <!-- <FormControl>
                 <Input
                   type="number"
                   step="1000"
                   placeholder="Precio"
                   v-bind="componentField"
                 />
-              </FormControl>
+              </FormControl> -->
               <FormMessage />
             </FormItem>
           </FormField>
@@ -213,7 +237,10 @@
               <FormControl>
                 <Popover v-model:open="brandOpen">
                   <PopoverTrigger as-child>
-                    <Button variant="outline" class="w-full justify-between">
+                    <Button
+                      variant="outline"
+                      class="text-muted-foreground w-full justify-between"
+                    >
                       {{ componentField.modelValue || 'Seleccione una marca' }}
                       <ChevronsUpDown
                         class="ml-2 h-4 w-4 shrink-0 opacity-50"
@@ -471,7 +498,7 @@
                   variant="ghost"
                   @click.prevent="removeVariant(index)"
                 >
-                  <Trash2Icon class="text-red-400" />
+                  <Trash2Icon class="text-destructive-foreground" />
                 </Button>
               </ItemContent>
             </Item>

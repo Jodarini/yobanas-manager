@@ -22,6 +22,8 @@ export default defineNuxtConfig({
   },
   eslint: {},
   colorMode: {
+    preference: 'light',
+    fallback: 'light',
     classSuffix: '',
   },
   shadcn: {

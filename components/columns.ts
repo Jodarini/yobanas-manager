@@ -33,8 +33,10 @@ export const columns: ColumnDef<Payment>[] = [
         'div',
         {
           class: 'capitalize',
-        }, categories.join(', '))
-    }
+        },
+        categories.join(', ')
+      );
+    },
   },
   {
     accessorKey: 'price',

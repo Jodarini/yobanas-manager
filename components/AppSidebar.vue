@@ -1,67 +1,65 @@
 <script setup lang="ts">
-import {
-  Package,
-  PlusIcon,
-  BarChart,
-} from 'lucide-vue-next';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarFooter,
-  SidebarHeader,
-} from '@/components/ui/sidebar';
+  import { Package, PlusIcon, BarChart } from 'lucide-vue-next';
+  import {
+    Sidebar,
+    SidebarContent,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarFooter,
+    SidebarHeader,
+  } from '@/components/ui/sidebar';
 
-const route = useRoute();
+  const route = useRoute();
 
-const menuItems = [
-  {
-    title: 'Productos',
-    url: '/',
-    icon: Package,
-  },
-  // {
-  //   title: 'Productos',
-  //   url: '/dashboard/products',
-  //   icon: Package,
-  // },
-  // {
-  //   title: 'Pedidos',
-  //   url: '/dashboard/orders',
-  //   icon: ShoppingCart,
-  // },
-  // {
-  //   title: 'Clientes',
-  //   url: '/dashboard/customers',
-  //   icon: Users,
-  // },
-  // {
-  //   title: 'Reportes',
-  //   url: '/dashboard/reports',
-  //   icon: BarChart,
-  // },
-  // {
-  //   title: 'Configuración',
-  //   url: '/dashboard/settings',
-  //   icon: Settings,
-  // },
-];
+  const menuItems = [
+    {
+      title: 'Productos',
+      url: '/',
+      icon: Package,
+    },
+    // {
+    //   title: 'Productos',
+    //   url: '/dashboard/products',
+    //   icon: Package,
+    // },
+    // {
+    //   title: 'Pedidos',
+    //   url: '/dashboard/orders',
+    //   icon: ShoppingCart,
+    // },
+    // {
+    //   title: 'Clientes',
+    //   url: '/dashboard/customers',
+    //   icon: Users,
+    // },
+    // {
+    //   title: 'Reportes',
+    //   url: '/dashboard/reports',
+    //   icon: BarChart,
+    // },
+    // {
+    //   title: 'Configuración',
+    //   url: '/dashboard/settings',
+    //   icon: Settings,
+    // },
+  ];
 
-// Check if current route is active
-const isActive = (url: string) => {
-  return route.path === url || route.path.startsWith(url + '/');
-};
+  // Check if current route is active
+  const isActive = (url: string) => {
+    return route.path === url || route.path.startsWith(url + '/');
+  };
 </script>
 
 <template>
   <Sidebar>
     <SidebarHeader>
       <div class="flex items-center gap-2 px-4 py-2">
-        <div class="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg">
+        <div
+          class="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg"
+        >
           <Package class="h-4 w-4" />
         </div>
         <div class="flex flex-col">
@@ -91,14 +89,22 @@ const isActive = (url: string) => {
 
     <SidebarFooter>
       <div class="px-4 py-2 text-center">
-
-        <Button as-child class="min-w-full mb-4">
+        <Button as-child class="mb-4 min-w-full">
           <NuxtLink to="/add-product" class="flex flex-row justify-evenly">
             <PlusIcon />
             Nuevo producto
           </NuxtLink>
         </Button>
-        <p class="text-muted-foreground text-xs">© 2025 Yobanas</p>
+        <p class="text-muted-foreground text-xs">
+          © 2025 Yobana's closet
+          <br />
+          <NuxtLink
+            to="https://www.jodarini.dev"
+            class="text-accent-foreground"
+          >
+            by Jodarini.dev
+          </NuxtLink>
+        </p>
       </div>
     </SidebarFooter>
   </Sidebar>

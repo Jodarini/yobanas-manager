@@ -1,52 +1,104 @@
 <script setup lang="ts" generic="TData, TValue">
-import type { ColumnDef } from '@tanstack/vue-table';
-import {
-  FlexRender,
-  getCoreRowModel,
-  useVueTable,
-} from '@tanstack/vue-table';
+  import type {
+    ColumnDef,
+    ColumnFiltersState,
+    SortingState,
+  } from '@tanstack/vue-table';
+  import {
+    FlexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getSortedRowModel,
+    getPaginationRowModel,
+    useVueTable,
+  } from '@tanstack/vue-table';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+  import { valueUpdater } from '@/lib/utils';
 
-const props = defineProps<{
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}>();
+  import {
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+    Table,
+  } from '@/components/ui/table';
 
-const table = useVueTable({
-  get data() {
-    return props.data;
-  },
-  get columns() {
-    return props.columns;
-  },
-  getCoreRowModel: getCoreRowModel(),
-});
+  const props = defineProps<{
+    columns: ColumnDef<TData, TValue>[];
+    data: TData[];
+  }>();
+
+  const sorting = ref<SortingState>([]);
+  const columnFilters = ref<ColumnFiltersState>([]);
+
+  const table = useVueTable({
+    get data() {
+      return props.data;
+    },
+    get columns() {
+      return props.columns;
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
+    onColumnFiltersChange: (updaterOrValue) =>
+      valueUpdater(updaterOrValue, columnFilters),
+    state: {
+      get sorting() {
+        return sorting.value;
+      },
+      get columnFilters() {
+        return columnFilters.value;
+      },
+    },
+  });
 </script>
 
 <template>
+  <Input
+    class="max-w-sm"
+    placeholder="Filtra productos..."
+    :model-value="table.getColumn('title')?.getFilterValue() as string"
+    @update:model-value="table.getColumn('title')?.setFilterValue($event)"
+  />
   <Table class="border-0">
     <TableHeader>
-      <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-        <TableHead v-for="header in headerGroup.headers" class="p-4" :key="header.id">
-          <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header"
-            :props="header.getContext()" />
+      <TableRow
+        v-for="headerGroup in table.getHeaderGroups()"
+        :key="headerGroup.id"
+      >
+        <TableHead
+          v-for="header in headerGroup.headers"
+          :key="header.id"
+          class="p-4"
+        >
+          <FlexRender
+            v-if="!header.isPlaceholder"
+            :render="header.column.columnDef.header"
+            :props="header.getContext()"
+          />
         </TableHead>
       </TableRow>
     </TableHeader>
     <TableBody>
       <template v-if="table.getRowModel().rows?.length">
-        <TableRow v-for="row in table.getRowModel().rows" :key="row.id"
-          :data-state="row.getIsSelected() ? 'selected' : undefined">
-          <TableCell v-for="cell in row.getVisibleCells()" class="p-4" :key="cell.id">
-            <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+        <TableRow
+          v-for="row in table.getRowModel().rows"
+          :key="row.id"
+          :data-state="row.getIsSelected() ? 'selected' : undefined"
+        >
+          <TableCell
+            v-for="cell in row.getVisibleCells()"
+            :key="cell.id"
+            class="p-4"
+          >
+            <FlexRender
+              :render="cell.column.columnDef.cell"
+              :props="cell.getContext()"
+            />
           </TableCell>
         </TableRow>
       </template>

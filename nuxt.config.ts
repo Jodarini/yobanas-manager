@@ -2,6 +2,37 @@
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineNuxtConfig({
+  app: {
+    head: {
+      title: "Yobana's Manager", // default fallback
+      htmlAttrs: { lang: 'es' },
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/x-icon',
+          href: '/img/logo2sobreoscuro.ico',
+        },
+        // {
+        //   rel: 'icon',
+        //   type: 'image/png',
+        //   sizes: '16x16',
+        //   href: '/favicon-16x16.png',
+        // },
+        // {
+        //   rel: 'icon',
+        //   type: 'image/png',
+        //   sizes: '32x32',
+        //   href: '/favicon-32x32.png',
+        // },
+        // {
+        //   rel: 'apple-touch-icon',
+        //   sizes: '180x180',
+        //   href: '/apple-touch-icon.png',
+        // },
+        // { rel: 'manifest', href: '/site.webmanifest' },
+      ],
+    },
+  },
   compatibilityDate: '2024-04-03',
   runtimeConfig: {
     supabaseUrl: '',

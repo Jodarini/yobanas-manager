@@ -47,6 +47,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@pinia/nuxt',
     '@nuxt/eslint',
+    '@nuxtjs/supabase',
   ],
   image: {
     dir: 'public', // or 'assets/images' if using assets
@@ -67,5 +68,14 @@ export default defineNuxtConfig({
      * @default "./components/ui"
      */
     componentDir: './components/ui',
+  },
+  supabase: {
+    redirectOptions: {
+      login: '/login',
+      callback: '/',
+      include: undefined,
+      exclude: [],
+      saveRedirectToCookie: true, // Saves the path user tried to access
+    },
   },
 });

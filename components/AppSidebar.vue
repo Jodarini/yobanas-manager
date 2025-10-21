@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { Package, PlusIcon, BarChart } from 'lucide-vue-next';
+  import { Package, PlusIcon, SunIcon, MoonIcon } from 'lucide-vue-next';
   import {
     Sidebar,
     SidebarContent,
@@ -51,12 +51,14 @@
   const isActive = (url: string) => {
     return route.path === url || route.path.startsWith(url + '/');
   };
+
+  const colorMode = useColorMode();
 </script>
 
 <template>
   <Sidebar>
     <SidebarHeader>
-      <div class="flex items-center gap-2 px-4 py-2">
+      <div class="flex items-center justify-between gap-2 px-4 py-2">
         <div
           class="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg"
         >
@@ -66,6 +68,31 @@
           <span class="text-sm font-semibold">Store Admin</span>
           <span class="text-muted-foreground text-xs">Gestión de tienda</span>
         </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger as-child>
+            <Button variant="outline">
+              <SunIcon
+                class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
+              />
+              <MoonIcon
+                class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
+              />
+              <span class="sr-only">Toggle theme</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem @click="colorMode.preference = 'light'">
+              Light
+            </DropdownMenuItem>
+            <DropdownMenuItem @click="colorMode.preference = 'dark'">
+              Dark
+            </DropdownMenuItem>
+            <DropdownMenuItem @click="colorMode.preference = 'system'">
+              System
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </SidebarHeader>
 

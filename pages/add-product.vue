@@ -75,7 +75,6 @@
 
   const onSubmit = handleSubmit(
     async (values) => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
       const product: InsertProduct = { ...values };
       try {
         store.addProduct(product);

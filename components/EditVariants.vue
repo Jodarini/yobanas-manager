@@ -130,9 +130,6 @@
     try {
       // TODO: add user confirmation
       isDeleting.value = true;
-      await new Promise((resolve) => {
-        setTimeout(resolve, 1000);
-      });
       await store.deleteProduct(index);
       toast({ title: 'Elemento eliminado' });
       navigateTo('/');

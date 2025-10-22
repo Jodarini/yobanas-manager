@@ -35,8 +35,13 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2024-04-03',
   runtimeConfig: {
-    supabaseUrl: '',
-    supabaseKey: '',
+    databaseUrl: process.env.NUXT_DATABASE_URL,
+    public: {
+      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
+      supabaseKey: process.env.NUXT_PUBLIC_SUPABASE_KEY,
+    },
+    // supabaseUrl: '',
+    // supabaseKey: '',
   },
   css: ['~/assets/css/tailwind.css'],
   vite: {
@@ -75,7 +80,7 @@ export default defineNuxtConfig({
       login: '/login',
       callback: '/',
       include: undefined,
-      exclude: [],
+      exclude: ['/'],
       saveRedirectToCookie: true, // Saves the path user tried to access
     },
   },

@@ -7,7 +7,7 @@ let client: ReturnType<typeof postgres> | null = null;
 export const useDB = () => {
   const config = useRuntimeConfig();
   if (!client) {
-    client = postgres(config.supabaseUrl);
+    client = postgres(config.databaseUrl);
     db = drizzle(client);
   }
 

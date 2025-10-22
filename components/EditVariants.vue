@@ -571,9 +571,9 @@
       <Button type="submit" class="self-end" :disabled="isSubmitting">
         <span v-if="isSubmitting" class="flex items-center">
           <Spinner class="mr-2" />
-          Agregando producto
+          Actualizando producto...
         </span>
-        <span v-else>Agregar producto</span>
+        <span v-else>Actualizar producto</span>
       </Button>
     </div>
   </form>

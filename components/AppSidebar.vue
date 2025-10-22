@@ -127,6 +127,7 @@
           <br />
           <NuxtLink
             to="https://www.jodarini.dev"
+            target="_blank"
             class="text-accent-foreground"
           >
             by Jodarini.dev

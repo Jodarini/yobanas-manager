@@ -9,4 +9,9 @@ export default defineConfig({
   dbCredentials: {
     url: process.env.NUXT_DATABASE_URL!,
   },
+  entities: {
+    roles: {
+      provider: 'supabase',
+    },
+  },
 });

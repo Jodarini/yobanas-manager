@@ -19,13 +19,17 @@ export const useAuth = () => {
     });
   };
 
-  const signInWithOtp = async (email: string, password: string) => {
-    console.log('sign in with:', email);
-    const { error } = await supabase.auth.signInWithPassword({
+  const signInWithPassword = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
-    if (error) console.log(error);
+    if (error) {
+      console.error('Sign in error:', error.message);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+    } else {
+      await navigateTo('/');
+    }
   };
 
   const signInAnonymous = async () => {
@@ -34,7 +38,7 @@ export const useAuth = () => {
       errorMessage.value = error.message;
     } else {
       userId.value = data.user!.id;
-      await navigateTo(path.value);
+      await navigateTo('/');
       return data;
     }
   };
@@ -45,6 +49,7 @@ export const useAuth = () => {
       throw error;
     }
     userId.value = null;
+    await refreshNuxtData();
     await navigateTo('/');
   };
 
@@ -52,7 +57,7 @@ export const useAuth = () => {
     initAuth,
     userId,
     errorMessage,
-    signInWithOtp,
+    signInWithPassword,
     signInAnonymous,
     signOut,
   };

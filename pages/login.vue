@@ -1,8 +1,9 @@
 <script setup lang="ts">
   import { useAuth } from '~/composables/useAuth';
 
-  // const supabase = useSupabaseClient();
-  const { signInAnonymous, userId, signOut, errorMessage } = useAuth();
+  const supabase = useSupabaseClient();
+  const { signInAnonymous, signInWithPassword, userId, signOut, errorMessage } =
+    useAuth();
 
   const email = ref('');
   const password = ref('');
@@ -12,9 +13,12 @@
   //     email: email.value,
   //     password: password.value,
   //   });
+  //   console.log('Full data object:', data);
+  //   console.log('User:', data.user);
+  //   console.log('Session:', data.session);
 
   //   if (error) {
-  //     console.error(error);
+  //     console.error('Signup error:', error);
   //   }
   // };
 </script>
@@ -26,7 +30,7 @@
       <CardDescription>Please sign in to continue.</CardDescription>
     </CardHeader>
     <CardContent class="flex flex-col items-center justify-center gap-4">
-      <!-- <form class="flex w-full flex-col gap-2" @submit="signUp">
+      <!-- <form class="flex w-full flex-col gap-2" @submit.prevent="signUp">
         <Input v-model="email" placeholder="Email" />
         <Input v-model="password" type="password" placeholder="Contraseña" />
         <Button
@@ -35,9 +39,25 @@
           class="w-full"
           @click="signUp"
         >
-          Sign In with Email
+          Sign Up with Email
         </Button>
       </form> -->
+
+      <form
+        class="flex w-full flex-col gap-2"
+        @submit.prevent="signInWithPassword(email, password)"
+      >
+        <Input v-model="email" placeholder="Email" />
+        <Input v-model="password" type="password" placeholder="Contraseña" />
+        <Button
+          v-if="!userId"
+          :disabled="email.length === 0"
+          class="w-full"
+          type="submit"
+        >
+          Sign In with Email
+        </Button>
+      </form>
 
       <Button
         v-if="!userId"

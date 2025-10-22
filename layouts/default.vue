@@ -7,7 +7,7 @@
   import AppSidebar from '@/components/AppSidebar.vue';
   import { useAuth } from '~/composables/useAuth';
 
-  const { initAuth, signInAnonymous, userId, signOut } = useAuth();
+  const { initAuth, userId, signOut } = useAuth();
   await initAuth();
 </script>
 
@@ -23,8 +23,8 @@
       >
         <SidebarTrigger class="-ml-1" />
 
-        <Button v-if="!userId" variant="outline" @click="signInAnonymous">
-          Sign In
+        <Button v-if="!userId" as-child variant="outline">
+          <NuxtLink to="/login">Sign In</NuxtLink>
         </Button>
         <Button v-else variant="outline" @click="signOut">Sign Out</Button>
       </header>

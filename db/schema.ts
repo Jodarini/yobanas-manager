@@ -5,7 +5,11 @@ import {
   varchar,
   integer,
   real,
+  uuid,
+  pgPolicy,
 } from 'drizzle-orm/pg-core';
+import { authenticatedRole, authUid } from 'drizzle-orm/supabase';
+import { sql } from 'drizzle-orm';
 import z from 'zod';
 
 export const users = pgTable('users', {
@@ -14,25 +18,87 @@ export const users = pgTable('users', {
   phone: varchar('phone', { length: 256 }),
 });
 
-export const productsTable = pgTable('products', {
-  id: serial('id').primaryKey().notNull(),
-  title: text('title').notNull(),
-  description: text('description'),
-  price: real('price').notNull(),
-  thumbnail: text('thumbnail'),
-  brand: text('brand').notNull(),
-  category: text('category').array().notNull(),
-});
+export const productsTable = pgTable(
+  'products',
+  {
+    id: serial('id').primaryKey().notNull(),
+    user_id: uuid('user_id').notNull(),
+    title: text('title').notNull(),
+    description: text('description'),
+    price: real('price').notNull(),
+    thumbnail: text('thumbnail'),
+    brand: text('brand').notNull(),
+    category: text('category').array().notNull(),
+  },
+  (table) => [
+    pgPolicy('users_select_own_products', {
+      as: 'permissive',
+      for: 'select',
+      to: authenticatedRole,
+      using: sql`(select auth.uid()) = ${table.user_id}`,
+    }),
+    pgPolicy('users_insert_own_products', {
+      as: 'permissive',
+      for: 'insert',
+      to: authenticatedRole,
+      withCheck: sql`(select auth.uid()) = ${table.user_id}`,
+    }),
+    pgPolicy('users_update_own_products', {
+      as: 'permissive',
+      for: 'update',
+      to: authenticatedRole,
+      using: sql`(select auth.uid()) = ${table.user_id}`,
+      withCheck: sql`(select auth.uid()) = ${table.user_id}`,
+    }),
+    pgPolicy('users_delete_own_products', {
+      as: 'permissive',
+      for: 'delete',
+      to: authenticatedRole,
+      using: sql`(select auth.uid()) = ${table.user_id}`,
+    }),
+  ]
+);
 
-export const productVariants = pgTable('product_variants', {
-  id: serial('id').primaryKey().notNull(),
-  productId: integer('product_id')
-    .notNull()
-    .references(() => productsTable.id, { onDelete: 'cascade' }),
-  size: varchar('size', { length: 50 }).notNull(),
-  color: varchar('color', { length: 50 }).notNull(),
-  stock: integer('stock').notNull().default(0),
-});
+export const productVariants = pgTable(
+  'product_variants',
+  {
+    id: serial('id').primaryKey().notNull(),
+    productId: integer('product_id')
+      .notNull()
+      .references(() => productsTable.id, { onDelete: 'cascade' }),
+    user_id: uuid('user_id').notNull(),
+    size: varchar('size', { length: 50 }).notNull(),
+    color: varchar('color', { length: 50 }).notNull(),
+    stock: integer('stock').notNull().default(0),
+  },
+  (table) => [
+    pgPolicy('users_select_own_variants', {
+      as: 'permissive',
+      for: 'select',
+      to: authenticatedRole,
+      using: sql`(select auth.uid()) = ${table.user_id}`,
+    }),
+    pgPolicy('users_insert_own_variants', {
+      as: 'permissive',
+      for: 'insert',
+      to: authenticatedRole,
+      withCheck: sql`(select auth.uid()) = ${table.user_id}`,
+    }),
+    pgPolicy('users_update_own_variants', {
+      as: 'permissive',
+      for: 'update',
+      to: authenticatedRole,
+      using: sql`(select auth.uid()) = ${table.user_id}`,
+      withCheck: sql`(select auth.uid()) = ${table.user_id}`,
+    }),
+    pgPolicy('users_delete_own_variants', {
+      as: 'permissive',
+      for: 'delete',
+      to: authenticatedRole,
+      using: sql`(select auth.uid()) = ${table.user_id}`,
+    }),
+  ]
+);
 
 export type Product = typeof productsTable.$inferInsert;
 export type ProductVariants = typeof productVariants.$inferInsert;

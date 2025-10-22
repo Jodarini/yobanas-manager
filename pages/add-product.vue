@@ -59,6 +59,13 @@
     useForm<FormValues>({
       validationSchema: formSchema,
       initialValues: {
+        // productInfo: {
+        //   title: 'test',
+        //   description: 'test',
+        //   price: 1000,
+        //   category: ['test'],
+        //   brand: 'test',
+        // },
         variantInfo: [{ size: '', stock: 0, color: '' }],
       },
     });
@@ -192,6 +199,7 @@
               <NumberField
                 class="gap-2"
                 :min="0"
+                :step="1000"
                 :format-options="{
                   style: 'currency',
                   currency: 'COP',

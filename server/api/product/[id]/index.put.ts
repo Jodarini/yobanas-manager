@@ -1,18 +1,27 @@
+import { serverSupabaseClient } from '#supabase/server';
 import { eq } from 'drizzle-orm';
 import {
   editProductSchema2,
   productsTable,
   productVariants,
 } from '~/db/schema';
-import { useDB } from '~/server/utils/db';
+import { useAuthDB } from '~/server/utils/db';
 
 export default defineEventHandler(async (event) => {
-  const db = useDB()
+  const supabase = await serverSupabaseClient(event);
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    throw createError({ statusCode: 401, message: 'Unauthorized' });
+  }
 
   try {
     const body = await readBody(event);
     const product = editProductSchema2.parse(body);
-    db.transaction(async (tx) => {
+
+    return await useAuthDB(session, async (tx) => {
       const result = await tx
         .update(productsTable)
         .set({
@@ -20,10 +29,10 @@ export default defineEventHandler(async (event) => {
           description: product.productInfo.description,
           price: product.productInfo.price,
           category: product.productInfo.category,
-          brand: product.productInfo.brand
+          brand: product.productInfo.brand,
         })
-        .returning()
-        .where(eq(productsTable.id, product.productInfo.id));
+        .where(eq(productsTable.id, product.productInfo.id))
+        .returning();
 
       await tx
         .delete(productVariants)
@@ -32,6 +41,7 @@ export default defineEventHandler(async (event) => {
       await tx.insert(productVariants).values(
         product.variantInfo.map((v) => ({
           productId: product.productInfo.id,
+          user_id: session.user.id, // Add user_id
           size: v.size,
           color: v.color,
           stock: v.stock,

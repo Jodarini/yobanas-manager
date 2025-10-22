@@ -1,26 +1,11 @@
 <script setup lang="ts">
   import { useAuth } from '~/composables/useAuth';
 
-  const supabase = useSupabaseClient();
   const { signInAnonymous, signInWithPassword, userId, signOut, errorMessage } =
     useAuth();
 
   const email = ref('');
   const password = ref('');
-
-  // const signUp = async () => {
-  //   const { data, error } = await supabase.auth.signUp({
-  //     email: email.value,
-  //     password: password.value,
-  //   });
-  //   console.log('Full data object:', data);
-  //   console.log('User:', data.user);
-  //   console.log('Session:', data.session);
-
-  //   if (error) {
-  //     console.error('Signup error:', error);
-  //   }
-  // };
 </script>
 
 <template>
@@ -68,7 +53,9 @@
         Sign In Anonymously
       </Button>
       <Button v-else class="w-full" @click="signOut">Sign Out</Button>
-      <p v-if="errorMessage" style="color: red">{{ errorMessage }}</p>
+      <p v-if="errorMessage" class="text-destructive-foreground">
+        {{ errorMessage }}
+      </p>
     </CardContent>
   </Card>
 </template>

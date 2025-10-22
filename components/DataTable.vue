@@ -58,12 +58,14 @@
 </script>
 
 <template>
-  <Input
-    class="max-w-sm"
-    placeholder="Filtra productos..."
-    :model-value="table.getColumn('title')?.getFilterValue() as string"
-    @update:model-value="table.getColumn('title')?.setFilterValue($event)"
-  />
+  <div class="p-2">
+    <Input
+      class="max-w-sm"
+      placeholder="Buscar..."
+      :model-value="table.getColumn('title')?.getFilterValue() as string"
+      @update:model-value="table.getColumn('title')?.setFilterValue($event)"
+    />
+  </div>
   <Table class="border-0">
     <TableHeader>
       <TableRow

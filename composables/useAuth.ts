@@ -27,6 +27,7 @@ export const useAuth = () => {
     if (error) {
       console.error('Sign in error:', error.message);
       console.error('Error details:', JSON.stringify(error, null, 2));
+      errorMessage.value = error.message;
     } else {
       await navigateTo('/');
     }

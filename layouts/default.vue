@@ -24,9 +24,9 @@
         <SidebarTrigger class="-ml-1" />
 
         <Button v-if="!userId" as-child variant="outline">
-          <NuxtLink to="/login">Sign In</NuxtLink>
+          <NuxtLink to="/login">Iniciar sesión</NuxtLink>
         </Button>
-        <Button v-else variant="outline" @click="signOut">Sign Out</Button>
+        <Button v-else variant="outline" @click="signOut">Cerrar sesión</Button>
       </header>
 
       <main class="flex max-w-6xl flex-1 flex-col gap-4 overflow-auto p-4">

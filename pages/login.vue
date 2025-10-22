@@ -11,8 +11,10 @@
 <template>
   <Card class="max-w-xl">
     <CardHeader class="items-center">
-      <CardTitle>Login</CardTitle>
-      <CardDescription>Please sign in to continue.</CardDescription>
+      <CardTitle>Iniciar sesión</CardTitle>
+      <CardDescription>
+        Por favor, inicia sesión para continuar.
+      </CardDescription>
     </CardHeader>
     <CardContent class="flex flex-col items-center justify-center gap-4">
       <!-- <form class="flex w-full flex-col gap-2" @submit.prevent="signUp">
@@ -52,7 +54,7 @@
       >
         Sign In Anonymously
       </Button>
-      <Button v-else class="w-full" @click="signOut">Sign Out</Button>
+      <Button v-else class="w-full" @click="signOut">Cerrar sesión</Button>
       <p v-if="errorMessage" class="text-destructive-foreground">
         {{ errorMessage }}
       </p>

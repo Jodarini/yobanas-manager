@@ -19,7 +19,7 @@
       <h1 class="mb-6 text-2xl">Welcome!</h1>
       <p>Sign in to start creating products.</p>
       <Button as-child>
-        <NuxtLink to="/login">Sign in</NuxtLink>
+        <NuxtLink to="/login">Iniciar sesión</NuxtLink>
       </Button>
     </div>
     <template v-if="user">

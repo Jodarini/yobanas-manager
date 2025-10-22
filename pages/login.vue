@@ -55,7 +55,10 @@
         Sign In Anonymously
       </Button>
       <Button v-else class="w-full" @click="signOut">Cerrar sesión</Button>
-      <p v-if="errorMessage" class="text-destructive-foreground">
+      <p
+        v-if="errorMessage"
+        class="text-destructive dark:text-destructive-foreground"
+      >
         {{ errorMessage }}
       </p>
     </CardContent>

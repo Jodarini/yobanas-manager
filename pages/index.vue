@@ -9,6 +9,8 @@
     key: 'products',
     lazy: true,
   });
+
+  const client = useSupabaseClient();
 </script>
 
 <template>

@@ -7,6 +7,6 @@ export default defineConfig({
     prefix: 'supabase',
   },
   dbCredentials: {
-    url: process.env.NUXT_SUPABASE_URL!,
+    url: process.env.NUXT_DATABASE_URL!,
   },
 });

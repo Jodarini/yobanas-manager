@@ -16,8 +16,8 @@
 <template>
   <div>
     <div v-if="!user">
-      <h1 class="mb-6 text-2xl">Welcome!</h1>
-      <p>Sign in to start creating products.</p>
+      <h1 class="mb-6 text-2xl">Bienvenido!</h1>
+      <p>Inicia sesión para comenzar a crear productos.</p>
       <Button as-child>
         <NuxtLink to="/login">Iniciar sesión</NuxtLink>
       </Button>

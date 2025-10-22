@@ -25,6 +25,7 @@
     CommandItem,
     CommandList,
   } from '@/components/ui/command';
+  import { Spinner } from '@/components/ui/spinner';
 
   import { Badge } from '@/components/ui/badge';
 
@@ -55,7 +56,7 @@
 
   const currentVariants = ref(productData?.variantInfo);
 
-  const { handleSubmit, values, setFieldValue } = useForm({
+  const { handleSubmit, values, setFieldValue, isSubmitting } = useForm({
     validationSchema: formSchema,
     initialValues: {
       productInfo: {
@@ -123,10 +124,16 @@
     setFieldValue('variantInfo', currentVariants.value);
   };
 
+  const isDeleting = ref(false);
+
   const deleteProduct = async (index: number) => {
     try {
       // TODO: add user confirmation
-      store.deleteProduct(index);
+      isDeleting.value = true;
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+      });
+      await store.deleteProduct(index);
       toast({ title: 'Elemento eliminado' });
       navigateTo('/');
     } catch (error) {
@@ -134,6 +141,8 @@
         variant: 'destructive',
         title: 'Algo anduvo mal',
       });
+    } finally {
+      isDeleting.value = false;
     }
   };
 
@@ -552,11 +561,23 @@
         type="button"
         variant="destructive"
         class=""
+        :disabled="isDeleting"
         @click.prevent="deleteProduct(+route.params.id)"
       >
-        Eliminar producto
+        <span v-if="isDeleting" class="flex items-center">
+          <Spinner class="mr-2" />
+          Elmininando producto
+        </span>
+        <span v-else>Eliminar producto</span>
       </Button>
-      <Button type="submit" class="">Actualizar producto</Button>
+
+      <Button type="submit" class="self-end" :disabled="isSubmitting">
+        <span v-if="isSubmitting" class="flex items-center">
+          <Spinner class="mr-2" />
+          Agregando producto
+        </span>
+        <span v-else>Agregar producto</span>
+      </Button>
     </div>
   </form>
 </template>

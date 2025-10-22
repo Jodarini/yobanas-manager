@@ -29,6 +29,7 @@
     CommandItem,
     CommandList,
   } from '@/components/ui/command';
+  import { Spinner } from '@/components/ui/spinner';
   import { Button } from '@/components/ui/button';
   import { Badge } from '@/components/ui/badge';
   import { cn } from '@/lib/utils';
@@ -55,17 +56,17 @@
   const formSchema = toTypedSchema(insertProductSchema);
   type FormValues = z.infer<typeof addProductSchema>;
 
-  const { handleSubmit, values, setFieldValue, resetForm } =
+  const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
     useForm<FormValues>({
       validationSchema: formSchema,
       initialValues: {
-        // productInfo: {
-        //   title: 'test',
-        //   description: 'test',
-        //   price: 1000,
-        //   category: ['test'],
-        //   brand: 'test',
-        // },
+        productInfo: {
+          title: 'test',
+          description: 'test',
+          price: 1000,
+          category: ['test'],
+          brand: 'test',
+        },
         variantInfo: [{ size: '', stock: 0, color: '' }],
       },
     });
@@ -74,6 +75,7 @@
 
   const onSubmit = handleSubmit(
     async (values) => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const product: InsertProduct = { ...values };
       try {
         store.addProduct(product);
@@ -518,6 +520,12 @@
       </CardContent>
     </Card>
 
-    <Button type="submit" class="mt-6 self-end">Agregar producto</Button>
+    <Button type="submit" class="mt-6 self-end" :disabled="isSubmitting">
+      <span v-if="isSubmitting" class="flex items-center">
+        <Spinner class="mr-2" />
+        Agregando producto
+      </span>
+      <span v-else>Agregar producto</span>
+    </Button>
   </form>
 </template>

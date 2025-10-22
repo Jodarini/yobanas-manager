@@ -1,8 +1,15 @@
 <script setup lang="ts">
   import { useAuth } from '~/composables/useAuth';
+  import { Spinner } from '@/components/ui/spinner';
 
-  const { signInAnonymous, signInWithPassword, userId, signOut, errorMessage } =
-    useAuth();
+  const {
+    signInAnonymous,
+    signInWithPassword,
+    userId,
+    signOut,
+    errorMessage,
+    isLoading,
+  } = useAuth();
 
   const email = ref('');
   const password = ref('');
@@ -38,11 +45,15 @@
         <Input v-model="password" type="password" placeholder="Contraseña" />
         <Button
           v-if="!userId"
-          :disabled="email.length === 0"
+          :disabled="email.length === 0 || isLoading || password.length === 0"
           class="w-full"
           type="submit"
         >
-          Sign In with Email
+          <span v-if="isLoading" class="flex items-center">
+            <Spinner class="mr-2" />
+            Iniciando sesión...
+          </span>
+          <span v-else>Iniciar sesión</span>
         </Button>
       </form>
 
@@ -50,11 +61,18 @@
         v-if="!userId"
         variant="ghost"
         class="w-full"
+        :disabled="isLoading"
         @click="signInAnonymous"
       >
-        Sign In Anonymously
+        Ingresa como invitado
       </Button>
-      <Button v-else class="w-full" @click="signOut">Cerrar sesión</Button>
+      <Button v-else class="w-full" :disabled="isLoading" @click="signOut">
+        <span v-if="isLoading" class="mr-2">
+          <Spinner />
+          Cerrando sesión...
+        </span>
+        <span v-else>Cerrar sesión</span>
+      </Button>
       <p
         v-if="errorMessage"
         class="text-destructive dark:text-destructive-foreground"

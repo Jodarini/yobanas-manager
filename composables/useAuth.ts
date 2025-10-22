@@ -3,8 +3,10 @@ export const useAuth = () => {
   const { path } = useSupabaseCookieRedirect();
   const userId = ref<string | null>(null);
   const errorMessage = ref<string | null>(null);
+  const isLoading = ref(false);
 
   const initAuth = async () => {
+    isLoading.value = true;
     const {
       data: { session },
       error,
@@ -17,6 +19,7 @@ export const useAuth = () => {
     supabase.auth.onAuthStateChange((_event, session) => {
       userId.value = session?.user ?? null;
     });
+    isLoading.value = false;
   };
 
   const signInWithPassword = async (email: string, password: string) => {
@@ -34,6 +37,7 @@ export const useAuth = () => {
   };
 
   const signInAnonymous = async () => {
+    isLoading.value = true;
     const { data, error } = await supabase.auth.signInAnonymously();
     if (error) {
       errorMessage.value = error.message;
@@ -42,9 +46,11 @@ export const useAuth = () => {
       await navigateTo('/');
       return data;
     }
+    isLoading.value = false;
   };
 
   const signOut = async () => {
+    isLoading.value = true;
     const { error } = await supabase.auth.signOut();
     if (error) {
       throw error;
@@ -52,6 +58,7 @@ export const useAuth = () => {
     userId.value = null;
     await refreshNuxtData();
     await navigateTo('/');
+    isLoading.value = false;
   };
 
   return {
@@ -61,5 +68,6 @@ export const useAuth = () => {
     signInWithPassword,
     signInAnonymous,
     signOut,
+    isLoading,
   };
 };

@@ -6,8 +6,9 @@
   } from '@/components/ui/sidebar';
   import AppSidebar from '@/components/AppSidebar.vue';
   import { useAuth } from '~/composables/useAuth';
+  import { Spinner } from '@/components/ui/spinner';
 
-  const { initAuth, userId, signOut } = useAuth();
+  const { initAuth, userId, signOut, isLoading } = useAuth();
   await initAuth();
 </script>
 
@@ -26,7 +27,18 @@
         <Button v-if="!userId" as-child variant="outline">
           <NuxtLink to="/login">Iniciar sesión</NuxtLink>
         </Button>
-        <Button v-else variant="outline" @click="signOut">Cerrar sesión</Button>
+        <Button
+          v-else
+          :disabled="isLoading"
+          class="flex items-center"
+          @click="signOut"
+        >
+          <span v-if="isLoading" class="flex items-center">
+            <Spinner class="mr-2" />
+            Cerrando sesión...
+          </span>
+          <span v-else>Cerrar sesión</span>
+        </Button>
       </header>
 
       <main class="flex max-w-6xl flex-1 flex-col gap-4 overflow-auto p-4">

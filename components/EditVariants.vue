@@ -535,7 +535,9 @@
                   variant="ghost"
                   @click.prevent="removeVariant(index)"
                 >
-                  <Trash2Icon class="text-destructive-foreground" />
+                  <Trash2Icon
+                    class="text-destructive dark:text-destructive-foreground"
+                  />
                 </Button>
               </ItemActions>
             </Item>

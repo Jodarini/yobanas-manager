@@ -36,6 +36,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   runtimeConfig: {
     supabaseUrl: '',
+    supabaseKey: '',
   },
   css: ['~/assets/css/tailwind.css'],
   vite: {

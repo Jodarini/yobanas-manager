@@ -19,6 +19,15 @@ export const useAuth = () => {
     });
   };
 
+  const signInWithOtp = async (email: string, password: string) => {
+    console.log('sign in with:', email);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+    if (error) console.log(error);
+  };
+
   const signInAnonymous = async () => {
     const { data, error } = await supabase.auth.signInAnonymously();
     if (error) {
@@ -43,6 +52,7 @@ export const useAuth = () => {
     initAuth,
     userId,
     errorMessage,
+    signInWithOtp,
     signInAnonymous,
     signOut,
   };

@@ -23,6 +23,7 @@ export const useAuth = () => {
   };
 
   const signInWithPassword = async (email: string, password: string) => {
+    isLoading.value = true;
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
@@ -34,6 +35,8 @@ export const useAuth = () => {
     } else {
       await navigateTo('/');
     }
+
+    isLoading.value = false;
   };
 
   const signInAnonymous = async () => {

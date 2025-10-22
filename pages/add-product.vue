@@ -60,13 +60,13 @@
     useForm<FormValues>({
       validationSchema: formSchema,
       initialValues: {
-        productInfo: {
-          title: 'test',
-          description: 'test',
-          price: 1000,
-          category: ['test'],
-          brand: 'test',
-        },
+        // productInfo: {
+        //   title: 'test',
+        //   description: 'test',
+        //   price: 1000,
+        //   category: ['test'],
+        //   brand: 'test',
+        // },
         variantInfo: [{ size: '', stock: 0, color: '' }],
       },
     });

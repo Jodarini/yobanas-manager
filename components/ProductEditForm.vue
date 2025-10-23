@@ -95,7 +95,6 @@
         title: 'Error actualizando el producto',
         description: `La validación falló ${JSON.stringify(errors)}`,
       });
-      // This runs when validation FAILS
       console.error('❌ Validation failed!');
       console.error('Errors:', errors);
       console.error('Current values:', values);

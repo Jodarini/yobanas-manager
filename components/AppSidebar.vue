@@ -20,34 +20,8 @@
       url: '/',
       icon: Package,
     },
-    // {
-    //   title: 'Productos',
-    //   url: '/dashboard/products',
-    //   icon: Package,
-    // },
-    // {
-    //   title: 'Pedidos',
-    //   url: '/dashboard/orders',
-    //   icon: ShoppingCart,
-    // },
-    // {
-    //   title: 'Clientes',
-    //   url: '/dashboard/customers',
-    //   icon: Users,
-    // },
-    // {
-    //   title: 'Reportes',
-    //   url: '/dashboard/reports',
-    //   icon: BarChart,
-    // },
-    // {
-    //   title: 'Configuración',
-    //   url: '/dashboard/settings',
-    //   icon: Settings,
-    // },
   ];
 
-  // Check if current route is active
   const isActive = (url: string) => {
     return route.path === url || route.path.startsWith(url + '/');
   };

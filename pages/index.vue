@@ -19,14 +19,14 @@
 
 <template>
   <div>
-    <div v-if="!user">
+    <template v-if="!user">
       <h1 class="mb-6 text-2xl">Bienvenido!</h1>
       <p>Inicia sesión para comenzar a crear productos.</p>
       <Button as-child>
         <NuxtLink to="/login">Iniciar sesión</NuxtLink>
       </Button>
-    </div>
-    <template v-if="user">
+    </template>
+    <template v-else-if="user">
       <div class="flex justify-between">
         <h1 class="mb-6 text-2xl">Sus productos</h1>
         <Button as-child>
@@ -47,13 +47,13 @@
       </div>
       <p v-else-if="error">{{ error }}</p>
 
-      <div v-else-if="data && data.length > 0">
+      <template v-else-if="data && data.length > 0">
         <Card>
           <CardContent class="p-0 pt-0">
             <DataTable :columns="columns" :data="data" />
           </CardContent>
         </Card>
-      </div>
+      </template>
       <div v-else>¡Agrega nuevos items a tu inventario!</div>
     </template>
   </div>

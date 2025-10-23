@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
       await tx.insert(productVariants).values(
         product.variants.map((v) => ({
           productId: product.id,
-          user_id: session.user.id, // Add user_id
+          user_id: session.user.id,
           size: v.size,
           color: v.color,
           stock: v.stock,

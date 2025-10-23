@@ -6,26 +6,28 @@ export const useProductsStore = defineStore('products', () => {
   const filterCategory = ref('Todos');
 
   async function addProduct(prod: InsertProduct) {
-
     const result = await $fetch(`/api/product/add`, {
       method: 'POST',
-      body: prod
+      body: prod,
     });
 
     if (result.product) {
       const p = {
-        title: prod.productInfo.title,
-        brand: prod.productInfo.brand,
-        price: prod.productInfo.price,
-        category: prod.productInfo.category,
-        thumbnail: prod.productInfo.thumbnail,
+        title: prod.title,
+        brand: prod.brand,
+        price: prod.price,
+        category: prod.category,
+        thumbnail: prod.thumbnail,
       };
     }
-    return result
+    return result;
   }
 
   async function deleteProduct(productId: number) {
-    return await $fetch(`/api/product/${productId}`, { method: 'delete', body: productId })
+    return await $fetch(`/api/product/${productId}`, {
+      method: 'delete',
+      body: productId,
+    });
   }
 
   const filteredProducts = computed(() => {
@@ -34,10 +36,9 @@ export const useProductsStore = defineStore('products', () => {
       filterCategory.value === 'Todos'
         ? prod.title.toLowerCase().includes(filterText.value.toLowerCase())
         : prod.title.toLowerCase().includes(filterText.value.toLowerCase()) &&
-        prod.category?.includes(filterCategory.value)
+          prod.category?.includes(filterCategory.value)
     );
   });
-
 
   return {
     addProduct,

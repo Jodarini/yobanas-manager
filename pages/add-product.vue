@@ -1,10 +1,5 @@
 <script setup lang="ts">
-  import type { z } from 'zod';
-  import {
-    addProductSchema,
-    insertProductSchema,
-    type InsertProduct,
-  } from '~/db/schema';
+  import { insertProductSchema, type InsertProduct } from '~/db/schema';
   import { useToast } from '@/components/ui/toast/use-toast';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
@@ -38,13 +33,10 @@
 
   const { toast } = useToast();
 
-  const { data, pending, error, refresh, clear } = await useFetch(
-    '/api/products',
-    {
-      key: 'products',
-      lazy: true,
-    }
-  );
+  const { data } = await useFetch('/api/products', {
+    key: 'products',
+    lazy: true,
+  });
 
   const categoriesList = ref<string[]>([
     ...new Set(data.value?.flatMap((product) => product.category)),
@@ -54,24 +46,19 @@
   ]);
 
   const formSchema = toTypedSchema(insertProductSchema);
-  type FormValues = z.infer<typeof addProductSchema>;
 
   const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
-    useForm<FormValues>({
+    useForm({
       validationSchema: formSchema,
       initialValues: {
-        // productInfo: {
         //   title: 'test',
         //   description: 'test',
         //   price: 1000,
         //   category: ['test'],
         //   brand: 'test',
-        // },
-        variantInfo: [{ size: '', stock: 0, color: '' }],
+        variants: [{ size: '', stock: 0, color: '' }],
       },
     });
-
-  const newProduct = ref(values);
 
   const onSubmit = handleSubmit(
     async (values) => {
@@ -93,21 +80,20 @@
   );
 
   const addVariant = () => {
-    const currentVariants = values.variantInfo || [];
+    const currentVariants = values.variants || [];
     const newVariant = {
       id: Math.floor(Math.random() * 1000000),
       size: '',
       color: '',
       stock: 0,
     };
-    setFieldValue('variantInfo', [...currentVariants, newVariant]);
+    setFieldValue('variants', [...currentVariants, newVariant]);
   };
 
   const removeVariant = (index: number) => {
-    const currentVariants = values.variantInfo || [];
-    const newVariants = [...currentVariants];
-    newVariants.splice(index, 1);
-    setFieldValue('variantInfo', newVariants);
+    const currentVariants = [...(values.variants || [])];
+    currentVariants.splice(index, 1);
+    setFieldValue('variants', currentVariants);
   };
 
   const brandOpen = ref(false);
@@ -132,36 +118,33 @@
   });
 
   function handleCategoryToggle(category: string) {
-    const currentValue = values.productInfo?.category || [];
+    const currentValue = values.category || [];
     const isSelected = currentValue.includes(category);
 
     const next = isSelected
       ? currentValue.filter((v) => v !== category)
       : [...currentValue, category];
 
-    setFieldValue('productInfo.category', next);
+    setFieldValue('category', next);
   }
 
   function handleCategoryRemove(category: string) {
-    const currentValue = values.productInfo?.category || [];
+    const currentValue = values.category || [];
     setFieldValue(
-      'productInfo.category',
+      'category',
       currentValue.filter((v) => v !== category)
     );
   }
 
   const brandSearchTerm2 = ref('');
   const createBrand = () => {
-    setFieldValue('productInfo.brand', brandSearchTerm2.value);
+    setFieldValue('brand', brandSearchTerm2.value);
     brandOpen.value = false;
   };
 
   const createCategory = () => {
-    const currentValue = values.productInfo?.category || [];
-    setFieldValue('productInfo.category', [
-      ...currentValue,
-      categorySearchTerm.value,
-    ]);
+    const currentValue = values.category || [];
+    setFieldValue('category', [...currentValue, categorySearchTerm.value]);
     categorySearchTerm.value = '';
   };
 </script>
@@ -176,11 +159,7 @@
 
       <CardContent>
         <div class="mb-4 flex flex-col gap-4 md:flex-row">
-          <FormField
-            v-slot="{ componentField }"
-            class="flex-1"
-            name="productInfo.title"
-          >
+          <FormField v-slot="{ componentField }" class="flex-1" name="title">
             <FormItem class="w-full">
               <FormLabel>Nombre</FormLabel>
               <FormControl>
@@ -194,7 +173,7 @@
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ value }" class="flex-1" name="productInfo.price">
+          <FormField v-slot="{ value }" class="flex-1" name="price">
             <FormItem class="w-full">
               <FormLabel>Precio</FormLabel>
               <NumberField
@@ -211,9 +190,9 @@
                 @update:model-value="
                   (v) => {
                     if (v) {
-                      setFieldValue('productInfo.price', v);
+                      setFieldValue('price', v);
                     } else {
-                      setFieldValue('productInfo.price', undefined);
+                      setFieldValue('price', undefined);
                     }
                   }
                 "
@@ -240,7 +219,7 @@
         </div>
 
         <div class="grid w-full items-center gap-4">
-          <FormField v-slot="{ componentField }" name="productInfo.brand">
+          <FormField v-slot="{ componentField }" name="brand">
             <FormItem class="flex flex-col">
               <FormLabel>Marca</FormLabel>
               <FormControl>
@@ -301,7 +280,7 @@
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ value }" name="productInfo.category">
+          <FormField v-slot="{ value }" name="category">
             <FormItem class="flex flex-col">
               <FormLabel>Categorías</FormLabel>
               <Popover v-model:open="categoryOpen">
@@ -403,7 +382,7 @@
           <FormField
             v-slot="{ componentField }"
             class="w-full"
-            name="productInfo.description"
+            name="description"
           >
             <FormItem class="w-full">
               <FormLabel>Descripción</FormLabel>
@@ -441,15 +420,15 @@
       <CardContent>
         <ItemGroup>
           <template
-            v-for="(variant, index) in newProduct.variantInfo"
-            :key="variant.id"
+            v-for="(variant, index) in values.variants"
+            :key="`new-${index}`"
           >
             <Item class="flex flex-col p-0 py-4 md:flex-row">
               <ItemContent class="flex gap-4 md:flex-row">
                 <FormField
                   v-slot="{ componentField }"
                   class="w-full"
-                  :name="`variantInfo[${index}].size`"
+                  :name="`variants[${index}].size`"
                 >
                   <FormItem class="w-full">
                     <FormLabel>Tamaño</FormLabel>
@@ -467,7 +446,7 @@
                 <FormField
                   v-slot="{ componentField }"
                   class="w-full"
-                  :name="`variantInfo[${index}].color`"
+                  :name="`variants[${index}].color`"
                 >
                   <FormItem class="w-full">
                     <FormLabel>Color</FormLabel>
@@ -485,7 +464,7 @@
                 <FormField
                   v-slot="{ componentField }"
                   class="w-full"
-                  :name="`variantInfo[${index}].stock`"
+                  :name="`variants[${index}].stock`"
                 >
                   <FormItem class="w-full">
                     <FormLabel>Stock</FormLabel>
@@ -513,7 +492,7 @@
                 </Button>
               </ItemContent>
             </Item>
-            <ItemSeparator v-if="index !== newProduct.variantInfo.length - 1" />
+            <ItemSeparator v-if="index !== values.variants!.length - 1" />
           </template>
         </ItemGroup>
       </CardContent>

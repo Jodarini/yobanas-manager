@@ -1,20 +1,14 @@
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { serverSupabaseClient } from '#supabase/server';
 import { eq } from 'drizzle-orm';
-import type { ProductWithVariant } from '~/db/schema';
+import type { ProductWithVariants } from '~/db/schema';
 import { productsTable, productVariants } from '~/db/schema';
 import { createError, defineEventHandler, getRouterParam } from 'h3';
-import { useDB } from '~/server/utils/db';
-
-function parseId(param: string | undefined): number | null {
-  const id = Number(param);
-  return Number.isFinite(id) ? id : null;
-}
 
 async function getProductWithVariants(
   productId: number,
   db: PostgresJsDatabase
-): Promise<ProductWithVariant | null> {
-
+): Promise<ProductWithVariants | null> {
   const productRow = await db
     .select()
     .from(productsTable)
@@ -22,38 +16,31 @@ async function getProductWithVariants(
     .limit(1);
   if (!productRow.length) return null;
 
-  // Get variants
   const variants = await db
     .select()
     .from(productVariants)
     .where(eq(productVariants.productId, productId));
 
   return {
-    productInfo: productRow[0],
-    variantInfo: variants,
+    ...productRow[0],
+    variants,
   };
 }
 
-export default defineEventHandler(async (event) => {
-  const db = useDB()
-  const param = getRouterParam(event, 'id');
-  const productId = parseId(param);
+export default defineEventHandler(
+  async (event): Promise<ProductWithVariants | null> => {
+    const id = getRouterParam(event, 'id');
+    const supabase = await serverSupabaseClient(event);
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-  if (!productId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Invalid product id",
+    if (!session) {
+      throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
+    }
+
+    return await useAuthDB(session, async (db) => {
+      return getProductWithVariants(Number(id), db);
     });
   }
-
-  const data = await getProductWithVariants(productId, db);
-
-  if (!data) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "Product not found",
-    });
-  }
-
-  return data;
-});
+);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { editProductSchema2, type ProductWithVariant } from '~/db/schema';
+  import { updateProductSchema, type ProductWithVariants } from '~/db/schema';
   import { useToast } from '@/components/ui/toast/use-toast';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
@@ -30,7 +30,7 @@
   import { Badge } from '@/components/ui/badge';
 
   const props = defineProps<{
-    product: ProductWithVariant;
+    product: ProductWithVariants;
   }>();
 
   const productData = props.product;
@@ -52,22 +52,18 @@
     return [...new Set(data.value.map((product) => product.brand))].sort();
   });
 
-  const formSchema = toTypedSchema(editProductSchema2);
-
-  const currentVariants = ref(productData?.variantInfo);
+  const formSchema = toTypedSchema(updateProductSchema);
 
   const { handleSubmit, values, setFieldValue, isSubmitting } = useForm({
     validationSchema: formSchema,
     initialValues: {
-      productInfo: {
-        id: +route.params.id,
-        title: productData.productInfo?.title || '',
-        description: productData.productInfo?.description || '',
-        price: productData.productInfo?.price || 0,
-        brand: productData.productInfo?.brand || '',
-        category: productData.productInfo?.category || [],
-      },
-      variantInfo: productData.variantInfo || [],
+      id: +route.params.id,
+      title: productData.title,
+      description: productData.description || '',
+      price: productData.price,
+      brand: productData.brand,
+      category: productData.category,
+      variants: productData.variants,
     },
   });
 
@@ -107,21 +103,19 @@
   );
 
   const addVariant = () => {
-    currentVariants.value = [...values.variantInfo];
+    const currentVariants = values.variants || [];
     const newVariant = {
-      id: Math.floor(Math.random() * 1000000),
       size: '',
       color: '',
       stock: 0,
     };
-    currentVariants.value.unshift(newVariant);
-    setFieldValue('variantInfo', currentVariants.value);
+    setFieldValue('variants', [newVariant, ...currentVariants]);
   };
 
   const removeVariant = (index: number) => {
-    currentVariants.value = [...values.variantInfo];
-    currentVariants.value.splice(index, 1);
-    setFieldValue('variantInfo', currentVariants.value);
+    const currentVariants = [...(values.variants || [])];
+    currentVariants.splice(index, 1);
+    setFieldValue('variants', currentVariants);
   };
 
   const isDeleting = ref(false);
@@ -134,6 +128,7 @@
       toast({ title: 'Elemento eliminado' });
       navigateTo('/');
     } catch (error) {
+      console.error(error);
       toast({
         variant: 'destructive',
         title: 'Algo anduvo mal',
@@ -164,36 +159,25 @@
   });
 
   function handleCategoryToggle(category: string) {
-    const currentValue = values.productInfo?.category || [];
+    const currentValue = values.category || [];
     const isSelected = currentValue.includes(category);
 
     const next = isSelected
       ? currentValue.filter((v) => v !== category)
       : [...currentValue, category];
 
-    setFieldValue('productInfo.category', next);
-  }
-
-  function handleCategoryRemove(category: string) {
-    const currentValue = values.productInfo?.category || [];
-    setFieldValue(
-      'productInfo.category',
-      currentValue.filter((v) => v !== category)
-    );
+    setFieldValue('category', next);
   }
 
   const brandSearchTerm2 = ref('');
   const createBrand = () => {
-    setFieldValue('productInfo.brand', brandSearchTerm2.value);
+    setFieldValue('brand', brandSearchTerm2.value);
     brandOpen.value = false;
   };
 
   const createCategory = () => {
-    const currentValue = values.productInfo?.category || [];
-    setFieldValue('productInfo.category', [
-      ...currentValue,
-      categorySearchTerm.value,
-    ]);
+    const currentValue = values.category || [];
+    setFieldValue('category', [...currentValue, categorySearchTerm.value]);
     categorySearchTerm.value = '';
   };
 </script>
@@ -208,11 +192,7 @@
 
       <CardContent>
         <div class="mb-4 flex flex-col gap-4 md:flex-row">
-          <FormField
-            v-slot="{ componentField }"
-            class="flex-1"
-            name="productInfo.title"
-          >
+          <FormField v-slot="{ componentField }" class="flex-1" name="title">
             <FormItem class="w-full">
               <FormLabel>Nombre</FormLabel>
               <FormControl>
@@ -226,7 +206,7 @@
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ value }" class="flex-1" name="productInfo.price">
+          <FormField v-slot="{ value }" class="flex-1" name="price">
             <FormItem class="w-full">
               <FormLabel>Precio</FormLabel>
               <NumberField
@@ -245,9 +225,9 @@
                 @update:model-value="
                   (v) => {
                     if (v) {
-                      setFieldValue('productInfo.price', v);
+                      setFieldValue('price', v);
                     } else {
-                      setFieldValue('productInfo.price', undefined);
+                      setFieldValue('price', undefined);
                     }
                   }
                 "
@@ -260,21 +240,14 @@
                   <NumberFieldIncrement />
                 </NumberFieldContent>
               </NumberField>
-              <!-- <FormControl>
-                  <Input
-                    type="number"
-                    step="1000"
-                    placeholder="Precio"
-                    v-bind="componentField"
-                  />
-                </FormControl> -->
+
               <FormMessage />
             </FormItem>
           </FormField>
         </div>
 
         <div class="grid w-full items-center gap-4">
-          <FormField v-slot="{ componentField }" name="productInfo.brand">
+          <FormField v-slot="{ componentField }" name="brand">
             <FormItem class="flex flex-col">
               <FormLabel>Marca</FormLabel>
               <FormControl>
@@ -337,7 +310,7 @@
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ value }" name="productInfo.category">
+          <FormField v-slot="{ value }" name="category">
             <FormItem class="flex flex-col">
               <FormLabel>Categorías</FormLabel>
               <Popover v-model:open="categoryOpen">
@@ -436,7 +409,7 @@
           <FormField
             v-slot="{ componentField }"
             class="w-full"
-            name="productInfo.description"
+            name="description"
           >
             <FormItem class="w-full">
               <FormLabel>Descripción</FormLabel>
@@ -474,15 +447,15 @@
       <CardContent>
         <ItemGroup>
           <template
-            v-for="(variant, index) in currentVariants"
-            :key="variant.id"
+            v-for="(variant, index) in values.variants"
+            :key="variant.id || `new-${index}`"
           >
             <Item class="flex flex-col p-0 py-4 md:flex-row">
               <ItemContent class="flex gap-4 md:flex-row">
                 <FormField
                   v-slot="{ componentField }"
                   class="w-full"
-                  :name="`variantInfo[${index}].size`"
+                  :name="`variants[${index}].size`"
                 >
                   <FormItem class="w-full">
                     <FormLabel>Tamaño</FormLabel>
@@ -500,7 +473,7 @@
                 <FormField
                   v-slot="{ componentField }"
                   class="w-full"
-                  :name="`variantInfo[${index}].color`"
+                  :name="`variants[${index}].color`"
                 >
                   <FormItem class="w-full">
                     <FormLabel>Color</FormLabel>
@@ -518,7 +491,7 @@
                 <FormField
                   v-slot="{ componentField }"
                   class="w-full"
-                  :name="`variantInfo[${index}].stock`"
+                  :name="`variants[${index}].stock`"
                 >
                   <FormItem class="w-full">
                     <FormLabel>Stock</FormLabel>
@@ -547,7 +520,7 @@
                 </Button>
               </ItemActions>
             </Item>
-            <ItemSeparator v-if="index !== currentVariants.length - 1" />
+            <ItemSeparator v-if="index !== values.variants!.length - 1" />
           </template>
         </ItemGroup>
       </CardContent>

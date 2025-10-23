@@ -1,9 +1,9 @@
 import { serverSupabaseClient } from '#supabase/server';
 import { eq } from 'drizzle-orm';
 import {
-  editProductSchema2,
   productsTable,
   productVariants,
+  updateProductSchema,
 } from '~/db/schema';
 import { useAuthDB } from '~/server/utils/db';
 
@@ -19,28 +19,28 @@ export default defineEventHandler(async (event) => {
 
   try {
     const body = await readBody(event);
-    const product = editProductSchema2.parse(body);
+    const product = updateProductSchema.parse(body);
 
     return await useAuthDB(session, async (tx) => {
       const result = await tx
         .update(productsTable)
         .set({
-          title: product.productInfo.title,
-          description: product.productInfo.description,
-          price: product.productInfo.price,
-          category: product.productInfo.category,
-          brand: product.productInfo.brand,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          category: product.category,
+          brand: product.brand,
         })
-        .where(eq(productsTable.id, product.productInfo.id))
+        .where(eq(productsTable.id, product.id))
         .returning();
 
       await tx
         .delete(productVariants)
-        .where(eq(productVariants.productId, product.productInfo.id));
+        .where(eq(productVariants.productId, product.id));
 
       await tx.insert(productVariants).values(
-        product.variantInfo.map((v) => ({
-          productId: product.productInfo.id,
+        product.variants.map((v) => ({
+          productId: product.id,
           user_id: session.user.id, // Add user_id
           size: v.size,
           color: v.color,

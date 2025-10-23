@@ -7,7 +7,6 @@ import { useAuthDB } from '~/server/utils/db';
 import { serverSupabaseClient } from '#supabase/server';
 
 export default defineEventHandler(async (event) => {
-  // Get Supabase client from the server utils
   const supabase = await serverSupabaseClient(event);
   const {
     data: { session },
@@ -22,9 +21,6 @@ export default defineEventHandler(async (event) => {
 
   const body = await readBody(event);
   const product = insertProductSchema.parse(body);
-  product.productInfo.category.forEach((category) => {
-    console.log(category);
-  });
 
   try {
     return await useAuthDB(session, async (tx) => {
@@ -32,18 +28,18 @@ export default defineEventHandler(async (event) => {
         .insert(productsTable)
         .values({
           user_id: session.user.id,
-          title: product.productInfo.title,
-          description: product.productInfo.description,
-          price: product.productInfo.price,
-          brand: product.productInfo.brand,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          brand: product.brand,
           thumbnail:
-            product.productInfo.thumbnail ||
+            product.thumbnail ||
             'https://cdn.dummyjson.com/products/VERYPOGGERSs/mens-shoes/Nike%20Air%20Jordan%201%20Red%20And%20Black/1.png',
-          category: product.productInfo.category || 'NONE',
+          category: product.category || 'NONE',
         })
         .returning();
 
-      for (const variant of product.variantInfo) {
+      for (const variant of product.variants) {
         await tx.insert(productVariants).values({
           productId: queryResult[0].id,
           user_id: session.user.id,

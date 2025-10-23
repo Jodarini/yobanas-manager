@@ -24,19 +24,6 @@
       </CardDescription>
     </CardHeader>
     <CardContent class="flex flex-col items-center justify-center gap-4">
-      <!-- <form class="flex w-full flex-col gap-2" @submit.prevent="signUp">
-        <Input v-model="email" placeholder="Email" />
-        <Input v-model="password" type="password" placeholder="Contraseña" />
-        <Button
-          v-if="!userId"
-          :disabled="email.length === 0"
-          class="w-full"
-          @click="signUp"
-        >
-          Sign Up with Email
-        </Button>
-      </form> -->
-
       <form
         class="flex w-full flex-col gap-2"
         @submit.prevent="signInWithPassword(email, password)"

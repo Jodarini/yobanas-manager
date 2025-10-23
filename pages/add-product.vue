@@ -106,7 +106,6 @@
     );
   });
 
-  // Category Management - Multi Select with Create
   const categoryOpen = ref(false);
   const categorySearchTerm = ref('');
 
@@ -151,7 +150,6 @@
 
 <template>
   <form class="flex w-full flex-col gap-4" @submit.prevent="onSubmit">
-    <!-- Product Info Fields -->
     <Card>
       <CardHeader>
         <CardTitle>Agregar producto</CardTitle>
@@ -205,14 +203,7 @@
                   <NumberFieldIncrement />
                 </NumberFieldContent>
               </NumberField>
-              <!-- <FormControl>
-                <Input
-                  type="number"
-                  step="1000"
-                  placeholder="Precio"
-                  v-bind="componentField"
-                />
-              </FormControl> -->
+
               <FormMessage />
             </FormItem>
           </FormField>

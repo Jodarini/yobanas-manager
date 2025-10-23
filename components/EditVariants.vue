@@ -506,8 +506,7 @@
                     <FormMessage />
                   </FormItem>
                 </FormField>
-              </ItemContent>
-              <ItemActions>
+
                 <Button
                   type="button"
                   class="w-fit md:self-end"
@@ -518,7 +517,7 @@
                     class="text-destructive dark:text-destructive-foreground"
                   />
                 </Button>
-              </ItemActions>
+              </ItemContent>
             </Item>
             <ItemSeparator v-if="index !== values.variants!.length - 1" />
           </template>

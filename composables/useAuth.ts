@@ -1,6 +1,5 @@
 export const useAuth = () => {
   const supabase = useSupabaseClient();
-  const { path } = useSupabaseCookieRedirect();
   const userId = ref<string | null>(null);
   const errorMessage = ref<string | null>(null);
   const isLoading = ref(false);

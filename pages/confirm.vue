@@ -5,7 +5,6 @@
     user,
     () => {
       if (user.value) {
-        // Redirect to protected page
         return navigateTo('/');
       }
     },

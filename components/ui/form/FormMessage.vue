@@ -11,6 +11,6 @@
     :id="formMessageId"
     as="p"
     :name="toValue(name)"
-    class="text-destructive-foreground text-sm font-medium"
+    class="text-destructive dark:text-destructive-foreground text-sm font-medium"
   />
 </template>

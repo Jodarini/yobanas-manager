@@ -1,3 +1,11 @@
+export type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object
+    ? T[P] extends Array<infer U>
+      ? Array<DeepPartial<U>>
+      : DeepPartial<T[P]>
+    : T[P];
+};
+
 export interface ProductsResponse {
   products: Product[];
   total: number;

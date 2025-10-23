@@ -23,22 +23,37 @@
   } from '@/components/ui/command';
   import { Spinner } from '@/components/ui/spinner';
   import { Badge } from '@/components/ui/badge';
-  import type { InsertProduct, UpdateProduct } from '~/db/schema';
+  import type { InsertProduct } from '~/db/schema';
+  import { useForm } from 'vee-validate';
+  import type { ZodSchema } from 'zod';
+  import { useToast } from './ui/toast';
 
   const props = defineProps<{
-    onSubmit: (e?: Event) => Promise<Promise<void> | undefined>;
-    setFieldValue: (field: string, value: any) => void;
     brands: string[];
     categories: string[];
-    values: UpdateProduct | InsertProduct;
+    initialValues?: InsertProduct;
     isDeleting?: boolean;
-    isSubmitting: boolean;
-    deleteProduct: () => Promise<void>;
+    validationSchema: ZodSchema;
+    variant: 'ADD' | 'EDIT';
   }>();
 
   const emit = defineEmits<{
     delete: [];
+    submit: [values: any];
   }>();
+
+  const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
+    useForm({
+      validationSchema: props.validationSchema,
+      initialValues: props.initialValues || {
+        title: 'test',
+        description: 'test',
+        price: 1000,
+        category: ['test'],
+        brand: 'test',
+        variants: [{ size: '', stock: 0, color: '' }],
+      },
+    });
 
   const brandOpen = ref(false);
   const brandSearchTerm2 = ref('');
@@ -62,45 +77,58 @@
   });
 
   const createBrand = () => {
-    props.setFieldValue('brand', brandSearchTerm2.value);
+    setFieldValue('brand', brandSearchTerm2.value);
     brandOpen.value = false;
   };
 
   const createCategory = () => {
-    const currentValue = props.values.category || [];
-    props.setFieldValue('category', [
-      ...currentValue,
-      categorySearchTerm.value,
-    ]);
+    const currentValue = values.category || [];
+    setFieldValue('category', [...currentValue, categorySearchTerm.value]);
     categorySearchTerm.value = '';
   };
 
   function handleCategoryToggle(category: string) {
-    const currentValue = props.values.category || [];
+    const currentValue = values.category || [];
     const isSelected = currentValue.includes(category);
 
     const next = isSelected
       ? currentValue.filter((v) => v !== category)
       : [...currentValue, category];
 
-    props.setFieldValue('category', next);
+    setFieldValue('category', next);
   }
 
   const addVariant = () => {
-    const currentVariants = props.values.variants || [];
+    const currentVariants = values.variants || [];
     const newVariant = {
       size: '',
       color: '',
       stock: 0,
     };
-    props.setFieldValue('variants', [newVariant, ...currentVariants]);
+    setFieldValue('variants', [newVariant, ...currentVariants]);
   };
 
   const removeVariant = (index: number) => {
-    const currentVariants = [...(props.values.variants || [])];
+    const currentVariants = [...(values.variants || [])];
     currentVariants.splice(index, 1);
-    props.setFieldValue('variants', currentVariants);
+    setFieldValue('variants', currentVariants);
   };
+
+  const { toast } = useToast();
+
+  const onSubmit = handleSubmit(
+    async (values) => {
+      emit('submit', values);
+    },
+    ({ errors }) => {
+      toast({
+        variant: 'destructive',
+        title: 'Error en el formulario',
+        description: 'Verifique los campos marcados en rojo',
+      });
+      console.error(errors);
+    }
+  );
 </script>
 
 <template>
@@ -368,8 +396,8 @@
       <CardContent>
         <ItemGroup>
           <template
-            v-for="(variant, index) in values.variants"
-            :key="variant.id || `new-${index}`"
+            v-for="(v, index) in values.variants"
+            :key="v.id || `new-${index}`"
           >
             <Item class="flex flex-col p-0 py-4 md:flex-row">
               <ItemContent class="flex gap-4 md:flex-row">
@@ -448,6 +476,7 @@
 
     <div class="flex max-h-fit justify-end gap-4">
       <Button
+        v-if="props.variant === 'EDIT'"
         type="button"
         variant="destructive"
         :disabled="isDeleting"
@@ -463,9 +492,17 @@
       <Button type="submit" class="self-end" :disabled="isSubmitting">
         <span v-if="isSubmitting" class="flex items-center">
           <Spinner class="mr-2" />
-          Actualizando producto...
+          {{
+            props.variant === 'EDIT'
+              ? 'Actualizando producto...'
+              : 'Creando producto...'
+          }}
         </span>
-        <span v-else>Actualizar producto</span>
+        <span v-else>
+          {{
+            props.variant === 'EDIT' ? 'Actualizar producto' : 'Crear producto'
+          }}
+        </span>
       </Button>
     </div>
   </form>

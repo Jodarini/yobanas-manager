@@ -62,6 +62,6 @@
   </div>
 
   <div v-else-if="productData" class="flex w-full flex-col gap-6 md:flex-row">
-    <EditVariants :product="productData" />
+    <ProductEditForm :product="productData" />
   </div>
 </template>

@@ -8,9 +8,29 @@ export default defineEventHandler(async (event) => {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (session) {
-    return await useAuthDB(session, (tx) => tx.select().from(productsTable));
+  if (!session) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized',
+    });
   }
 
-  return [];
+  try {
+    const products = await useAuthDB(session, (tx) =>
+      tx.select().from(productsTable)
+    );
+    if (!products) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Productos no encontrados',
+      });
+    }
+    return products;
+  } catch (error) {
+    console.error(error);
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Error interno del servidor',
+    });
+  }
 });

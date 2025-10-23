@@ -1,16 +1,20 @@
 <script setup lang="ts">
   import { columns } from '@/components/columns';
+  import { useToast } from '@/components/ui/toast/use-toast';
 
-  const {
-    data: filteredProducts,
-    status: productsStatus,
-    error: productsError,
-  } = await useFetch('/api/products', {
+  const { toast } = useToast();
+  const user = useSupabaseUser();
+
+  const { data, status, error } = await useFetch('/api/products', {
     key: 'products',
-    lazy: true,
   });
 
-  const user = useSupabaseUser();
+  if (error.value) {
+    toast({
+      variant: 'destructive',
+      title: `${error.value.message}`,
+    });
+  }
 </script>
 
 <template>
@@ -31,7 +35,7 @@
       </div>
 
       <div
-        v-if="productsStatus === 'pending'"
+        v-if="status === 'pending'"
         class="flex min-h-[400px] items-center justify-center"
       >
         <div class="flex flex-col items-center gap-4">
@@ -41,12 +45,12 @@
           <p class="text-gray-600">Cargando producto...</p>
         </div>
       </div>
-      <p v-else-if="productsError">{{ productsError }}</p>
+      <p v-else-if="error">{{ error }}</p>
 
-      <div v-else-if="filteredProducts && filteredProducts.length > 0">
+      <div v-else-if="data && data.length > 0">
         <Card>
           <CardContent class="p-0 pt-0">
-            <DataTable :columns="columns" :data="filteredProducts" />
+            <DataTable :columns="columns" :data="data" />
           </CardContent>
         </Card>
       </div>

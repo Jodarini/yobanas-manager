@@ -24,9 +24,9 @@
       </CardDescription>
     </CardHeader>
     <CardContent class="flex flex-col items-center justify-center gap-4">
-      <form
+      <Form
         class="flex w-full flex-col gap-2"
-        @submit.prevent="signInWithPassword(email, password)"
+        @submit="signInWithPassword(email, password)"
       >
         <Input v-model="email" placeholder="Email" />
         <Input v-model="password" type="password" placeholder="Contraseña" />
@@ -42,7 +42,7 @@
           </span>
           <span v-else>Iniciar sesión</span>
         </Button>
-      </form>
+      </Form>
 
       <Button
         v-if="!userId"

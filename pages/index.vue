@@ -5,14 +5,21 @@
   const { toast } = useToast();
   const user = useSupabaseUser();
 
-  const { data, status, error } = await useFetch('/api/products', {
+  const { data, status, error, execute } = await useFetch('/api/products', {
     key: 'products',
+    immediate: false,
+  });
+
+  watch(user, async (newUser) => {
+    if (newUser) {
+      await execute();
+    }
   });
 
   if (error.value) {
     toast({
       variant: 'destructive',
-      title: `${error.value.message}`,
+      title: error.value.message,
     });
   }
 </script>

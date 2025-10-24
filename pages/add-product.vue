@@ -2,6 +2,7 @@
   import { insertProductSchema, type InsertProduct } from '~/db/schema';
   import { useToast } from '@/components/ui/toast/use-toast';
   import { toTypedSchema } from '@vee-validate/zod';
+  import type z from 'zod';
 
   const store = useProductsStore();
 
@@ -38,7 +39,7 @@
     :brands
     :categories
     :form-schema
-    :validation-schema="formSchema"
+    :validation-schema="insertProductSchema"
     @submit="handleSubmit"
   />
 </template>

@@ -23,28 +23,34 @@
   } from '@/components/ui/command';
   import { Spinner } from '@/components/ui/spinner';
   import { Badge } from '@/components/ui/badge';
-  import type { InsertProduct } from '~/db/schema';
   import { useForm } from 'vee-validate';
-  import type { ZodSchema } from 'zod';
   import { useToast } from './ui/toast';
+  import { toTypedSchema } from '@vee-validate/zod';
+  import type {
+    insertProductSchema,
+    updateProductSchema,
+    InsertProduct,
+  } from '~/db/schema';
 
   const props = defineProps<{
     brands: string[];
     categories: string[];
     initialValues?: InsertProduct;
     isDeleting?: boolean;
-    validationSchema: ZodSchema;
+    validationSchema: typeof insertProductSchema | typeof updateProductSchema;
     variant: 'ADD' | 'EDIT';
   }>();
 
   const emit = defineEmits<{
     delete: [];
-    submit: [values: any];
+    submit: [values: typeof values];
   }>();
+
+  const formSchema = toTypedSchema(props.validationSchema);
 
   const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
     useForm({
-      validationSchema: props.validationSchema,
+      validationSchema: formSchema,
       initialValues: props.initialValues || {
         title: 'test',
         description: 'test',
@@ -119,6 +125,9 @@
   const onSubmit = handleSubmit(
     async (values) => {
       emit('submit', values);
+      if (props.variant === 'ADD') {
+        resetForm();
+      }
     },
     ({ errors }) => {
       toast({
@@ -176,7 +185,7 @@
                     if (v) {
                       setFieldValue('price', v);
                     } else {
-                      setFieldValue('price', undefined);
+                      setFieldValue('price', 0);
                     }
                   }
                 "
@@ -395,10 +404,7 @@
 
       <CardContent>
         <ItemGroup>
-          <template
-            v-for="(v, index) in values.variants"
-            :key="v.id || `new-${index}`"
-          >
+          <template v-for="(_, index) in values.variants" :key="`new-${index}`">
             <Item class="flex flex-col p-0 py-4 md:flex-row">
               <ItemContent class="flex gap-4 md:flex-row">
                 <FormField

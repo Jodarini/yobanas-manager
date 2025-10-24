@@ -1,5 +1,9 @@
 <script setup lang="ts">
-  import type { ProductWithVariants } from '~/db/schema';
+  import {
+    updateProductSchema,
+    type ProductWithVariants,
+    type UpdateProduct,
+  } from '~/db/schema';
   import { useToast } from '@/components/ui/toast/use-toast';
 
   const props = defineProps<{
@@ -27,7 +31,7 @@
     return [...new Set(data.value.map((product) => product.brand))].sort();
   });
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values: UpdateProduct) => {
     try {
       const newProduct = ref(values);
       await $fetch(`/api/product/${route.params.id}`, {
@@ -72,9 +76,9 @@
     variant="EDIT"
     :brands
     :categories
-    :initialValues="productData"
+    :initial-values="productData"
     :is-deleting
-    :validationSchema="formSchema"
+    :validation-schema="updateProductSchema"
     @delete="deleteProduct"
     @submit="onSubmit"
   />

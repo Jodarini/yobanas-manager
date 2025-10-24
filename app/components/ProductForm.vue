@@ -1,143 +1,120 @@
-<script setup lang="ts" generic="T">
-  import { cn } from '@/lib/utils';
-  import {
-    Check,
-    ChevronsUpDown,
-    PlusCircleIcon,
-    Trash2Icon,
-    Plus,
-  } from 'lucide-vue-next';
-  import { Button } from '@/components/ui/button';
-  import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-  } from '@/components/ui/popover';
-  import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-  } from '@/components/ui/command';
-  import { Spinner } from '@/components/ui/spinner';
-  import { Badge } from '@/components/ui/badge';
-  import { useForm } from 'vee-validate';
-  // import { useToast } from './ui/toast';
-  import { toTypedSchema } from '@vee-validate/zod';
-  import type {
-    insertProductSchema,
-    updateProductSchema,
-    InsertProduct,
-  } from '~~/db/schema';
+<script setup lang="ts">
+import { cn } from '@/lib/utils';
+import { useForm } from 'vee-validate';
+// import { useToast } from './ui/toast';
+import { toTypedSchema } from '@vee-validate/zod';
+import type {
+  insertProductSchema,
+  updateProductSchema,
+  InsertProduct,
+} from '~~/db/schema';
 
-  const props = defineProps<{
-    brands: string[];
-    categories: string[];
-    initialValues?: InsertProduct;
-    isDeleting?: boolean;
-    validationSchema: typeof insertProductSchema | typeof updateProductSchema;
-    variant: 'ADD' | 'EDIT';
-  }>();
+const props = defineProps<{
+  brands: string[];
+  categories: string[];
+  initialValues?: InsertProduct;
+  isDeleting?: boolean;
+  validationSchema: typeof insertProductSchema | typeof updateProductSchema;
+  variant: 'ADD' | 'EDIT';
+}>();
 
-  const emit = defineEmits<{
-    delete: [];
-    submit: [values: typeof values];
-  }>();
+const emit = defineEmits<{
+  delete: [];
+  submit: [values: typeof values];
+}>();
 
-  const formSchema = toTypedSchema(props.validationSchema);
+const formSchema = toTypedSchema(props.validationSchema);
 
-  const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
-    useForm({
-      validationSchema: formSchema,
-      initialValues: props.initialValues || {
-        title: 'test',
-        description: 'test',
-        price: 1000,
-        category: ['test'],
-        brand: 'test',
-        variants: [{ size: '', stock: 0, color: '' }],
-      },
-    });
-
-  const brandOpen = ref(false);
-  const brandSearchTerm2 = ref('');
-  const brandSearchTerm = ref('');
-
-  const filteredBrands = computed(() => {
-    if (!brandSearchTerm.value) return props.brands;
-    return props.brands.filter((b) =>
-      b.toLowerCase().includes(brandSearchTerm.value.toLowerCase())
-    );
-  });
-
-  const categoryOpen = ref(false);
-  const categorySearchTerm = ref('');
-
-  const filteredCategories = computed(() => {
-    if (!categorySearchTerm.value) return props.categories;
-    return props.categories.filter((c) =>
-      c.toLowerCase().includes(categorySearchTerm.value.toLowerCase())
-    );
-  });
-
-  const createBrand = () => {
-    setFieldValue('brand', brandSearchTerm2.value);
-    brandOpen.value = false;
-  };
-
-  const createCategory = () => {
-    const currentValue = values.category || [];
-    setFieldValue('category', [...currentValue, categorySearchTerm.value]);
-    categorySearchTerm.value = '';
-  };
-
-  function handleCategoryToggle(category: string) {
-    const currentValue = values.category || [];
-    const isSelected = currentValue.includes(category);
-
-    const next = isSelected
-      ? currentValue.filter((v) => v !== category)
-      : [...currentValue, category];
-
-    setFieldValue('category', next);
-  }
-
-  const addVariant = () => {
-    const currentVariants = values.variants || [];
-    const newVariant = {
-      size: '',
-      color: '',
-      stock: 0,
-    };
-    setFieldValue('variants', [newVariant, ...currentVariants]);
-  };
-
-  const removeVariant = (index: number) => {
-    const currentVariants = [...(values.variants || [])];
-    currentVariants.splice(index, 1);
-    setFieldValue('variants', currentVariants);
-  };
-
-  // const { toast } = useToast();
-
-  const onSubmit = handleSubmit(
-    async (values) => {
-      emit('submit', values);
-      if (props.variant === 'ADD') {
-        resetForm();
-      }
+const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
+  useForm({
+    validationSchema: formSchema,
+    initialValues: props.initialValues || {
+      title: 'test',
+      description: 'test',
+      price: 1000,
+      category: ['test'],
+      brand: 'test',
+      variants: [{ size: '', stock: 0, color: '' }],
     },
-    ({ errors }) => {
-      // toast({
-      //   variant: 'destructive',
-      //   title: 'Error en el formulario',
-      //   description: 'Verifique los campos marcados en rojo',
-      // });
-      console.error(errors);
-    }
+  });
+
+const brandOpen = ref(false);
+const brandSearchTerm2 = ref('');
+const brandSearchTerm = ref('');
+
+const filteredBrands = computed(() => {
+  if (!brandSearchTerm.value) return props.brands;
+  return props.brands.filter((b) =>
+    b.toLowerCase().includes(brandSearchTerm.value.toLowerCase())
   );
+});
+
+const categoryOpen = ref(false);
+const categorySearchTerm = ref('');
+
+const filteredCategories = computed(() => {
+  if (!categorySearchTerm.value) return props.categories;
+  return props.categories.filter((c) =>
+    c.toLowerCase().includes(categorySearchTerm.value.toLowerCase())
+  );
+});
+
+const createBrand = () => {
+  setFieldValue('brand', brandSearchTerm2.value);
+  brandOpen.value = false;
+};
+
+const createCategory = () => {
+  const currentValue = values.category || [];
+  setFieldValue('category', [...currentValue, categorySearchTerm.value]);
+  categorySearchTerm.value = '';
+};
+
+function handleCategoryToggle(category: string) {
+  const currentValue = values.category || [];
+  const isSelected = currentValue.includes(category);
+
+  const next = isSelected
+    ? currentValue.filter((v) => v !== category)
+    : [...currentValue, category];
+
+  setFieldValue('category', next);
+}
+
+const addVariant = () => {
+  const currentVariants = values.variants || [];
+  const newVariant = {
+    size: '',
+    color: '',
+    stock: 0,
+  };
+  setFieldValue('variants', [newVariant, ...currentVariants]);
+};
+
+const removeVariant = (index: number) => {
+  const currentVariants = [...(values.variants || [])];
+  currentVariants.splice(index, 1);
+  setFieldValue('variants', currentVariants);
+};
+
+// const { toast } = useToast();
+
+const onSubmit = handleSubmit(
+  async (values) => {
+    emit('submit', values);
+    if (props.variant === 'ADD') {
+      resetForm();
+    }
+  },
+  ({ errors }) => {
+    // toast({
+    //   variant: 'destructive',
+    //   title: 'Error en el formulario',
+    //   description: 'Verifique los campos marcados en rojo',
+    // });
+    console.error(errors);
+  }
+);
 </script>
 
 <template>
@@ -154,11 +131,7 @@
             <FormItem class="w-full">
               <FormLabel>Nombre</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Nombre del producto"
-                  v-bind="componentField"
-                />
+                <Input type="text" placeholder="Nombre del producto" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -167,29 +140,23 @@
           <FormField v-slot="{ value }" class="flex-1" name="price">
             <FormItem class="w-full">
               <FormLabel>Precio</FormLabel>
-              <NumberField
-                class="gap-2"
-                :min="0"
-                :format-options="{
-                  style: 'currency',
-                  currency: 'COP',
-                  currencyDisplay: 'symbol',
-                  currencySign: 'accounting',
-                  trailingZeroDisplay: 'stripIfInteger',
-                  useGrouping: true,
-                  signDisplay: 'auto',
-                }"
-                :model-value="value"
-                @update:model-value="
-                  (v) => {
-                    if (v) {
-                      setFieldValue('price', v);
-                    } else {
-                      setFieldValue('price', 0);
-                    }
+              <NumberField class="gap-2" :min="0" :format-options="{
+                style: 'currency',
+                currency: 'COP',
+                currencyDisplay: 'symbol',
+                currencySign: 'accounting',
+                trailingZeroDisplay: 'stripIfInteger',
+                useGrouping: true,
+                signDisplay: 'auto',
+              }" :model-value="value" @update:model-value="
+                (v) => {
+                  if (v) {
+                    setFieldValue('price', v);
+                  } else {
+                    setFieldValue('price', 0);
                   }
-                "
-              >
+                }
+              ">
                 <NumberFieldContent>
                   <NumberFieldDecrement />
                   <FormControl>
@@ -211,38 +178,22 @@
               <FormControl>
                 <Popover v-model:open="brandOpen">
                   <PopoverTrigger as-child>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      class="w-full justify-between"
-                    >
+                    <Button type="button" variant="outline" class="w-full justify-between">
                       {{ componentField.modelValue || 'Seleccione una marca' }}
-                      <ChevronsUpDown
-                        class="ml-2 h-4 w-4 shrink-0 opacity-50"
-                      />
+                      <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent class="p-0">
                     <Command>
-                      <CommandInput
-                        placeholder="Search brand..."
-                        v-model="brandSearchTerm2"
-                        @keydown.enter.prevent="createBrand"
-                      />
-                      <div
-                        v-if="
-                          brandSearchTerm2 &&
-                          !filteredBrands.includes(brandSearchTerm2)
-                        "
-                        class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none"
-                      >
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          class="w-full justify-start"
-                          @click="createBrand"
-                        >
+                      <CommandInput placeholder="Search brand..." v-model="brandSearchTerm2"
+                        @keydown.enter.prevent="createBrand" />
+                      <div v-if="
+                        brandSearchTerm2 &&
+                        !filteredBrands.includes(brandSearchTerm2)
+                      "
+                        class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none">
+                        <Button type="button" variant="ghost" size="sm" class="w-full justify-start"
+                          @click="createBrand">
                           <Plus class="mr-2 h-4 w-4" />
                           Crear "{{ brandSearchTerm2 }}"
                         </Button>
@@ -250,12 +201,8 @@
                       <CommandList>
                         <CommandEmpty>No se encontraron marcas...</CommandEmpty>
                         <CommandGroup>
-                          <CommandItem
-                            v-for="brand in filteredBrands"
-                            :key="brand"
-                            :value="brand"
-                            @select="() => componentField.onChange(brand)"
-                          >
+                          <CommandItem v-for="brand in filteredBrands" :key="brand" :value="brand"
+                            @select="() => componentField.onChange(brand)">
                             <span>{{ brand }}</span>
                           </CommandItem>
                         </CommandGroup>
@@ -274,13 +221,8 @@
               <Popover v-model:open="categoryOpen">
                 <PopoverTrigger as-child>
                   <FormControl>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      role="combobox"
-                      :aria-expanded="categoryOpen"
-                      class="h-auto min-h-10 w-full justify-start"
-                    >
+                    <Button type="button" variant="outline" role="combobox" :aria-expanded="categoryOpen"
+                      class="h-auto min-h-10 w-full justify-start">
                       <div class="flex flex-1 flex-wrap gap-1.5">
                         <template v-if="!value || value.length === 0">
                           <span class="text-muted-foreground">
@@ -288,74 +230,48 @@
                           </span>
                         </template>
                         <template v-else>
-                          <Badge
-                            v-for="item in value"
-                            :key="`${item}-badges`"
-                            variant="secondary"
-                            class="gap-1"
-                          >
+                          <Badge v-for="item in value" :key="`${item}-badges`" variant="secondary" class="gap-1">
                             <span>
                               {{ item }}
                             </span>
                           </Badge>
                         </template>
                       </div>
-                      <ChevronsUpDown
-                        class="ml-2 h-4 w-4 shrink-0 opacity-50"
-                      />
+                      <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent class="w-full p-0" align="start">
                   <Command>
-                    <CommandInput
-                      placeholder="Buscar categorías..."
-                      v-model="categorySearchTerm"
-                    />
+                    <CommandInput placeholder="Buscar categorías..." v-model="categorySearchTerm" />
 
-                    <div
-                      v-if="
-                        categorySearchTerm &&
-                        !filteredCategories.includes(categorySearchTerm)
-                      "
-                      class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none"
-                    >
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        class="w-full justify-start"
-                        @click="createCategory"
-                      >
+                    <div v-if="
+                      categorySearchTerm &&
+                      !filteredCategories.includes(categorySearchTerm)
+                    "
+                      class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none">
+                      <Button type="button" variant="ghost" size="sm" class="w-full justify-start"
+                        @click="createCategory">
                         <Plus class="mr-2 h-4 w-4" />
                         Crear "{{ categorySearchTerm }}"
                       </Button>
                     </div>
                     <CommandList>
                       <CommandEmpty>
-                        <p
-                          class="text-muted-foreground py-6 text-center text-sm"
-                        >
+                        <p class="text-muted-foreground py-6 text-center text-sm">
                           No se encontraron categorías
                         </p>
                       </CommandEmpty>
                       <CommandGroup>
-                        <CommandItem
-                          v-for="category in filteredCategories"
-                          :key="category!"
-                          :value="category!"
-                          @select="handleCategoryToggle(category!)"
-                        >
-                          <Check
-                            :class="
-                              cn(
-                                'mr-2 h-4 w-4',
-                                value?.includes(category)
-                                  ? 'opacity-100'
-                                  : 'opacity-0'
-                              )
-                            "
-                          />
+                        <CommandItem v-for="category in filteredCategories" :key="category!" :value="category!"
+                          @select="handleCategoryToggle(category!)">
+                          <Check :class="cn(
+                            'mr-2 h-4 w-4',
+                            value?.includes(category)
+                              ? 'opacity-100'
+                              : 'opacity-0'
+                          )
+                            " />
                           {{ category }}
                         </CommandItem>
                       </CommandGroup>
@@ -367,19 +283,11 @@
             </FormItem>
           </FormField>
 
-          <FormField
-            v-slot="{ componentField }"
-            class="w-full"
-            name="description"
-          >
+          <FormField v-slot="{ componentField }" class="w-full" name="description">
             <FormItem class="w-full">
               <FormLabel>Descripción</FormLabel>
               <FormControl>
-                <Textarea
-                  type="text"
-                  placeholder="Descripción"
-                  v-bind="componentField"
-                />
+                <Textarea type="text" placeholder="Descripción" v-bind="componentField" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -390,16 +298,10 @@
 
     <!-- Variants Section -->
     <Card>
-      <CardHeader
-        class="flex flex-col justify-between pb-0 md:flex-row md:pb-6"
-      >
+      <CardHeader class="flex flex-col justify-between pb-0 md:flex-row md:pb-6">
         <CardTitle class="text-xl font-semibold">Variantes</CardTitle>
-        <Button
-          type="button"
-          variant="outline"
-          class="mt-4 flex w-full gap-2 md:mt-0 md:w-fit"
-          @click.prevent="addVariant"
-        >
+        <Button type="button" variant="outline" class="mt-4 flex w-full gap-2 md:mt-0 md:w-fit"
+          @click.prevent="addVariant">
           <PlusCircleIcon />
           Agregar variante
         </Button>
@@ -410,70 +312,38 @@
           <template v-for="(_, index) in values.variants" :key="`new-${index}`">
             <Item class="flex flex-col p-0 py-4 md:flex-row">
               <ItemContent class="flex gap-4 md:flex-row">
-                <FormField
-                  v-slot="{ componentField }"
-                  class="w-full"
-                  :name="`variants[${index}].size`"
-                >
+                <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].size`">
                   <FormItem class="w-full">
                     <FormLabel>Tamaño</FormLabel>
                     <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Tamaño"
-                        v-bind="componentField"
-                      />
+                      <Input type="text" placeholder="Tamaño" v-bind="componentField" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 </FormField>
 
-                <FormField
-                  v-slot="{ componentField }"
-                  class="w-full"
-                  :name="`variants[${index}].color`"
-                >
+                <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].color`">
                   <FormItem class="w-full">
                     <FormLabel>Color</FormLabel>
                     <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Color"
-                        v-bind="componentField"
-                      />
+                      <Input type="text" placeholder="Color" v-bind="componentField" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 </FormField>
 
-                <FormField
-                  v-slot="{ componentField }"
-                  class="w-full"
-                  :name="`variants[${index}].stock`"
-                >
+                <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].stock`">
                   <FormItem class="w-full">
                     <FormLabel>Stock</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        step="1"
-                        placeholder="0"
-                        v-bind="componentField"
-                      />
+                      <Input type="number" step="1" placeholder="0" v-bind="componentField" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 </FormField>
 
-                <Button
-                  type="button"
-                  class="w-fit md:self-end"
-                  variant="ghost"
-                  @click.prevent="removeVariant(index)"
-                >
-                  <Trash2Icon
-                    class="text-destructive dark:text-destructive-foreground"
-                  />
+                <Button type="button" class="w-fit md:self-end" variant="ghost" @click.prevent="removeVariant(index)">
+                  <Trash2Icon class="text-destructive dark:text-destructive-foreground" />
                 </Button>
               </ItemContent>
             </Item>
@@ -484,13 +354,8 @@
     </Card>
 
     <div class="flex max-h-fit justify-end gap-4">
-      <Button
-        v-if="props.variant === 'EDIT'"
-        type="button"
-        variant="destructive"
-        :disabled="isDeleting"
-        @click="emit('delete')"
-      >
+      <Button v-if="props.variant === 'EDIT'" type="button" variant="destructive" :disabled="isDeleting"
+        @click="emit('delete')">
         <span v-if="isDeleting" class="flex items-center">
           <Spinner class="mr-2" />
           Elmininando producto

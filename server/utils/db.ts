@@ -1,4 +1,4 @@
-import type { Session } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import { sql } from 'drizzle-orm';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
 import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
@@ -22,7 +22,7 @@ export const useDB = () => {
 };
 
 export const useAuthDB = async <T>(
-  session: Session,
+  user: User,
   callback: (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tx: PgTransaction<PostgresJsQueryResultHKT, Record<string, unknown>, any>
@@ -32,9 +32,9 @@ export const useAuthDB = async <T>(
 
   return db.transaction(async (tx) => {
     const claims = {
-      sub: session.user.id,
-      role: session.user.role || 'authenticated',
-      email: session.user.email,
+      sub: user.id,
+      role: user.role || 'authenticated',
+      email: user.email,
     };
 
     const claimsJson = JSON.stringify(claims).replace(/'/g, "''");

@@ -7,16 +7,16 @@ export const useAuth = () => {
   const initAuth = async () => {
     isLoading.value = true;
     const {
-      data: { session },
+      data: { user },
       error,
-    } = await supabase.auth.getSession();
+    } = await supabase.auth.getUser();
     if (error) {
       errorMessage.value = error.message;
-    } else if (session?.user) {
-      userId.value = session.user.id;
+    } else if (user) {
+      userId.value = user.id;
     }
     supabase.auth.onAuthStateChange((_event, session) => {
-      userId.value = session?.user ?? null;
+      userId.value = user.id ?? null;
     });
     isLoading.value = false;
   };

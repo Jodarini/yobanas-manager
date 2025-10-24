@@ -13,7 +13,6 @@ const { data, status, error, execute } = await useFetch('/api/products', {
 
 watch(user, async (u) => {
   if (!u) return
-  // Avoid refetch if already have data
   if (data.value?.length) return
   await execute()
 })

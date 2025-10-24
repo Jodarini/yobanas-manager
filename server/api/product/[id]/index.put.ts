@@ -10,10 +10,10 @@ import { useAuthDB } from '~~/server/utils/db';
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
     throw createError({ statusCode: 401, message: 'Unauthorized' });
   }
 
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const product = updateProductSchema.parse(body);
 
-    return await useAuthDB(session, async (tx) => {
+    return await useAuthDB(user, async (tx) => {
       const result = await tx
         .update(productsTable)
         .set({
@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
       await tx.insert(productVariants).values(
         product.variants.map((v) => ({
           productId: product.id,
-          user_id: session.user.id,
+          user_id: user.id,
           size: v.size,
           color: v.color,
           stock: v.stock,

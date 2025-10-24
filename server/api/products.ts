@@ -5,10 +5,10 @@ import { useAuthDB } from '../utils/db';
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized',
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const products = await useAuthDB(session, (tx) =>
+    const products = await useAuthDB(user, (tx) =>
       tx.select().from(productsTable)
     );
     if (!products) {

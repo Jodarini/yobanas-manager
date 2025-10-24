@@ -41,14 +41,14 @@ export default defineEventHandler(
     const id = getRouterParam(event, 'id');
     const supabase = await serverSupabaseClient(event);
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (!user) {
       throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
     }
 
-    return await useAuthDB(session, async (db) => {
+    return await useAuthDB(user, async (db) => {
       return getProductWithVariants(Number(id), db);
     });
   }

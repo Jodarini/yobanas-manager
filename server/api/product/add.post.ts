@@ -9,10 +9,10 @@ import { serverSupabaseClient } from '#supabase/server';
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       message: 'Unauthorized - Please sign in',
@@ -23,11 +23,11 @@ export default defineEventHandler(async (event) => {
   const product = insertProductSchema.parse(body);
 
   try {
-    return await useAuthDB(session, async (tx) => {
+    return await useAuthDB(user, async (tx) => {
       const queryResult = await tx
         .insert(productsTable)
         .values({
-          user_id: session.user.id,
+          user_id: user.id,
           title: product.title,
           description: product.description,
           price: product.price,
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
       for (const variant of product.variants) {
         await tx.insert(productVariants).values({
           productId: queryResult[0].id,
-          user_id: session.user.id,
+          user_id: user.id,
           color: variant.color,
           size: variant.size,
           stock: variant.stock,

@@ -16,9 +16,9 @@ export default defineEventHandler(async (event) => {
 
   const supabase = await serverSupabaseClient(event);
   const {
-    data: { session },
+    data: { user },
     error: authError,
-  } = await supabase.auth.getSession();
+  } = await supabase.auth.getUser();
 
   if (authError) {
     throw createError({
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized',
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const result = await useAuthDB(session, async (db) => {
+    const result = await useAuthDB(user, async (db) => {
       return await db
         .delete(productsTable)
         .where(eq(productsTable.id, productId))

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils';
 import { useForm } from 'vee-validate';
-import { Trash2Icon, PlusCircleIcon } from 'lucide-vue-next';
+import { Trash2Icon, PlusCircleIcon, Check, Plus, ChevronsUpDown } from 'lucide-vue-next';
 import { toTypedSchema } from '@vee-validate/zod';
 import type {
   insertProductSchema,

@@ -2,8 +2,8 @@ import {
   insertProductSchema,
   productsTable,
   productVariants,
-} from '~/db/schema';
-import { useAuthDB } from '~/server/utils/db';
+} from '~~/db/schema';
+import { useAuthDB } from '~~/server/utils/db';
 import { serverSupabaseClient } from '#supabase/server';
 
 export default defineEventHandler(async (event) => {

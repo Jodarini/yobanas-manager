@@ -4,8 +4,8 @@ import {
   productsTable,
   productVariants,
   updateProductSchema,
-} from '~/db/schema';
-import { useAuthDB } from '~/server/utils/db';
+} from '~~/db/schema';
+import { useAuthDB } from '~~/server/utils/db';
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);

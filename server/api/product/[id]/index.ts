@@ -4,8 +4,8 @@ import type {
 } from 'drizzle-orm/postgres-js';
 import { serverSupabaseClient } from '#supabase/server';
 import { eq } from 'drizzle-orm';
-import type { ProductWithVariants } from '~/db/schema';
-import { productsTable, productVariants } from '~/db/schema';
+import type { ProductWithVariants } from '~~/db/schema';
+import { productsTable, productVariants } from '~~/db/schema';
 import { createError, defineEventHandler, getRouterParam } from 'h3';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
 

@@ -1,5 +1,5 @@
 import { serverSupabaseClient } from '#supabase/server';
-import { productsTable } from '~/db/schema';
+import { productsTable } from '~~/db/schema';
 import { useAuthDB } from '../utils/db';
 
 export default defineEventHandler(async (event) => {

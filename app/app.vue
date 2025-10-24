@@ -2,6 +2,7 @@
 
 <template>
   <div class="flex h-screen flex-col items-start justify-start">
+    <NuxtLoadingIndicator />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
@@ -9,5 +10,5 @@
 </template>
 
 <style>
-  @import url('~/assets/css/tailwind.css');
+@import url('~/assets/css/tailwind.css');
 </style>

@@ -14,5 +14,5 @@ const { name, formMessageId } = useFormField()
 
 <template>
   <ErrorMessage :id="formMessageId" data-slot="form-message" as="p" :name="toValue(name)"
-    :class="cn('text-destructive dark:text-destructive-foreground text-sm ', props.class)" />
+    :class="cn('text-destructive dark:text-destructive-foreground text-sm leading-[1rem]', props.class)" />
 </template>

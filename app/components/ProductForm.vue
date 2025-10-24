@@ -2,7 +2,6 @@
 import { cn } from '@/lib/utils';
 import { useForm } from 'vee-validate';
 import { Trash2Icon, PlusCircleIcon } from 'lucide-vue-next';
-// import { useToast } from './ui/toast';
 import { toTypedSchema } from '@vee-validate/zod';
 import type {
   insertProductSchema,
@@ -131,7 +130,7 @@ const onSubmit = handleSubmit(
         <div class="mb-4 flex flex-col gap-4 md:flex-row">
           <FormField v-slot="{ componentField }" class="flex-1" name="title">
             <FormItem class="w-full">
-              <div class='flex gap-1'>
+              <div class='flex gap-1 h-4'>
                 <FormLabel>Nombre</FormLabel>
                 <FormMessage />
               </div>
@@ -144,7 +143,7 @@ const onSubmit = handleSubmit(
           <FormField v-slot="{ value }" class="flex-1" name="price">
             <FormItem class="w-full">
 
-              <div class='flex gap-1'>
+              <div class='flex gap-1 h-4'>
                 <FormLabel>Precio</FormLabel>
                 <FormMessage />
               </div>
@@ -181,7 +180,7 @@ const onSubmit = handleSubmit(
         <div class="grid w-full items-center gap-4">
           <FormField v-slot="{ componentField }" name="brand">
             <FormItem class="flex flex-col">
-              <div class='flex gap-1'>
+              <div class='flex gap-1 h-4'>
                 <FormLabel>Marca</FormLabel>
                 <FormMessage />
               </div>
@@ -226,7 +225,7 @@ const onSubmit = handleSubmit(
 
           <FormField v-slot="{ value }" name="category">
             <FormItem class="flex flex-col">
-              <div class='flex gap-1'>
+              <div class='flex gap-1 h-4'>
                 <FormLabel>Categorías</FormLabel>
                 <FormMessage />
               </div>
@@ -296,7 +295,7 @@ const onSubmit = handleSubmit(
 
           <FormField v-slot="{ componentField }" class="w-full" name="description">
             <FormItem class="w-full">
-              <div class='flex gap-1'>
+              <div class='flex gap-1 h-4'>
                 <FormLabel>Descripción</FormLabel>
                 <FormMessage />
               </div>
@@ -327,7 +326,7 @@ const onSubmit = handleSubmit(
               <ItemContent class="flex gap-4 md:flex-row ">
                 <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].size`">
                   <FormItem class="w-full">
-                    <div class='flex gap-1'>
+                    <div class='flex gap-1 h-4'>
                       <FormLabel>Talla</FormLabel>
                       <FormMessage />
                     </div>
@@ -339,7 +338,7 @@ const onSubmit = handleSubmit(
 
                 <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].color`">
                   <FormItem class="w-full">
-                    <div class='flex gap-1'>
+                    <div class='flex gap-1 h-4'>
                       <FormLabel>Color</FormLabel>
                       <FormMessage />
                     </div>
@@ -351,7 +350,7 @@ const onSubmit = handleSubmit(
 
                 <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].stock`">
                   <FormItem class="w-full">
-                    <div class='flex gap-1'>
+                    <div class='flex gap-1 h-4'>
                       <FormLabel>Stock</FormLabel>
                       <FormMessage />
                     </div>

@@ -223,12 +223,12 @@
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent class="p-0">
-                    <Command
-                      v-model:search-term="brandSearchTerm2"
-                      @keydown.enter.prevent="createBrand"
-                    >
-                      <CommandInput placeholder="Search brand..." />
-
+                    <Command>
+                      <CommandInput
+                        placeholder="Search brand..."
+                        v-model="brandSearchTerm2"
+                        @keydown.enter.prevent="createBrand"
+                      />
                       <div
                         v-if="
                           brandSearchTerm2 &&
@@ -307,8 +307,11 @@
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent class="w-full p-0" align="start">
-                  <Command v-model:search-term="categorySearchTerm">
-                    <CommandInput placeholder="Buscar categorías..." />
+                  <Command>
+                    <CommandInput
+                      placeholder="Buscar categorías..."
+                      v-model="categorySearchTerm"
+                    />
 
                     <div
                       v-if="

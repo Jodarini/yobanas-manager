@@ -101,21 +101,21 @@ export const productVariants = pgTable(
 );
 
 export const insertProductVariantSchema = z.object({
-  size: z.string().min(1, 'Size is required').max(50),
-  color: z.string().min(1, 'Color is required').max(50),
-  stock: z.number().int().min(0, 'Stock cannot be negative').default(0),
+  size: z.string().min(1, 'es obligatoria').max(50),
+  color: z.string().min(1, 'es obligatorio').max(50),
+  stock: z.number({ message: 'debe ser número' }).int({ message: 'debe ser número' }).min(0, 'no puede ser negativo').default(0),
 });
 
 export const insertProductSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
+  title: z.string().min(1, 'es obligatorio'),
   description: z.string().optional(),
-  price: z.number().positive('Price must be positive'),
+  price: z.number().positive('no puede ser negativo'),
   thumbnail: z.string().url().optional().or(z.literal('')),
-  brand: z.string().min(1, 'Brand is required'),
-  category: z.array(z.string()).min(1, 'At least one category is required'),
+  brand: z.string().min(1, 'es obligatoria'),
+  category: z.array(z.string()).min(1, 'es obligatoria'),
   variants: z
     .array(insertProductVariantSchema)
-    .min(1, 'At least one variant is required'),
+    .min(1, 'es obligatoria'),
 });
 
 export type InsertProduct = z.infer<typeof insertProductSchema>;
@@ -123,24 +123,24 @@ export type InsertProductVariant = z.infer<typeof insertProductVariantSchema>;
 
 export const updateProductVariantSchema = z.object({
   id: z.number().int().positive().optional(),
-  size: z.string().min(1, 'Size is required').max(50),
-  color: z.string().min(1, 'Color is required').max(50),
-  stock: z.number().int().min(0, 'Stock cannot be negative'),
+  size: z.string().min(1, 'es obligatoria').max(50),
+  color: z.string().min(1, 'es obligatorio').max(50),
+  stock: z.number({ message: 'debe ser número' }).int({ message: 'debe ser número' }).min(0, 'no puede ser negativo').default(0),
   productId: z.number().int().optional(),
   user_id: z.string().uuid().optional(),
 });
 
 export const updateProductSchema = z.object({
   id: z.number().int().positive(),
-  title: z.string().min(1, 'Title is required'),
+  title: z.string().min(1, 'es obligatorio'),
   description: z.string().optional(),
-  price: z.number().positive('Price must be positive'),
+  price: z.number().positive('no puede ser negativo'),
   thumbnail: z.string().url().optional().or(z.literal('')),
-  brand: z.string().min(1, 'Brand is required'),
-  category: z.array(z.string()).min(1, 'At least one category is required'),
+  brand: z.string().min(1, 'es obligatoria'),
+  category: z.array(z.string()).min(1, 'es obligatoria'),
   variants: z
     .array(updateProductVariantSchema)
-    .min(1, 'At least one variant is required'),
+    .min(1, 'es obligatoria'),
 });
 
 export type UpdateProduct = z.infer<typeof updateProductSchema>;

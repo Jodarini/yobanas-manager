@@ -9,6 +9,7 @@ import type {
   updateProductSchema,
   InsertProduct,
 } from '~~/db/schema';
+import { useToast } from './ui/toast';
 
 const props = defineProps<{
   brands: string[];
@@ -98,7 +99,7 @@ const removeVariant = (index: number) => {
   setFieldValue('variants', currentVariants);
 };
 
-// const { toast } = useToast();
+const { toast } = useToast();
 
 const onSubmit = handleSubmit(
   async (values) => {
@@ -108,11 +109,11 @@ const onSubmit = handleSubmit(
     }
   },
   ({ errors }) => {
-    // toast({
-    //   variant: 'destructive',
-    //   title: 'Error en el formulario',
-    //   description: 'Verifique los campos marcados en rojo',
-    // });
+    toast({
+      variant: 'destructive',
+      title: 'Error en el formulario',
+      description: 'Verifique los campos marcados en rojo',
+    });
     console.error(errors);
   }
 );
@@ -130,17 +131,23 @@ const onSubmit = handleSubmit(
         <div class="mb-4 flex flex-col gap-4 md:flex-row">
           <FormField v-slot="{ componentField }" class="flex-1" name="title">
             <FormItem class="w-full">
-              <FormLabel>Nombre</FormLabel>
+              <div class='flex gap-1'>
+                <FormLabel>Nombre</FormLabel>
+                <FormMessage />
+              </div>
               <FormControl>
                 <Input type="text" placeholder="Nombre del producto" v-bind="componentField" />
               </FormControl>
-              <FormMessage />
             </FormItem>
           </FormField>
 
           <FormField v-slot="{ value }" class="flex-1" name="price">
             <FormItem class="w-full">
-              <FormLabel>Precio</FormLabel>
+
+              <div class='flex gap-1'>
+                <FormLabel>Precio</FormLabel>
+                <FormMessage />
+              </div>
               <NumberField class="gap-2" :min="0" :format-options="{
                 style: 'currency',
                 currency: 'COP',
@@ -167,7 +174,6 @@ const onSubmit = handleSubmit(
                 </NumberFieldContent>
               </NumberField>
 
-              <FormMessage />
             </FormItem>
           </FormField>
         </div>
@@ -175,7 +181,10 @@ const onSubmit = handleSubmit(
         <div class="grid w-full items-center gap-4">
           <FormField v-slot="{ componentField }" name="brand">
             <FormItem class="flex flex-col">
-              <FormLabel>Marca</FormLabel>
+              <div class='flex gap-1'>
+                <FormLabel>Marca</FormLabel>
+                <FormMessage />
+              </div>
               <FormControl>
                 <Popover v-model:open="brandOpen">
                   <PopoverTrigger as-child>
@@ -212,13 +221,15 @@ const onSubmit = handleSubmit(
                   </PopoverContent>
                 </Popover>
               </FormControl>
-              <FormMessage />
             </FormItem>
           </FormField>
 
           <FormField v-slot="{ value }" name="category">
             <FormItem class="flex flex-col">
-              <FormLabel>Categorías</FormLabel>
+              <div class='flex gap-1'>
+                <FormLabel>Categorías</FormLabel>
+                <FormMessage />
+              </div>
               <Popover v-model:open="categoryOpen">
                 <PopoverTrigger as-child>
                   <FormControl>
@@ -280,17 +291,18 @@ const onSubmit = handleSubmit(
                   </Command>
                 </PopoverContent>
               </Popover>
-              <FormMessage />
             </FormItem>
           </FormField>
 
           <FormField v-slot="{ componentField }" class="w-full" name="description">
             <FormItem class="w-full">
-              <FormLabel>Descripción</FormLabel>
+              <div class='flex gap-1'>
+                <FormLabel>Descripción</FormLabel>
+                <FormMessage />
+              </div>
               <FormControl>
                 <Textarea type="text" placeholder="Descripción" v-bind="componentField" />
               </FormControl>
-              <FormMessage />
             </FormItem>
           </FormField>
         </div>
@@ -312,34 +324,41 @@ const onSubmit = handleSubmit(
         <ItemGroup>
           <template v-for="(_, index) in values.variants" :key="`new-${index}`">
             <Item class="flex flex-col p-0 py-4 md:flex-row">
-              <ItemContent class="flex gap-4 md:flex-row">
+              <ItemContent class="flex gap-4 md:flex-row ">
                 <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].size`">
                   <FormItem class="w-full">
-                    <FormLabel>Tamaño</FormLabel>
+                    <div class='flex gap-1'>
+                      <FormLabel>Talla</FormLabel>
+                      <FormMessage />
+                    </div>
                     <FormControl>
                       <Input type="text" placeholder="Tamaño" v-bind="componentField" />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 </FormField>
 
                 <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].color`">
                   <FormItem class="w-full">
-                    <FormLabel>Color</FormLabel>
+                    <div class='flex gap-1'>
+                      <FormLabel>Color</FormLabel>
+                      <FormMessage />
+                    </div>
                     <FormControl>
                       <Input type="text" placeholder="Color" v-bind="componentField" />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 </FormField>
 
                 <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].stock`">
                   <FormItem class="w-full">
-                    <FormLabel>Stock</FormLabel>
+                    <div class='flex gap-1'>
+                      <FormLabel>Stock</FormLabel>
+                      <FormMessage />
+                    </div>
+
                     <FormControl>
                       <Input type="number" step="1" placeholder="0" v-bind="componentField" />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 </FormField>
 

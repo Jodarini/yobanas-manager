@@ -8,13 +8,15 @@ const user = useSupabaseUser();
 const { data, status, error, execute } = await useFetch('/api/products', {
   key: 'products',
   immediate: false,
-});
+  watch: false,
+})
 
-watch(user, async (newUser) => {
-  if (newUser) {
-    await execute();
-  }
-});
+watch(user, async (u) => {
+  if (!u) return
+  // Avoid refetch if already have data
+  if (data.value?.length) return
+  await execute()
+})
 
 if (error.value) {
   toast({

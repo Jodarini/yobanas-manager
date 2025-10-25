@@ -8,14 +8,13 @@ const user = useSupabaseUser();
 const { data, status, error, execute } = await useFetch('/api/products', {
   key: 'products',
   immediate: false,
-  watch: false,
-})
+});
 
-watch(user, async (u) => {
-  if (!u) return
-  if (data.value?.length) return
-  await execute()
-})
+watch(user, async (newUser) => {
+  if (newUser) {
+    await execute();
+  }
+});
 
 if (error.value) {
   toast({
@@ -51,7 +50,7 @@ if (error.value) {
       </div>
       <p v-else-if="error">{{ error }}</p>
 
-      <template v-else-if="data && data.length > 0">
+      <template v-else-if="status === 'success' && data && data.length > 0">
         <Card>
           <CardContent class="p-0 pt-0">
             <DataTable :columns="columns" :data="data" />

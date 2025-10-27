@@ -2,10 +2,11 @@
 const supabase = useSupabaseClient()
 const email = ref('')
 const errorRef = ref('')
+const config = useRuntimeConfig()
 
 const handleSubmit = async () => {
   const { error } = await supabase.auth.resetPasswordForEmail(email.value, {
-    redirectTo: 'http://localhost:3000/password/update',
+    redirectTo: `${config.public.siteUrl}/password/update`,
   })
 
   if (error) {

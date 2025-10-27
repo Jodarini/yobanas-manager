@@ -1,24 +1,22 @@
 <script setup lang="ts">
-import { Tags, Package } from 'lucide-vue-next';
+import { Tags, Package, DollarSign } from 'lucide-vue-next';
 
 const { data, pending, error, refresh } = await useFetch('/api/products', {
   key: 'products'
 })
 
-console.log(data.value.forEach(product => product.variants))
-
 const numProducts = computed(() => data.value.length)
 
 const numBrands = computed(() => new Set(data.value?.map(product => product.brand)).size)
 
-// const stockValue = computed(() => data.value.reduce((acc, product) => acc + (product.price * product.), 0))
+const stockValue = computed(() => data.value.reduce((acc, product) => acc + product.price, 0))
 
 </script>
 
 <template>
   <h1>Dashboard</h1>
-  <div class="flex gap-4 w-full">
-    <Card class="min-w-sm flex flex-row justify-between items-center">
+  <div class="flex gap-4 w-full flex-wrap">
+    <Card class="w-sm flex flex-row justify-between items-center">
       <div>
         <CardContent class="text-2xl font-bold">
           {{ numProducts }}
@@ -32,7 +30,7 @@ const numBrands = computed(() => new Set(data.value?.map(product => product.bran
       </CardFooter>
     </Card>
 
-    <Card class="min-w-sm flex flex-row justify-between items-center">
+    <Card class="w-sm flex flex-row justify-between items-center">
       <div>
         <CardContent class="text-2xl font-bold">
           {{ numBrands }}
@@ -46,7 +44,7 @@ const numBrands = computed(() => new Set(data.value?.map(product => product.bran
       </CardFooter>
     </Card>
 
-    <Card class="min-w-sm flex flex-row justify-between items-center">
+    <Card class="w-sm flex flex-row justify-between items-center">
       <div>
         <CardContent class="text-2xl font-bold">
           {{ stockValue }}
@@ -56,7 +54,7 @@ const numBrands = computed(() => new Set(data.value?.map(product => product.bran
         </CardHeader>
       </div>
       <CardFooter class="h-fit">
-        <Tags />
+        <DollarSign />
       </CardFooter>
     </Card>
   </div>

@@ -14,7 +14,7 @@ const stockValue = computed(() => data.value.reduce((acc, product) => acc + prod
 </script>
 
 <template>
-  <h1>Dashboard</h1>
+  <h1 class="mb-6 text-2xl">Dashboard</h1>
   <div class="flex gap-4 w-full flex-wrap">
     <Card class="w-sm flex flex-row justify-between items-center">
       <div>

@@ -11,7 +11,6 @@ const handleSubmit = async () => {
     errorRef.value = error.message
     return
   }
-  console.log(data)
 
   navigateTo('/')
 

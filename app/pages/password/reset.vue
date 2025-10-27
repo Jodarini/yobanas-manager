@@ -4,7 +4,7 @@ const email = ref('')
 const errorRef = ref('')
 
 const handleSubmit = async () => {
-  const { data, error } = await supabase.auth.resetPasswordForEmail(email.value, {
+  const { error } = await supabase.auth.resetPasswordForEmail(email.value, {
     redirectTo: 'http://localhost:3000/password/update',
   })
 
@@ -14,7 +14,6 @@ const handleSubmit = async () => {
   }
   errorRef.value = 'Revisa tu email'
 
-  console.log(data)
 }
 
 </script>

@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { columns } from '@/components/columns';
-import { useToast } from '@/components/ui/toast/use-toast';
-
-// const { toast } = useToast();
 const user = useSupabaseUser();
 
 const { data, status, error, execute } = await useFetch('/api/products', {
@@ -15,13 +12,6 @@ watch(user, async (newUser) => {
     await execute();
   }
 });
-
-// if (error.value) {
-//   toast({
-//     variant: 'destructive',
-//     title: error.value.message,
-//   });
-// }
 </script>
 
 <template>

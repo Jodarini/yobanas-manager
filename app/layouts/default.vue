@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useAuth } from '~/composables/useAuth';
 import Toaster from '~/components/ui/toast/Toaster.vue';
 
 const { initAuth, userId, signOut, isLoading } = useAuth();

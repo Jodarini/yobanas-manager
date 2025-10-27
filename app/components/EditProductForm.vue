@@ -31,6 +31,8 @@ const brands = computed(() => {
   return [...new Set(data.value.map((product) => product.brand))].sort();
 });
 
+console.log(brands.value)
+
 const onSubmit = async (values: UpdateProduct) => {
   try {
     const newProduct = ref(values);

@@ -1,30 +1,33 @@
 <script setup lang="ts">
-  import { Package, PlusIcon, SunIcon, MoonIcon } from 'lucide-vue-next';
+import { Package, DatabaseIcon, PlusIcon, SunIcon, MoonIcon } from 'lucide-vue-next';
 
-  const route = useRoute();
+const route = useRoute();
 
-  const menuItems = [
-    {
-      title: 'Productos',
-      url: '/',
-      icon: Package,
-    },
-  ];
+const menuItems = [
+  {
+    title: 'Dashboard',
+    url: '/dashboard',
+    icon: DatabaseIcon,
+  },
+  {
+    title: 'Productos',
+    url: '/',
+    icon: Package,
+  },
+];
 
-  const isActive = (url: string) => {
-    return route.path === url || route.path.startsWith(url + '/');
-  };
+const isActive = (url: string) => {
+  return route.path === url || route.path.startsWith(url + '/');
+};
 
-  const colorMode = useColorMode();
+const colorMode = useColorMode();
 </script>
 
 <template>
   <Sidebar>
     <SidebarHeader>
       <div class="flex items-center justify-between gap-2 px-4 py-2">
-        <div
-          class="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg"
-        >
+        <div class="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg">
           <Package class="h-4 w-4" />
         </div>
         <div class="flex flex-col">
@@ -35,12 +38,9 @@
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
             <Button variant="outline">
-              <SunIcon
-                class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
-              />
+              <SunIcon class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
               <MoonIcon
-                class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
-              />
+                class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
               <span class="sr-only">Toggle theme</span>
             </Button>
           </DropdownMenuTrigger>
@@ -88,11 +88,7 @@
         <p class="text-muted-foreground text-xs">
           © 2025 Yobana's closet
           <br />
-          <NuxtLink
-            to="https://www.jodarini.dev"
-            target="_blank"
-            class="text-accent-foreground"
-          >
+          <NuxtLink to="https://www.jodarini.dev" target="_blank" class="text-accent-foreground">
             by Jodarini.dev
           </NuxtLink>
         </p>

@@ -24,24 +24,19 @@ export const useAuth = () => {
 
   const signInWithPassword = async (email: string, password: string) => {
     isLoading.value = true;
-    console.log('before fetch')
     try {
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
       });
-      console.log({ data })
       if (error) {
-        console.log('found error')
         console.error('Sign in error:', error.message);
         console.error('Error details:', JSON.stringify(error, null, 2));
         errorMessage.value = error.message;
       } else {
-        console.log('before navigate')
         return navigateTo('/');
       }
-      console.log('outside if')
     } catch (err) {
       console.error(err)
     } finally {

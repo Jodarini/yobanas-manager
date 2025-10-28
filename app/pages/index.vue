@@ -15,7 +15,6 @@ watch(user, async (newUser) => {
 </script>
 
 <template>
-  <Form></Form>
   <div>
     <template v-if="!user">
       <h1 class="mb-6 text-2xl">Bienvenido!</h1>

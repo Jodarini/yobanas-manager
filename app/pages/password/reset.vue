@@ -11,7 +11,6 @@ const handleSubmit = async () => {
   message.value = ''
   errorRef.value = ''
 
-
   const { error } = await supabase.auth.resetPasswordForEmail(email.value, {
     redirectTo: `${config.public.siteUrl}/password/update`,
   })

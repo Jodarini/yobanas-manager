@@ -13,8 +13,6 @@ const numProducts = computed(() => data.value.length)
 
 const numBrands = computed(() => new Set(data.value?.map(product => product.brand)).size)
 
-// const stockValue = computed(() => data.value.reduce((acc, product) => acc + product.price, 0))
-
 </script>
 
 <template>

@@ -12,9 +12,6 @@ onMounted(async () => {
   const code = route.query.code as string
   const type = route.query.type as string
 
-  console.log({ code })
-  console.log({ type })
-
   if (code && type === 'recovery') {
     // Exchange the code for a session
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)

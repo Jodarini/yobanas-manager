@@ -6,36 +6,43 @@ export const useAuth = () => {
 
   const initAuth = async () => {
     isLoading.value = true;
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-    if (error) {
-      errorMessage.value = error.message;
-    } else if (user) {
-      userId.value = user.id;
+
+    // Get initial session without network call
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (session?.user) {
+      userId.value = session.user.id;
     }
+
+    // Fix the callback to use session parameter
     supabase.auth.onAuthStateChange((_event, session) => {
-      userId.value = user.id ?? null;
+      userId.value = session?.user?.id ?? null;
     });
+
     isLoading.value = false;
   };
 
   const signInWithPassword = async (email: string, password: string) => {
     isLoading.value = true;
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
-    if (error) {
-      console.error('Sign in error:', error.message);
-      console.error('Error details:', JSON.stringify(error, null, 2));
-      errorMessage.value = error.message;
-    } else {
-      await navigateTo('/');
-    }
+    try {
 
-    isLoading.value = false;
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+      if (error) {
+        console.error('Sign in error:', error.message);
+        console.error('Error details:', JSON.stringify(error, null, 2));
+        errorMessage.value = error.message;
+      } else {
+        return navigateTo('/');
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+
+      isLoading.value = false;
+    }
   };
 
   const signInAnonymous = async () => {

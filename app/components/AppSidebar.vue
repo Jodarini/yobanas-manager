@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { Package, DatabaseIcon, PlusIcon, SunIcon, MoonIcon } from 'lucide-vue-next';
 
+const { initAuth, userId, signOut, isLoading } = useAuth();
+await initAuth();
+
 const route = useRoute();
 
 const menuItems = [
@@ -78,13 +81,25 @@ const colorMode = useColorMode();
     </SidebarContent>
 
     <SidebarFooter>
-      <div class="px-4 py-2 text-center">
-        <Button as-child class="mb-4 min-w-full">
-          <NuxtLink to="/add-product" class="flex flex-row justify-evenly">
-            <PlusIcon />
-            Nuevo producto
-          </NuxtLink>
+      <div class="px-4 py-2 text-center space-y-2">
+
+        <Button v-if="!userId" class="min-w-full" as-child variant="outline">
+          <NuxtLink to="/login">Iniciar sesión</NuxtLink>
         </Button>
+
+        <Button v-else :disabled="isLoading" variant="outline" class="flex items-center min-w-full" @click="signOut">
+          <span v-if="isLoading" class="flex items-center">
+            <Spinner class="mr-2" />
+            Cerrando sesión...
+          </span>
+          <span v-else>Cerrar sesión</span>
+        </Button>
+        <!-- <Button as-child class="mb-4 min-w-full"> -->
+        <!--   <NuxtLink to="/add-product" class="flex flex-row justify-evenly"> -->
+        <!--     <PlusIcon /> -->
+        <!--     Nuevo producto -->
+        <!--   </NuxtLink> -->
+        <!-- </Button> -->
         <p class="text-muted-foreground text-xs">
           © 2025 Yobana's closet
           <br />

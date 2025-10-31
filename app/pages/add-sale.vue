@@ -66,7 +66,7 @@ function handleAddToCart(product: Product, variant: ProductVariant) {
 
 
 <template>
-  <Card class="min-h-1/2">
+  <Card class="min-h-2/3">
     <form class="w-full space-y-8 h-full flex flex-col" @submit="onSubmit">
       <CardHeader class="border-b">
         <CardTitle>Agregar venta</CardTitle>
@@ -97,7 +97,8 @@ function handleAddToCart(product: Product, variant: ProductVariant) {
               </div>
             </div>
 
-            <div class="border-t w-full overflow-y-auto min-h-32 max-h-32">
+            <div class="border-t w-full overflow-y-auto min-h-2/6 max-h-2/6">
+              <h3 class="text-2xl bolder">Resumen de transacciones</h3>
               <div v-for="prod in cart" :key="prod.id" class="py-2 px-4">
                 {{ prod.title }} - {{ prod.variant.size }} - {{ prod.variant.color }}
               </div>

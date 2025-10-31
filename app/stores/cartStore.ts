@@ -12,7 +12,7 @@ export const useCartStore = defineStore('cart', () => {
 
   function addItem(item: CartProduct) {
     console.log({ item })
-    cart.value.push(item)
+    cart.value.unshift(item)
     console.log(cart.value)
   }
 

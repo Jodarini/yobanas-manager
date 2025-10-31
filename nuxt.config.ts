@@ -78,4 +78,16 @@ export default defineNuxtConfig({
       saveRedirectToCookie: true, // Saves the path user tried to access
     },
   },
+  hooks: {
+    'vite:extendConfig': extendViteConfig,
+  },
 });
+
+function extendViteConfig(config: import('vite').UserConfig) {
+  const plugin = config.plugins?.find(plugin => isPlugin(plugin, 'nuxt:environments'))
+  if (plugin) plugin.enforce = 'pre'
+}
+
+function isPlugin(plugin: unknown, name: string): plugin is import('vite').Plugin {
+  return !!(plugin && typeof plugin === 'object' && 'name' in plugin && plugin.name === name)
+}

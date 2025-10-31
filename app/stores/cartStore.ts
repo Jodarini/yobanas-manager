@@ -1,19 +1,34 @@
 import { type ProductVariant, type ProductWithVariants } from "~~/db/schema"
+import { toast } from '~/components/ui/toast'
 
 
 export const useCartStore = defineStore('cart', () => {
+
   type CartProduct = {
     title: string
     id: number
     variant: ProductVariant
-
+    stock: number
   }
+
   const cart = ref<CartProduct[]>([])
 
+
   function addItem(item: CartProduct) {
-    console.log({ item })
+    const productIsAlreadyInCart = cart.value.find(product => product.variant.id === item.variant.id)
+    if (productIsAlreadyInCart) {
+      if (productIsAlreadyInCart.stock + item.stock > item.variant.stock) {
+        item.stock = item.variant.stock
+        toast({
+          variant: 'destructive',
+          title: 'No hay stock suficiente',
+        });
+        return
+      }
+      productIsAlreadyInCart.stock += item.stock
+      return
+    }
     cart.value.unshift(item)
-    console.log(cart.value)
   }
 
   function removeItem(id: number) {

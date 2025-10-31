@@ -2,8 +2,7 @@
 import { refDebounced } from '@vueuse/core'
 import { useForm } from 'vee-validate'
 import { toast } from '~/components/ui/toast'
-import type { Product, ProductVariant, ProductWithVariants } from '~~/db/schema'
-import { Trash2Icon } from 'lucide-vue-next'
+import type { Product, ProductVariant } from '~~/db/schema'
 
 const searchTerm = ref('')
 const debouncedSearchTerm = refDebounced(searchTerm, 500) // 300ms debounce
@@ -17,6 +16,7 @@ const { data, pending, error, refresh } =
     watch: [debouncedSearchTerm],
     lazy: true,
   })
+$fetch('/api/dashboard/stats')
 
 const { data: variants, pending: variantsPending, execute } = useFetch(
   () => `/api/product/${selectedProductId.value}/variants`,
@@ -59,9 +59,15 @@ const onSubmit = handleSubmit(
   }
 );
 
-function handleAddToCart(product: Product, variant: ProductVariant) {
-  addItem({ title: product.title, id: product.id, variant: variant })
+function handleAddToCart(product: Product, variant: ProductVariant, stock:
+  number) {
+  if (stock === undefined) {
+    stock = 1
+  }
+  addItem({ title: product.title, id: product.id, variant: variant, stock })
 }
+
+const variantStockToAdd = reactive({});
 </script>
 
 
@@ -85,22 +91,41 @@ function handleAddToCart(product: Product, variant: ProductVariant) {
           </div>
           <div class="flex flex-col gap-4 w-full min-h-0">
             <div class="flex-1 min-h-0 overflow-y-auto">
-              <h2 class="text-2xl">{{ selectedProduct?.title }}</h2>
+              <div v-if="selectedProduct" class="border-b pb-4 mb-4">
+                <h2 class="text-2xl">{{ selectedProduct?.title }}</h2>
+                <span class="text-muted-foreground">Agrega las variantes para la venta</span>
+              </div>
 
-              <div v-for="variant in variants" :key="variant.id">
-                {{ variant.size }}
-                {{ variant.color }}
-                {{ variant.stock }}
-                <Button @click="handleAddToCart(selectedProduct, variant)">
-                  ADD PRODUCT VARIANT
-                </Button>
+              <div class="flex flex-col gap-4">
+                <div v-for="variant in variants" :key="variant.id" class="grid grid-cols-4 gap-4 text-muted-foreground">
+                  <span>Tamaño: {{ variant.size }} </span>
+                  <span>Color: {{ variant.color }}</span>
+                  <span>Stock: {{ variant.stock }}</span>
+                  <div class="flex flex-row gap-2">
+                    <NumberField v-model="variantStockToAdd[variant.id]" :default-value="1" :min="1"
+                      :max="variant.stock">
+                      <Label hidden>Stock</Label>
+                      <NumberFieldContent>
+                        <NumberFieldDecrement />
+                        <NumberFieldInput />
+                        <NumberFieldIncrement />
+                      </NumberFieldContent>
+                    </NumberField>
+                    <Button @click="handleAddToCart(selectedProduct, variant, variantStockToAdd[variant.id])"
+                      class="text-foreground">
+                      Agregar
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="border-t w-full overflow-y-auto min-h-2/6 max-h-2/6">
               <h3 class="text-2xl bolder">Resumen de transacciones</h3>
               <div v-for="prod in cart" :key="prod.id" class="py-2 px-4">
-                {{ prod.title }} - {{ prod.variant.size }} - {{ prod.variant.color }}
+                <span class="font-bold">{{ prod.title }} </span>
+                - {{ prod.variant.size }} - {{ prod.variant.color }} -
+                {{ prod.stock }}
               </div>
             </div>
           </div>
@@ -109,7 +134,7 @@ function handleAddToCart(product: Product, variant: ProductVariant) {
       <CardFooter class="border-t flex flex-row justify-between">
         Total price: $
         <div class="flex flex-row gap-2">
-          <Button variant="secondary">Cancelar</Button>
+          <Button variant="outline">Cancelar</Button>
           <Button>Completar venta</Button>
         </div>
       </CardFooter>

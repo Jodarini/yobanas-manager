@@ -7,6 +7,7 @@ export const useCartStore = defineStore('cart', () => {
   type CartProduct = {
     title: string
     id: number
+    price: number
     variant: ProductVariant
     stock: number
   }
@@ -31,11 +32,32 @@ export const useCartStore = defineStore('cart', () => {
     cart.value.unshift(item)
   }
 
-  function removeItem(id: number) {
-    cart.value = cart.value.filter(product => product.id !== id)
+  function handleQuantityChange(id: number, quantity: number) {
+    const product = cart.value.find(product => product.variant.id === id)
+    if (product) {
+      product.stock = quantity
+      if (product.stock > product.variant.stock) {
+        product.stock = product.variant.stock
+      }
+      if (product.stock === 0) {
+        removeItem(id)
+      }
+    }
   }
 
-  return { cart, addItem, removeItem }
+  function removeItem(id: number) {
+    cart.value = cart.value.filter(product => product.variant.id !== id)
+  }
+
+  function emptyCart() {
+    cart.value = []
+  }
+
+  const totalPrice = computed(() => {
+    return cart.value.reduce((acc, product) => acc + product.price * product.stock, 0)
+  })
+
+  return { cart, addItem, removeItem, totalPrice, emptyCart }
 
 
 })

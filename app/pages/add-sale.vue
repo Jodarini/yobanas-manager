@@ -3,12 +3,13 @@ import { refDebounced } from '@vueuse/core'
 import { useForm } from 'vee-validate'
 import { toast } from '~/components/ui/toast'
 import type { Product, ProductVariant } from '~~/db/schema'
+import { TrashIcon } from 'lucide-vue-next'
 
 const searchTerm = ref('')
 const debouncedSearchTerm = refDebounced(searchTerm, 500) // 300ms debounce
 const selectedProduct = ref<Product>()
 const selectedProductId = computed(() => selectedProduct.value?.id)
-const { cart, addItem } = useCartStore()
+const cartStore = useCartStore()
 
 
 const { data, pending, error, refresh } =
@@ -47,7 +48,7 @@ const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
 
 const onSubmit = handleSubmit(
   async (values) => {
-    console.log(values)
+    // console.log(values)
   },
   ({ errors }) => {
     toast({
@@ -59,15 +60,16 @@ const onSubmit = handleSubmit(
   }
 );
 
-function handleAddToCart(product: Product, variant: ProductVariant, stock:
+function handleAddToCart(product: Product, variant: ProductVariant, quantity:
   number) {
-  if (stock === undefined) {
-    stock = 1
+  if (quantity === undefined) {
+    quantity = 1
   }
-  addItem({ title: product.title, id: product.id, variant: variant, stock })
+  cartStore.addItem({ title: product.title, id: product.id, price: product.price, variant: variant, stock: quantity })
 }
 
 const variantStockToAdd = reactive({});
+const variantQuantity = ref(0)
 </script>
 
 
@@ -122,19 +124,52 @@ const variantStockToAdd = reactive({});
 
             <div class="border-t w-full overflow-y-auto min-h-2/6 max-h-2/6">
               <h3 class="text-2xl bolder">Resumen de transacciones</h3>
-              <div v-for="prod in cart" :key="prod.id" class="py-2 px-4">
-                <span class="font-bold">{{ prod.title }} </span>
-                - {{ prod.variant.size }} - {{ prod.variant.color }} -
-                {{ prod.stock }}
+              <div v-for="prod in cartStore.cart" :key="prod.id" class="py-2 px-4">
+                <div class="flex flex-row justify-between">
+                  <div>
+                    <p>
+                      <span class="font-bold">{{ prod.title }} </span>
+                      - {{ prod.variant.size }} - {{ prod.variant.color }}
+                    </p>
+                    <p class="text-muted-foreground">
+                      Cantidad: {{ prod.stock }}
+                      <NumberField :default-value="1" :min="1" :max="prod.variant.stock">
+                        <Label hidden>Stock</Label>
+                        <NumberFieldContent>
+                          <NumberFieldDecrement />
+                          <NumberFieldInput />
+                          <NumberFieldIncrement />
+                        </NumberFieldContent>
+                      </NumberField>
+                    </p>
+                  </div>
+                  <div class="flex flex-row gap-2 items-center">
+                    <p>
+                      {{ (prod.price * prod.stock).toLocaleString('es-CO', {
+                        style: 'currency',
+                        currency: 'COP',
+                        minimumFractionDigits: 0
+                      }) }}
+                    </p>
+                    <Button @click="cartStore.removeItem(prod.variant.id)" variant="destructive">
+                      <TrashIcon />
+                    </Button>
+                  </div>
+
+                </div>
               </div>
             </div>
           </div>
         </div>
       </CardContent>
       <CardFooter class="border-t flex flex-row justify-between">
-        Total price: $
+        Total: {{ cartStore.totalPrice.toLocaleString('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+          minimumFractionDigits: 0
+        }) }}
         <div class="flex flex-row gap-2">
-          <Button variant="outline">Cancelar</Button>
+          <Button @click="cartStore.emptyCart" variant="outline">Cancelar</Button>
           <Button>Completar venta</Button>
         </div>
       </CardFooter>

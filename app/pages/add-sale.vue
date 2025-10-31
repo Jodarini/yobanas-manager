@@ -16,13 +16,19 @@ const { data, pending, error, refresh } =
     lazy: true,
   })
 
-const { data: variants, pending: variantsPending } = useFetch(
+const { data: variants, pending: variantsPending, execute } = useFetch(
   () => `/api/product/${selectedProductId.value}/variants`,
   {
-    watch: [selectedProductId],
-    lazy: true, // Use lazy instead of immediate: false
+    key: () => `product-variants-${selectedProductId.value}`,
+    immediate: false,
+    watch: false,
   }
 )
+
+watch(selectedProductId, async () => {
+  await execute()
+})
+
 
 const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
   useForm({

@@ -3,7 +3,7 @@ import { refDebounced } from '@vueuse/core'
 import { useForm } from 'vee-validate'
 import { toast } from '~/components/ui/toast'
 import type { Product, ProductVariant } from '~~/db/schema'
-import { TrashIcon } from 'lucide-vue-next'
+import { TrashIcon, PlusCircleIcon, ChevronDown } from 'lucide-vue-next'
 
 const searchTerm = ref('')
 const debouncedSearchTerm = refDebounced(searchTerm, 500) // 300ms debounce
@@ -12,12 +12,12 @@ const selectedProductId = computed(() => selectedProduct.value?.id)
 const cartStore = useCartStore()
 
 
+const expandedVariant = ref(null)
 const { data, pending, error, refresh } =
   useFetch(() => `/api/products?search=${debouncedSearchTerm.value}`, {
     watch: [debouncedSearchTerm],
     lazy: true,
   })
-$fetch('/api/dashboard/stats')
 
 const { data: variants, pending: variantsPending, execute } = useFetch(
   () => `/api/product/${selectedProductId.value}/variants`,
@@ -31,7 +31,6 @@ const { data: variants, pending: variantsPending, execute } = useFetch(
 watch(selectedProductId, async () => {
   await execute()
 })
-
 
 const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
   useForm({
@@ -68,111 +67,300 @@ function handleAddToCart(product: Product, variant: ProductVariant, quantity:
   cartStore.addItem({ title: product.title, id: product.id, price: product.price, variant: variant, stock: quantity })
 }
 
-const variantStockToAdd = reactive({});
 const variantQuantity = ref(0)
+const searchOpen = ref(false)
+const variantStockToAdd = reactive<Record<string, number>>({})
+
+function selectProduct(product: Product) {
+  selectedProduct.value = product
+  searchOpen.value = false
+  expandedVariant.value = null
+}
+
+function clearSelection() {
+  selectedProduct.value = undefined
+  expandedVariant.value = null
+  searchOpen.value = true
+}
+
+// Optional: compute filtered products against debounced term
+const filteredProducts = computed(() => {
+  if (!data?.value) return []
+  const q = (searchTerm.value || '').toLowerCase()
+  if (!q) return data.value
+  return data.value.filter(p => p.title.toLowerCase().includes(q))
+})
+
+
+// quick filters
+const showAvailableOnly = ref(true)
+const sizeFilter = ref<string | null>(null)
+const colorFilter = ref<string | null>(null)
+
+const sizes = computed(() => {
+  const set = new Set<string>()
+  for (const v of variants.value ?? []) set.add(String(v.size))
+  return Array.from(set)
+})
+const colors = computed(() => {
+  const set = new Set<string>()
+  for (const v of variants.value ?? []) set.add(String(v.color))
+  return Array.from(set)
+})
+
+function toggleSize(s: string) {
+  sizeFilter.value = sizeFilter.value === s ? null : s
+}
+function toggleColor(c: string) {
+  colorFilter.value = colorFilter.value === c ? null : c
+}
+function clearVariantFilters() {
+  sizeFilter.value = null
+  colorFilter.value = null
+}
+
+const filteredVariants = computed(() => {
+  let list = (variants.value ?? [])
+  if (showAvailableOnly.value) list = list.filter(v => (v.stock ?? 0) > 0)
+  if (sizeFilter.value) list = list.filter(v => String(v.size) === sizeFilter.value)
+  if (colorFilter.value) list = list.filter(v => String(v.color) === colorFilter.value)
+  return list
+})
+
+// keep focus after add and show minimal feedback
+function quickAdd(product: Product, variant: ProductVariant) {
+  const qty = variantStockToAdd[variant.id] ?? 1
+  handleAddToCart(product, variant, qty)
+  // preserve focus for fast repeated adds
+  // optional: fire a light toast
+  toast({ title: 'Agregado', description: `${product.title} • ${variant.size} • ${variant.color} x${qty}` })
+}
 </script>
 
 
+<script setup lang="ts">
+</script>
 <template>
-  <Card class="min-h-2/3">
-    <form class="w-full space-y-8 h-full flex flex-col" @submit="onSubmit">
-      <CardHeader class="border-b">
+  <Card class="min-h-screen lg:min-h-2/3">
+    <form class="w-full h-full flex flex-col" @submit="onSubmit">
+      <CardHeader class="border-b shrink-0">
         <CardTitle>Agregar venta</CardTitle>
         <CardDescription>Agregar una venta a tu inventario</CardDescription>
       </CardHeader>
-      <CardContent class="flex-1 min-h-0">
-        <div class="flex flex-row gap-4 h-full">
-          <div class="flex flex-col gap-4 max-w-1/3 border-r pr-4">
-            <Input placeholder="Buscar producto..." v-model="searchTerm" />
-            <div>
-              <div class="hover:cursor-pointer hover:bg-accent p-2 rounded-sm" v-for="product in data"
-                @click="selectedProduct = product" :class="{ 'bg-accent': selectedProduct?.id === product.id }">
-                {{ product.title }}
-              </div>
+
+      <CardContent class="min-h-0 flex-1 p-4 lg:p-6">
+        <div class="flex flex-col lg:flex-row gap-4 h-full">
+          <!-- Search (Master) -->
+          <aside class="flex flex-col gap-3 w-full lg:max-w-80 xl:max-w-96 lg:border-r lg:pr-4 min-h-0">
+            <!-- Mobile collapsible header once selected -->
+            <div v-if="selectedProduct" class="lg:hidden">
+              <Button type="button" class="min-w-full justify-between" variant="outline"
+                @click="searchOpen = !searchOpen">
+                <span class="font-medium text-sm truncate">{{ selectedProduct.title }}</span>
+                <ChevronDown :class="{ 'rotate-180': searchOpen }" class="w-4 h-4 transition-transform" />
+              </Button>
             </div>
-          </div>
-          <div class="flex flex-col gap-4 w-full min-h-0">
-            <div class="flex-1 min-h-0 overflow-y-auto">
-              <div v-if="selectedProduct" class="border-b pb-4 mb-4">
-                <h2 class="text-2xl">{{ selectedProduct?.title }}</h2>
-                <span class="text-muted-foreground">Agrega las variantes para la venta</span>
+
+            <!-- Search body -->
+            <div class="flex flex-col gap-3 overflow-hidden"
+              :class="selectedProduct ? (searchOpen ? '' : 'hidden lg:flex') : ''">
+              <div class="flex gap-2">
+                <Input placeholder="Buscar producto..." v-model="searchTerm" class="text-sm flex-1" />
+                <Button v-if="selectedProduct" variant="outline" size="sm" class="hidden lg:inline-flex"
+                  @click="clearSelection">
+                  Limpiar
+                </Button>
               </div>
 
-              <div class="flex flex-col gap-4">
-                <div v-for="variant in variants" :key="variant.id" class="grid grid-cols-4 gap-4 text-muted-foreground">
-                  <span>Tamaño: {{ variant.size }} </span>
-                  <span>Color: {{ variant.color }}</span>
-                  <span>Stock: {{ variant.stock }}</span>
-                  <div class="flex flex-row gap-2">
-                    <NumberField v-model="variantStockToAdd[variant.id]" :default-value="1" :min="1"
-                      :max="variant.stock">
-                      <Label hidden>Stock</Label>
-                      <NumberFieldContent>
-                        <NumberFieldDecrement />
-                        <NumberFieldInput />
-                        <NumberFieldIncrement />
-                      </NumberFieldContent>
-                    </NumberField>
-                    <Button @click="handleAddToCart(selectedProduct, variant, variantStockToAdd[variant.id])"
-                      class="text-foreground">
-                      Agregar
+              <div class="min-h-32 max-h-64 lg:max-h-none overflow-auto rounded-lg border">
+                <div v-if="pending" class="p-3 text-xs text-muted-foreground">Buscando…</div>
+                <div v-else-if="error" class="p-3 text-xs text-destructive">Error cargando productos</div>
+                <div v-else-if="!filteredProducts?.length" class="p-3 text-xs text-muted-foreground">Sin resultados
+                </div>
+
+                <div v-for="product in filteredProducts" :key="product.id"
+                  class="p-2 hover:bg-accent cursor-pointer transition-colors text-sm"
+                  :class="{ 'bg-accent': selectedProduct?.id === product.id }" @click="selectProduct(product)">
+                  {{ product.title }}
+                </div>
+              </div>
+
+              <!-- Desktop helper -->
+              <div v-if="selectedProduct" class="hidden lg:flex">
+                <Button variant="outline" size="sm" @click="clearSelection">Borrar selección</Button>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Detail (Variants + Summary) -->
+          <section class="flex flex-col gap-4 w-full min-h-0 flex-1">
+            <!-- Variants panel -->
+            <div class="flex flex-col overflow-hidden flex-1 min-h-0">
+              <!-- Sticky product/context bar with quick filters -->
+              <div v-if="selectedProduct"
+                class="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+                <div class="flex items-center justify-between gap-2 px-2 py-2">
+                  <div class="min-w-0">
+                    <h2 class="text-sm lg:text-lg font-semibold truncate">{{ selectedProduct.title }}</h2>
+                    <p class="text-[11px] lg:text-xs text-muted-foreground">Selecciona variantes y cantidades.</p>
+                  </div>
+                  <div class="flex gap-2 shrink-0">
+                    <Button variant="outline" size="sm" class="hidden lg:inline-flex"
+                      @click="selectedProduct = undefined">Cambiar</Button>
+                    <Button variant="outline" size="sm" class="lg:hidden" @click="searchOpen = !searchOpen">
+                      {{ searchOpen ? 'Ocultar' : 'Buscar' }}
                     </Button>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <div class="border-t w-full overflow-y-auto min-h-2/6 max-h-2/6">
-              <h3 class="text-2xl bolder">Resumen de transacciones</h3>
-              <div v-for="prod in cartStore.cart" :key="prod.id" class="py-2 px-4">
-                <div class="flex flex-row justify-between">
-                  <div>
-                    <p>
-                      <span class="font-bold">{{ prod.title }} </span>
-                      - {{ prod.variant.size }} - {{ prod.variant.color }}
-                    </p>
-                    <p class="text-muted-foreground">
-                      Cantidad: {{ prod.stock }}
-                      <NumberField :default-value="1" :min="1" :max="prod.variant.stock">
-                        <Label hidden>Stock</Label>
+                <!-- Quick filters row -->
+                <div class="px-2 pb-2 flex items-center gap-2 overflow-x-auto">
+                  <Button type="button" size="sm" variant="outline" :class="{ 'bg-accent': showAvailableOnly }"
+                    @click="showAvailableOnly = !showAvailableOnly">
+                    Solo disponibles
+                  </Button>
+
+                  <!-- Size chips -->
+                  <div class="flex items-center gap-2">
+                    <button v-for="size in sizes" :key="size" type="button"
+                      class="px-2 py-1 rounded-full border text-xs" :class="sizeFilter === size ? 'bg-accent' : ''"
+                      @click="toggleSize(size)">
+                      {{ size }}
+                    </button>
+                  </div>
+
+                  <!-- Color chips -->
+                  <div class="flex items-center gap-2">
+                    <button v-for="color in colors" :key="color" type="button"
+                      class="px-2 py-1 rounded-full border text-xs" :class="colorFilter === color ? 'bg-accent' : ''"
+                      @click="toggleColor(color)">
+                      {{ color }}
+                    </button>
+                  </div>
+
+                  <Button v-if="sizeFilter || colorFilter" type="button" size="sm" variant="ghost" class="ml-auto"
+                    @click="clearVariantFilters">
+                    Limpiar filtros
+                  </Button>
+                </div>
+              </div>
+
+              <!-- Loading and empty states -->
+              <div v-if="variantsPending" class="p-3 text-sm text-muted-foreground">Cargando variantes…</div>
+              <div v-else-if="selectedProduct && !filteredVariants?.length" class="p-3 text-sm text-muted-foreground">
+                No hay variantes que coincidan con los filtros.
+              </div>
+
+              <!-- Scrollable list -->
+              <div v-if="selectedProduct" class="flex flex-col gap-2 overflow-y-auto min-h-0 flex-1 px-1 py-1">
+                <div v-for="(variant, idx) in filteredVariants" :key="variant.id"
+                  class="rounded-lg border bg-card/40 hover:bg-card/60 transition-colors">
+                  <!-- Compact row -->
+                  <div class="grid grid-cols-12 items-center gap-2 p-2">
+                    <div class="col-span-7 sm:col-span-6 lg:col-span-6 min-w-0">
+                      <p class="text-sm font-medium truncate">
+                        {{ variant.size }} • {{ variant.color }}
+                      </p>
+                      <p class="text-xs text-muted-foreground">Stock: {{ variant.stock }}</p>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="col-span-3 sm:col-span-3 lg:col-span-3 flex items-center justify-end">
+                      <NumberField v-model="variantStockToAdd[variant.id]" :default-value="1" :min="1"
+                        :max="variant.stock" class="min-w-24">
+                        <Label hidden>Cantidad</Label>
                         <NumberFieldContent>
                           <NumberFieldDecrement />
                           <NumberFieldInput />
                           <NumberFieldIncrement />
                         </NumberFieldContent>
                       </NumberField>
-                    </p>
-                  </div>
-                  <div class="flex flex-row gap-2 items-center">
-                    <p>
-                      {{ (prod.price * prod.stock).toLocaleString('es-CO', {
-                        style: 'currency',
-                        currency: 'COP',
-                        minimumFractionDigits: 0
-                      }) }}
-                    </p>
-                    <Button @click="cartStore.removeItem(prod.variant.id)" variant="destructive">
-                      <TrashIcon />
-                    </Button>
+                    </div>
+
+                    <!-- Quick add -->
+                    <div class="col-span-2 sm:col-span-2 lg:col-span-2">
+                      <Button size="sm" class="w-full" @click="quickAdd(selectedProduct, variant)">
+                        Agregar
+                      </Button>
+                    </div>
+
+                    <!-- Expand toggle (mobile) -->
+                    <div class="col-span-12 flex justify-end sm:hidden">
+                      <button type="button" class="text-xs text-muted-foreground px-2 py-1"
+                        @click="expandedVariant === idx ? expandedVariant = null : expandedVariant = idx"
+                        :aria-expanded="expandedVariant === idx">
+                        Detalles
+                        <span :class="{ 'inline-block rotate-180': expandedVariant === idx }"
+                          class="inline-block align-middle transition-transform">⌄</span>
+                      </button>
+                    </div>
                   </div>
 
+                  <!-- Optional details -->
+                  <div v-if="expandedVariant === idx" class="px-3 pb-3 sm:hidden">
+                    <ul class="text-xs text-muted-foreground space-y-1">
+                      <li>SKU: {{ variant.sku || '—' }}</li>
+                      <li>Precio: {{ (variant.price ?? selectedProduct.price).toLocaleString('es-CO', {
+                        style: 'currency', currency: 'COP', minimumFractionDigits: 0
+                      }) }}</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+
+            <!-- Summary -->
+            <div class="pt-3 lg:pt-4 w-full shrink-0 border-t">
+              <h3 class="text-base lg:text-2xl font-bold mb-2 lg:mb-3">Resumen de transacciones</h3>
+              <div class="flex flex-col gap-2 max-h-56 lg:max-h-64 overflow-y-auto">
+                <div v-for="prod in cartStore.cart" :key="prod.id" class="p-3 border rounded-lg">
+                  <div class="flex flex-col sm:flex-row sm:justify-between gap-3">
+                    <div class="min-w-0">
+                      <p class="font-semibold text-sm lg:text-base truncate">
+                        {{ prod.title }}
+                        <span class="text-muted-foreground"> • {{ prod.variant.size }} • {{ prod.variant.color }}</span>
+                      </p>
+                      <div class="flex items-center gap-2 mt-2">
+                        <span class="text-xs text-muted-foreground">Cant.:</span>
+                        <NumberField :default-value="prod.stock" :min="1" :max="prod.variant.stock" class="min-w-24">
+                          <Label hidden>Cantidad</Label>
+                          <NumberFieldContent>
+                            <NumberFieldDecrement />
+                            <NumberFieldInput />
+                            <NumberFieldIncrement />
+                          </NumberFieldContent>
+                        </NumberField>
+                      </div>
+                    </div>
+                    <div class="flex items-center sm:flex-col lg:flex-row gap-2 sm:items-end sm:justify-end">
+                      <p class="font-semibold">
+                        {{ (prod.price * prod.stock).toLocaleString('es-CO', {
+                          style: 'currency', currency: 'COP', minimumFractionDigits: 0
+                        }) }}
+                      </p>
+                      <Button @click="cartStore.removeItem(prod.variant.id)" variant="destructive" size="sm">
+                        <TrashIcon class="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-3 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                <p class="text-base lg:text-xl font-bold">
+                  Total:
+                  {{ cartStore.totalPrice.toLocaleString('es-CO', {
+                    style: 'currency', currency: 'COP', minimumFractionDigits: 0
+                  }) }}
+                </p>
+                <div class="flex flex-col gap-2 md:flex-row">
+                  <Button @click="cartStore.emptyCart" variant="outline" class="w-full sm:w-auto">Cancelar</Button>
+                  <Button class="w-full sm:w-auto">Completar venta</Button>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </CardContent>
-      <CardFooter class="border-t flex flex-row justify-between">
-        Total: {{ cartStore.totalPrice.toLocaleString('es-CO', {
-          style: 'currency',
-          currency: 'COP',
-          minimumFractionDigits: 0
-        }) }}
-        <div class="flex flex-row gap-2">
-          <Button @click="cartStore.emptyCart" variant="outline">Cancelar</Button>
-          <Button>Completar venta</Button>
-        </div>
-      </CardFooter>
     </form>
   </Card>
 </template>

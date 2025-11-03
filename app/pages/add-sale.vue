@@ -172,7 +172,7 @@ const value = ref<Product | undefined>()
         Ventas
       </TabsTrigger>
     </TabsList>
-    <TabsContent value="productos">
+    <TabsContent value="productos" class="max-h-full overflow-hidden">
       <Card class="h-full flex">
         <form class="w-full h-full flex flex-col" @submit="onSubmit">
           <CardHeader>
@@ -229,13 +229,6 @@ const value = ref<Product | undefined>()
                 <div class="flex flex-col overflow-hidden flex-1 min-h-0">
                   <!-- Sticky product/context bar with quick filters -->
                   <div v-if="selectedProduct" class="border-b border-border">
-                    <div class="flex items-center justify-between gap-2 px-2 py-2">
-                      <div class="flex gap-2 shrink-0">
-                        <Button variant="outline" size="sm" class="lg:hidden" @click="searchOpen = !searchOpen">
-                          {{ searchOpen ? 'Ocultar' : 'Buscar' }}
-                        </Button>
-                      </div>
-                    </div>
 
                     <!-- Quick filters row -->
                     <div class="px-2 pb-2 flex items-center gap-2 overflow-x-auto">
@@ -278,7 +271,7 @@ const value = ref<Product | undefined>()
                   </div>
 
                   <!-- Scrollable list -->
-                  <div v-if="selectedProduct" class="flex flex-col gap-2 overflow-y-auto min-h-0 flex-1">
+                  <div v-if="selectedProduct" class="flex flex-col gap-2 overflow-y-auto min-h-0 flex-1 pb-8">
                     <div v-for="(variant, idx) in filteredVariants" :key="variant.id"
                       class="border-border border-b bg-card/40 hover:bg-card/60 transition-colors p-2">
                       <!-- Compact row -->
@@ -328,7 +321,7 @@ const value = ref<Product | undefined>()
         </form>
       </Card>
     </TabsContent>
-    <TabsContent value="ventas" class="h-full">
+    <TabsContent value="ventas" class="h-full overflow-hidden">
       <Card class="h-full">
         <CardHeader>
           <CardTitle>Resumen de ventas</CardTitle>

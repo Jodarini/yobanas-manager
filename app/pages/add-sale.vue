@@ -49,7 +49,7 @@ const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
 
 const onSubmit = handleSubmit(
   async (values) => {
-    // console.log(values)
+    console.log(values)
   },
   ({ errors }) => {
     toast({
@@ -337,7 +337,7 @@ const value = ref<Product | undefined>()
                   </p>
                   <div class="flex md:items-center gap-2 mt-2">
                     <span class="text-xs text-muted-foreground">Cant.:</span>
-                    <NumberField :default-value="prod.stock" :min="1"
+                    <NumberField :default-value="prod.stock" :min="1" :max="prod.variant.stock"
                       @update:model-value="val => cartStore.handleQuantityChange(prod.variant.id, val)">
                       <Label hidden>Cantidad</Label>
                       <NumberFieldContent>

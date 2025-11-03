@@ -33,7 +33,6 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   function handleQuantityChange(id: number, quantity: number) {
-    console.log(id, quantity)
     const product = cart.value.find(product => product.variant.id === id)
     if (product) {
       product.stock = quantity

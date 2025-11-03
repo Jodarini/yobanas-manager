@@ -33,6 +33,7 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   function handleQuantityChange(id: number, quantity: number) {
+    console.log(id, quantity)
     const product = cart.value.find(product => product.variant.id === id)
     if (product) {
       product.stock = quantity
@@ -57,7 +58,7 @@ export const useCartStore = defineStore('cart', () => {
     return cart.value.reduce((acc, product) => acc + product.price * product.stock, 0)
   })
 
-  return { cart, addItem, removeItem, totalPrice, emptyCart }
+  return { cart, addItem, removeItem, totalPrice, handleQuantityChange, emptyCart }
 
 
 })

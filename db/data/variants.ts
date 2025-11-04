@@ -1,107 +1,44 @@
+// db/data/variants.ts
 export const productVariantsData = [
-  // Tenis Deportivos (productId: 1)
-  { productId: 1, size: '38', color: 'rojo', stock: 12 },
-  { productId: 1, size: '39', color: 'rojo', stock: 8 },
-  { productId: 1, size: '40', color: 'rojo', stock: 15 },
-  { productId: 1, size: '41', color: 'rojo', stock: 10 },
-  { productId: 1, size: '42', color: 'rojo', stock: 6 },
-  { productId: 1, size: '38', color: 'azul', stock: 9 },
-  { productId: 1, size: '39', color: 'azul', stock: 11 },
-  { productId: 1, size: '40', color: 'azul', stock: 7 },
-  { productId: 1, size: '41', color: 'azul', stock: 13 },
-  { productId: 1, size: '42', color: 'azul', stock: 5 },
-  { productId: 1, size: '38', color: 'negro', stock: 14 },
-  { productId: 1, size: '39', color: 'negro', stock: 16 },
-  { productId: 1, size: '40', color: 'negro', stock: 12 },
-  { productId: 1, size: '41', color: 'negro', stock: 8 },
-  { productId: 1, size: '42', color: 'negro', stock: 4 },
+  // Product 1: Camiseta
+  { product_id: 1, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'S', color: 'blanco', stock: 25, sold_count: 5 },
+  { product_id: 1, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'M', color: 'blanco', stock: 30, sold_count: 7 },
+  { product_id: 1, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'L', color: 'negro', stock: 20, sold_count: 3 },
 
-  // Reloj Inteligente (productId: 2)
-  { productId: 2, size: 'Talla u', color: 'negro', stock: 25 },
-  { productId: 2, size: 'Talla u', color: 'plateado', stock: 18 },
-  { productId: 2, size: 'Talla u', color: 'dorado', stock: 12 },
-  { productId: 2, size: 'Talla u', color: 'blanco', stock: 15 },
+  // Product 2: Jogger
+  { product_id: 2, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'S', color: 'gris', stock: 15, sold_count: 2 },
+  { product_id: 2, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'M', color: 'negro', stock: 18, sold_count: 4 },
 
-  // Billetera de Cuero (productId: 3)
-  { productId: 3, size: 'Estándar', color: 'café', stock: 22 },
-  { productId: 3, size: 'Estándar', color: 'negro', stock: 28 },
-  { productId: 3, size: 'Compacta', color: 'café', stock: 15 },
-  { productId: 3, size: 'Compacta', color: 'negro', stock: 18 },
-  { productId: 3, size: 'Estándar', color: 'marrón', stock: 12 },
-  { productId: 3, size: 'Compacta', color: 'marrón', stock: 10 },
+  // Product 3: Rompevientos
+  { product_id: 3, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'M', color: 'azul', stock: 12, sold_count: 1 },
+  { product_id: 3, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'L', color: 'verde', stock: 10, sold_count: 0 },
 
-  // Audífonos Inalámbricos (productId: 4)
-  { productId: 4, size: 'Talla u', color: 'negro', stock: 30 },
-  { productId: 4, size: 'Talla u', color: 'blanco', stock: 25 },
-  { productId: 4, size: 'Talla u', color: 'azul', stock: 12 },
-  { productId: 4, size: 'Talla u', color: 'rojo', stock: 8 },
+  // Product 4: Zapatillas
+  { product_id: 4, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: '39', color: 'blanco', stock: 8, sold_count: 1 },
+  { product_id: 4, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: '41', color: 'negro', stock: 9, sold_count: 2 },
 
-  // Camiseta de Algodón (productId: 5)
-  { productId: 5, size: 'S', color: 'blanco', stock: 35 },
-  { productId: 5, size: 'M', color: 'blanco', stock: 40 },
-  { productId: 5, size: 'L', color: 'blanco', stock: 30 },
-  { productId: 5, size: 'XL', color: 'blanco', stock: 20 },
-  { productId: 5, size: 'S', color: 'negro', stock: 32 },
-  { productId: 5, size: 'M', color: 'negro', stock: 38 },
-  { productId: 5, size: 'L', color: 'negro', stock: 28 },
-  { productId: 5, size: 'XL', color: 'negro', stock: 18 },
-  { productId: 5, size: 'S', color: 'gris', stock: 25 },
-  { productId: 5, size: 'M', color: 'gris', stock: 30 },
-  { productId: 5, size: 'L', color: 'gris', stock: 22 },
-  { productId: 5, size: 'XL', color: 'gris', stock: 15 },
+  // Product 5: Gorra
+  { product_id: 5, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'U', color: 'negro', stock: 40, sold_count: 6 },
+  { product_id: 5, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'U', color: 'rojo', stock: 25, sold_count: 1 },
 
-  // Chaqueta Impermeable (productId: 6)
-  { productId: 6, size: 'S', color: 'azul', stock: 18 },
-  { productId: 6, size: 'M', color: 'azul', stock: 25 },
-  { productId: 6, size: 'L', color: 'azul', stock: 22 },
-  { productId: 6, size: 'XL', color: 'azul', stock: 15 },
-  { productId: 6, size: 'S', color: 'gris', stock: 16 },
-  { productId: 6, size: 'M', color: 'gris', stock: 20 },
-  { productId: 6, size: 'L', color: 'gris', stock: 18 },
-  { productId: 6, size: 'XL', color: 'gris', stock: 12 },
-  { productId: 6, size: 'S', color: 'negro', stock: 14 },
-  { productId: 6, size: 'M', color: 'negro', stock: 18 },
-  { productId: 6, size: 'L', color: 'negro', stock: 16 },
-  { productId: 6, size: 'XL', color: 'negro', stock: 10 },
+  // Product 6: Sudadera
+  { product_id: 6, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'M', color: 'gris', stock: 14, sold_count: 2 },
+  { product_id: 6, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'L', color: 'negro', stock: 16, sold_count: 3 },
 
-  // Mochila Ejecutiva (productId: 7)
-  { productId: 7, size: 'Estándar', color: 'negro', stock: 30 },
-  { productId: 7, size: 'Estándar', color: 'gris', stock: 25 },
-  { productId: 7, size: 'Estándar', color: 'café', stock: 18 },
-  { productId: 7, size: 'Grande', color: 'negro', stock: 20 },
-  { productId: 7, size: 'Grande', color: 'gris', stock: 15 },
-  { productId: 7, size: 'Grande', color: 'café', stock: 12 },
+  // Product 7: Camisa de lino
+  { product_id: 7, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'M', color: 'beige', stock: 11, sold_count: 0 },
+  { product_id: 7, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'L', color: 'blanco', stock: 9, sold_count: 1 },
 
-  // Smartphone Android (productId: 8)
-  { productId: 8, size: '128GB', color: 'negro', stock: 20 },
-  { productId: 8, size: '128GB', color: 'blanco', stock: 18 },
-  { productId: 8, size: '128GB', color: 'azul', stock: 15 },
-  { productId: 8, size: '256GB', color: 'negro', stock: 15 },
-  { productId: 8, size: '256GB', color: 'blanco', stock: 12 },
-  { productId: 8, size: '256GB', color: 'azul', stock: 10 },
-  { productId: 8, size: '512GB', color: 'negro', stock: 8 },
-  { productId: 8, size: '512GB', color: 'blanco', stock: 6 },
+  // Product 8: Medias
+  { product_id: 8, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'U', color: 'blanco', stock: 60, sold_count: 10 },
+  { product_id: 8, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'U', color: 'negro', stock: 55, sold_count: 12 },
 
-  // Perfume Masculino (productId: 9)
-  { productId: 9, size: '50ml', color: 'transpa', stock: 25 },
-  { productId: 9, size: '100ml', color: 'transp', stock: 20 },
-  { productId: 9, size: '150ml', color: 'transp', stock: 15 },
+  // Product 9: Cinturón
+  { product_id: 9, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: '90', color: 'marrón', stock: 7, sold_count: 0 },
+  { product_id: 9, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: '95', color: 'negro', stock: 6, sold_count: 0 },
 
-  // Laptop Gaming (productId: 10)
-  { productId: 10, size: '15.6', color: 'negro', stock: 8 },
-  { productId: 10, size: '15.6', color: 'gris', stock: 6 },
-  { productId: 10, size: '17.3', color: 'negro', stock: 5 },
-  { productId: 10, size: '17.3', color: 'gris', stock: 4 },
-
-  // Gafas de Sol (productId: 11)
-  { productId: 11, size: 'Talla u', color: 'negro', stock: 30 },
-  { productId: 11, size: 'Talla u', color: 'café', stock: 25 },
-  { productId: 11, size: 'Talla u', color: 'dorado', stock: 20 },
-  { productId: 11, size: 'Talla u', color: 'plateado', stock: 18 },
-  { productId: 11, size: 'Talla u', color: 'azul', stock: 15 },
-
-  // Crema Facial (productId: 12)
-  { productId: 12, size: '50ml', color: 'blanco', stock: 40 },
-  { productId: 12, size: '100ml', color: 'blanco', stock: 35 },
-  { productId: 12, size: '150ml', color: 'blanco', stock: 25 },
+  // Product 10: Short
+  { product_id: 10, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'S', color: 'azul', stock: 20, sold_count: 2 },
+  { product_id: 10, user_id: '0913d73e-08aa-44e5-98d7-db0f1b1b19c2', size: 'M', color: 'negro', stock: 22, sold_count: 1 },
 ];
+

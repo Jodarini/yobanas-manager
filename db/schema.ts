@@ -9,6 +9,7 @@ import {
   timestamp,
   numeric,
   index,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core'
 import { authenticatedRole } from 'drizzle-orm/supabase'
 import { sql } from 'drizzle-orm'
@@ -24,6 +25,7 @@ export const productsTable = pgTable(
   'products',
   {
     id: serial('id').primaryKey().notNull(),
+    sku: text('sku').notNull(),
     user_id: uuid('user_id').notNull(),
     title: text('title').notNull(),
     description: text('description'),
@@ -34,6 +36,7 @@ export const productsTable = pgTable(
   },
   (table) => [
     index('idx_products_user_id').on(table.user_id),
+    uniqueIndex('uq_products_sku').on(table.sku),
     pgPolicy('users_select_own_products', {
       as: 'permissive',
       for: 'select',
@@ -66,6 +69,7 @@ export const productVariants = pgTable(
   'product_variants',
   {
     id: serial('id').primaryKey().notNull(),
+    sku: text('sku').notNull(),
     productId: integer('product_id')
       .notNull()
       .references(() => productsTable.id, { onDelete: 'cascade' }),
@@ -79,6 +83,7 @@ export const productVariants = pgTable(
   (table) => [
     index('idx_variants_product_id').on(table.productId),
     index('idx_variants_user_id').on(table.user_id),
+    uniqueIndex('uq_variants_sku').on(table.sku),
     pgPolicy('users_select_own_variants', {
       as: 'permissive',
       for: 'select',

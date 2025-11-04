@@ -5,6 +5,7 @@ import {
 } from '~~/db/schema';
 import { useAuthDB } from '~~/server/utils/db';
 import { serverSupabaseClient } from '#supabase/server';
+import { buildProductSku, buildVariantSku } from '~~/db/utils/sku';
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -24,10 +25,17 @@ export default defineEventHandler(async (event) => {
 
   try {
     return await useAuthDB(user, async (tx) => {
+      const productSku = buildProductSku({
+        brand: product.brand,
+        category: product.category[0] || 'misc',
+        model: product.title,
+      });
+
       const queryResult = await tx
         .insert(productsTable)
         .values({
           user_id: user.id,
+          sku: productSku,
           title: product.title,
           description: product.description,
           price: product.price,
@@ -40,15 +48,20 @@ export default defineEventHandler(async (event) => {
         .returning();
 
       for (const variant of product.variants) {
+        const variantSku = buildVariantSku({
+          productSku,
+          color: variant.color,
+          size: variant.size,
+        });
         await tx.insert(productVariants).values({
           productId: queryResult[0].id,
           user_id: user.id,
           color: variant.color,
           size: variant.size,
           stock: variant.stock,
+          sku: variantSku,
         });
       }
-
       return { product: queryResult[0] };
     });
   } catch (error) {

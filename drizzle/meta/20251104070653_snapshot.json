@@ -1,6 +1,6 @@
 {
-  "id": "96d500bf-c072-44a2-8e36-d208b5d179a1",
-  "prevId": "a4745996-9156-4512-bba3-38853c4afa15",
+  "id": "a4fbc3cb-9888-4f68-b638-4edf91c946da",
+  "prevId": "8dabb73c-75da-4149-8598-3e7c7e79d58f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -12,6 +12,12 @@
           "name": "id",
           "type": "serial",
           "primaryKey": true,
+          "notNull": true
+        },
+        "sku": {
+          "name": "sku",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true
         },
         "product_id": {
@@ -158,6 +164,12 @@
           "name": "id",
           "type": "serial",
           "primaryKey": true,
+          "notNull": true
+        },
+        "sku": {
+          "name": "sku",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true
         },
         "user_id": {

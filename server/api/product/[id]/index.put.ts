@@ -6,6 +6,7 @@ import {
   updateProductSchema,
 } from '~~/db/schema';
 import { useAuthDB } from '~~/server/utils/db';
+import { buildProductSku, buildVariantSku } from '~~/db/utils/sku';
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -22,6 +23,11 @@ export default defineEventHandler(async (event) => {
     const product = updateProductSchema.parse(body);
 
     return await useAuthDB(user, async (tx) => {
+      const productSku = buildProductSku({
+        brand: product.brand,
+        category: product.category[0] || 'misc',
+        model: product.title,
+      });
       const result = await tx
         .update(productsTable)
         .set({
@@ -30,6 +36,7 @@ export default defineEventHandler(async (event) => {
           price: product.price,
           category: product.category,
           brand: product.brand,
+          sku: productSku,
         })
         .where(eq(productsTable.id, product.id))
         .returning();
@@ -39,13 +46,21 @@ export default defineEventHandler(async (event) => {
         .where(eq(productVariants.productId, product.id));
 
       await tx.insert(productVariants).values(
-        product.variants.map((v) => ({
-          productId: product.id,
-          user_id: user.id,
-          size: v.size,
-          color: v.color,
-          stock: v.stock,
-        }))
+        product.variants.map((v) => {
+          const variantSku = buildVariantSku({
+            productSku,
+            color: v.color,
+            size: v.size,
+          });
+          return {
+            productId: product.id,
+            user_id: user.id,
+            size: v.size,
+            color: v.color,
+            stock: v.stock,
+            sku: variantSku,
+          };
+        })
       );
 
       return {

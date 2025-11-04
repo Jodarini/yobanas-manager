@@ -252,6 +252,8 @@ export const checkoutPayloadSchema = z.object({
   note: z.string().max(1000).optional(),
 })
 
+export type checkoutItem = z.infer<typeof checkoutItemSchema>
+
 export type UpdateProduct = z.infer<typeof updateProductSchema>
 export type UpdateProductVariant = z.infer<typeof updateProductVariantSchema>
 

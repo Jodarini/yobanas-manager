@@ -1,4 +1,4 @@
-import { type ProductVariant, type ProductWithVariants } from "~~/db/schema"
+import { type ProductVariant, type checkoutItem } from "~~/db/schema"
 import { toast } from '~/components/ui/toast'
 
 
@@ -57,7 +57,35 @@ export const useCartStore = defineStore('cart', () => {
     return cart.value.reduce((acc, product) => acc + product.price * product.stock, 0)
   })
 
-  return { cart, addItem, removeItem, totalPrice, handleQuantityChange, emptyCart }
+  async function checkout(items: checkoutItem[]) {
+    console.log('aslkdjflasdkjflkasjflkasjdflkajsf')
+    console.log({ items })
+    const isSubmitting = ref(true)
+    try {
+
+      const res = await $fetch('/api/sales', {
+        method: 'POST',
+        body: { items: items },
+      })
+      toast({
+        title: 'Compra exitosa',
+        description: 'Se han registrado los productos',
+      })
+
+      return res
+
+    } catch (err) {
+      console.error(err)
+      toast({
+        variant: 'destructive',
+        title: 'Error al procesar la compra',
+      });
+    } finally {
+      isSubmitting.value = false
+    }
+  }
+
+  return { cart, addItem, removeItem, totalPrice, handleQuantityChange, emptyCart, checkout }
 
 
 })

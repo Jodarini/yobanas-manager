@@ -34,32 +34,14 @@ watch(selectedProductId, async () => {
   await execute()
 })
 
-const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
-  useForm({
-    // validationSchema: formSchema,
-    // initialValues: props.initialValues || {
-    //   title: 'test',
-    //   description: 'test',
-    //   price: 1000,
-    //   category: ['test'],
-    //   brand: 'test',
-    //   variants: [{ size: '', stock: 0, color: '' }],
-    // },
-  });
 
-const onSubmit = handleSubmit(
-  async (values) => {
-    console.log(values)
-  },
-  ({ errors }) => {
-    toast({
-      variant: 'destructive',
-      title: 'Error en el formulario',
-      description: 'Verifique los campos marcados en rojo',
-    });
-    console.error(errors);
-  }
-);
+async function onSubmit() {
+  const items = cartStore.cart.map(p => ({
+    variantId: p.variant.id,
+    quantity: p.stock,
+  }))
+  await cartStore.checkout(items)
+}
 
 function handleAddToCart(product: Product, variant: ProductVariant, quantity:
   number) {
@@ -69,7 +51,6 @@ function handleAddToCart(product: Product, variant: ProductVariant, quantity:
   cartStore.addItem({ title: product.title, id: product.id, price: product.price, variant: variant, stock: quantity })
 }
 
-const variantQuantity = ref(0)
 const searchOpen = ref(false)
 const variantStockToAdd = reactive<Record<string, number>>({})
 
@@ -184,7 +165,7 @@ const value = ref<Product | undefined>()
             <Combobox v-model="value" by="label">
               <ComboboxAnchor as-child class="mb-4">
                 <ComboboxTrigger as-child>
-                  <Button variant="outline" class="justify-between w-full">
+                  <Button variant="outline" class="justify-between w-full" type="button">
                     {{ value?.title ?? 'Selecciona un producto' }}
                     <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
@@ -295,7 +276,7 @@ const value = ref<Product | undefined>()
                           </NumberField>
 
                           <!-- Quick add -->
-                          <Button @click="quickAdd(selectedProduct, variant)">
+                          <Button type="button" @click="quickAdd(selectedProduct, variant)">
                             Agregar
                           </Button>
                         </div>
@@ -354,7 +335,7 @@ const value = ref<Product | undefined>()
                       style: 'currency', currency: 'COP', minimumFractionDigits: 0
                     }) }}
                   </p>
-                  <Button @click="cartStore.removeItem(prod.variant.id)" variant="destructive">
+                  <Button type="button" @click="cartStore.removeItem(prod.variant.id)" variant="destructive">
                     <TrashIcon class="w-4 h-4" />
                   </Button>
                 </div>
@@ -370,8 +351,10 @@ const value = ref<Product | undefined>()
             }) }}
           </p>
           <div class="flex flex-col gap-2 md:flex-row w-full md:w-auto">
-            <Button @click="cartStore.emptyCart" variant="outline" class="w-full md:w-auto">Limpiar</Button>
-            <Button class="w-full md:w-auto">Completar venta</Button>
+            <Button type="button" @click="cartStore.emptyCart" variant="outline"
+              class="w-full md:w-auto">Limpiar</Button>
+            <Button class="w-full md:w-auto" @click="onSubmit">Completar
+              venta</Button>
           </div>
         </CardFooter>
       </Card>

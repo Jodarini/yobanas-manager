@@ -1,73 +1,89 @@
-import { serverSupabaseClient } from '#supabase/server';
-import { eq, inArray, sql } from 'drizzle-orm';
+import { serverSupabaseClient } from '#supabase/server'
 import {
   checkoutPayloadSchema,
-  productsTable,
-  productVariants,
-  saleItems,
-  sales,
-} from '~~/db/schema';
-import { useAuthDB } from '~~/server/utils/db';
+} from '~~/db/schema'
+import { useAuthDB } from '~~/server/utils/db'
+import { eq, inArray, sql } from 'drizzle-orm'
+import { sales, saleItems, productVariants, productsTable } from '~~/db/schema'
 
 export default defineEventHandler(async (event) => {
-  const supabase = await serverSupabaseClient(event);
+  const supabase = await serverSupabaseClient(event)
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' });
+    throw createError({ statusCode: 401, message: 'Unauthorized' })
   }
 
   try {
-    const body = await readBody(event);
-    const product = checkoutPayloadSchema.parse(body);
-    const items = product.items;
+    const body = await readBody(event)
+    const payload = checkoutPayloadSchema.parse(body)
+    const items = payload.items
 
+    // Validate empty cart
+    if (!items || items.length === 0) {
+      throw createError({ statusCode: 400, message: 'Carrito vacío' })
+    }
 
     return await useAuthDB(user, async (tx) => {
-      // 1) Load variants and ensure tenant ownership via join to product/user
+      const now = new Date()
+
+      // 1) Load variants with product prices; RLS will auto-filter to user's products
       const variantIds = items.map((i) => i.variantId)
       const variants = await tx
         .select({
           id: productVariants.id,
           productId: productVariants.productId,
           stock: productVariants.stock,
-          // capture unit price from products table list price (or add variant price if you have it)
           unitPrice: productsTable.price,
         })
         .from(productVariants)
+        .innerJoin(productsTable, eq(productsTable.id, productVariants.productId))
         .where(inArray(productVariants.id, variantIds))
-        .leftJoin(productsTable, eq(productsTable.id, productVariants.productId))
 
-      // Simple ownership check: every variant’s product must belong to user
-      const allOwned = variants.every((v) => !!v && (v as any).products?.user_id === user.id)
-      if (!allOwned || variants.length !== items.length) {
-        throw createError({ statusCode: 403, statusMessage: 'Forbidden or invalid variant' })
+      // Validate all variants exist
+      if (variants.length !== items.length) {
+        throw createError({ statusCode: 404, message: 'Una o más variantes no existen' })
       }
 
       // 2) Validate stock and prepare line rows
-      const now = new Date()
-      const lines = items.map((i) => {
-        const v = variants.find((vv) => vv.id === i.variantId)!
-        if (i.quantity <= 0) {
-          throw createError({ statusCode: 400, statusMessage: 'Invalid quantity' })
+      const variantMap = new Map(variants.map((v) => [v.id, v]))
+      const lines: Array<{
+        variantId: number
+        quantity: number
+        unitPrice: string | number
+        lineTotal: number
+      }> = []
+
+      for (const item of items) {
+        if (item.quantity <= 0) {
+          throw createError({ statusCode: 400, message: 'Cantidad inválida' })
         }
-        if ((v.stock ?? 0) < i.quantity) {
-          throw createError({ statusCode: 409, statusMessage: 'Insufficient stock' })
+
+        const variant = variantMap.get(item.variantId)
+        if (!variant) {
+          throw createError({ statusCode: 404, message: `Variante ${item.variantId} no encontrada` })
         }
-        // numeric(12,2) expects strings or numbers, Drizzle will serialize
-        const unit = v.unitPrice
-        const lineTotal = Number(unit) * i.quantity
-        return {
-          user_id: user.id,
-          product_variant_id: i.variantId,
-          quantity: i.quantity,
-          unit_price: unit,           // numeric(12,2)
-          line_total: lineTotal,      // numeric(12,2)
-          created_at: now,
+
+        const availableStock = variant.stock ?? 0
+        if (availableStock < item.quantity) {
+          throw createError({
+            statusCode: 409,
+            message: `Stock insuficiente para ${item.variantId}. Disponible: ${availableStock}`,
+          })
         }
-      })
+
+        const unitPrice = variant.unitPrice
+        const lineTotal = Number(unitPrice) * item.quantity
+
+        lines.push({
+          variantId: item.variantId,
+          quantity: item.quantity,
+          unitPrice,
+          lineTotal,
+        })
+      }
 
       // 3) Create sale header with provisional total 0
       const [sale] = await tx
@@ -75,40 +91,70 @@ export default defineEventHandler(async (event) => {
         .values({
           user_id: user.id,
           status: 'paid',
-          total_amount: '0',
-          note: product.note ?? null,
+          note: payload.note ?? null,
           created_at: now,
         })
         .returning({ id: sales.id })
 
+      if (!sale) {
+        throw createError({ statusCode: 500, message: 'Error al crear la venta' })
+      }
+
       // 4) Insert sale items (attach sale_id)
-      await tx.insert(saleItems).values(lines.map((l) => ({ ...l, sale_id: sale.id })))
+      const saleItemsToInsert = lines.map((l) => ({
+        user_id: user.id,
+        sale_id: sale.id,
+        product_variant_id: l.variantId,
+        quantity: l.quantity,
+        unit_price: l.unitPrice,
+        line_total: l.lineTotal,
+        created_at: now,
+      }))
+
+      await tx.insert(saleItems).values(saleItemsToInsert)
 
       // 5) Update inventory and counters per variant
-      for (const l of lines) {
+      for (const line of lines) {
         await tx
           .update(productVariants)
           .set({
-            stock: sql`${productVariants.stock} - ${l.quantity}`,
-            sold_count: sql`${productVariants.sold_count} + ${l.quantity}`,
+            stock: sql`${productVariants.stock} - ${line.quantity}`,
+            sold_count: sql`${productVariants.sold_count} + ${line.quantity}`,
             last_sold_at: now,
           })
-          .where(eq(productVariants.id, l.product_variant_id))
+          .where(eq(productVariants.id, line.variantId))
       }
 
-      // 6) Compute total from lines and update sale header
-      const total = lines.reduce((acc, l) => acc + Number(l.line_total), 0)
+      // 6) Compute total and update sale header
+      const total = lines.reduce((acc, l) => acc + l.lineTotal, 0)
       await tx
         .update(sales)
-        .set({ total_amount: total })
+        .set({ total_amount: total.toString() })
         .where(eq(sales.id, sale.id))
 
-      return { saleId: sale.id, total }
+      return {
+        saleId: sale.id,
+        total: total.toFixed(2),
+        itemCount: items.length,
+      }
     })
-
-
   } catch (err) {
-    console.error('Error parsing the body', err);
-    throw err;
+    console.error('Error processing checkout:', err)
+
+    // Check if it's a known error we threw
+    if (err.statusCode) {
+      throw err
+    }
+
+    // Validation errors
+    if (err.name === 'ZodError') {
+      throw createError({ statusCode: 400, message: 'Payload inválido' })
+    }
+
+    throw createError({
+      statusCode: 500,
+      message: 'Error al procesar la venta. Intenta de nuevo.',
+    })
   }
-});
+})
+

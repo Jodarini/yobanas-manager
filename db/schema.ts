@@ -10,6 +10,7 @@ import {
   numeric,
   index,
   uniqueIndex,
+  boolean,
 } from 'drizzle-orm/pg-core'
 import { authenticatedRole } from 'drizzle-orm/supabase'
 import { sql } from 'drizzle-orm'
@@ -33,6 +34,7 @@ export const productsTable = pgTable(
     thumbnail: text('thumbnail'),
     brand: text('brand').notNull(),
     category: text('category').array().notNull(),
+    deleted_at: timestamp('deleted_at', { withTimezone: true }),
   },
   (table) => [
     index('idx_products_user_id').on(table.user_id),
@@ -79,6 +81,7 @@ export const productVariants = pgTable(
     stock: integer('stock').notNull().default(0),
     sold_count: integer('sold_count').notNull().default(0),
     last_sold_at: timestamp('last_sold_at', { withTimezone: true }),
+    deleted_at: timestamp('deleted_at', { withTimezone: true }),
   },
   (table) => [
     index('idx_variants_product_id').on(table.productId),
@@ -118,10 +121,10 @@ export const sales = pgTable(
     id: serial('id').primaryKey().notNull(),
     user_id: uuid('user_id').notNull(),
     status: varchar('status', { length: 32 }).notNull().default('paid'),
-    // Already numeric; keep for exact totals
     total_amount: numeric('total_amount', { precision: 12, scale: 2 }).notNull().default('0'),
     note: text('note'),
     created_at: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    deleted_at: timestamp('deleted_at', { withTimezone: true }),
   },
   (table) => [
     index('idx_sales_user_id').on(table.user_id),
@@ -169,6 +172,7 @@ export const saleItems = pgTable(
     unit_price: numeric('unit_price', { precision: 12, scale: 2 }).notNull(),
     line_total: numeric('line_total', { precision: 12, scale: 2 }).notNull(),
     created_at: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    deleted_at: timestamp('deleted_at', { withTimezone: true }),
   },
   (table) => [
     index('idx_sale_items_sale_id').on(table.sale_id),
@@ -247,6 +251,28 @@ export const updateProductSchema = z.object({
   variants: z.array(updateProductVariantSchema).min(1, 'es obligatoria'),
 })
 
+
+export const updateProductSchema2 = z.object({
+  id: z.number().int().positive(),
+  title: z.string().min(1, 'es obligatorio'),
+  description: z.string().optional(),
+  price: z.number().positive('no puede ser negativo'),
+  thumbnail: z.string().url().optional().or(z.literal('')),
+  brand: z.string().min(1, 'es obligatoria'),
+  category: z.array(z.string()).min(1, 'es obligatoria'),
+})
+export const updateVariantSchema = z.object({
+  variants: z.array(
+    z.object({
+      id: z.number().optional(),
+      size: z.string(),
+      color: z.string(),
+      stock: z.number()
+    })
+  ),
+  productSKU: z.string()
+});
+
 export const checkoutItemSchema = z.object({
   variantId: z.number().int().positive(),
   quantity: z.number().int().positive(),
@@ -260,6 +286,8 @@ export const checkoutPayloadSchema = z.object({
 export type checkoutItem = z.infer<typeof checkoutItemSchema>
 
 export type UpdateProduct = z.infer<typeof updateProductSchema>
+export type UpdateVariant = z.infer<typeof updateVariantSchema>
+export type UpdateProduct2 = z.infer<typeof updateProductSchema2>
 export type UpdateProductVariant = z.infer<typeof updateProductVariantSchema>
 
 export type Product = typeof productsTable.$inferSelect

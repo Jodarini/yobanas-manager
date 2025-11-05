@@ -186,7 +186,7 @@ const value = ref<Product | undefined>()
                 </div>
 
                 <ComboboxEmpty>
-                  No framework found.
+                  Productos no encontrados.
                 </ComboboxEmpty>
 
                 <ComboboxGroup>
@@ -224,7 +224,6 @@ const value = ref<Product | undefined>()
                           class="px-2 py-1 rounded-full border border-border text-xs"
                           :class="sizeFilter === size ? 'bg-accent' : ''" @click="toggleSize(size)">
                           {{ size }}
-                          kjasd
                         </Button>
                       </div>
 

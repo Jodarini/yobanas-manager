@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Package, DatabaseIcon, PlusIcon, SunIcon, MoonIcon } from 'lucide-vue-next';
+import { Package, DatabaseIcon, SunIcon, MoonIcon, ShoppingCartIcon } from 'lucide-vue-next';
 
 const { initAuth, userId, signOut, isLoading } = useAuth();
 await initAuth();
@@ -16,6 +16,11 @@ const menuItems = [
     title: 'Productos',
     url: '/',
     icon: Package,
+  },
+  {
+    title: 'Carrito',
+    url: '/add-sale',
+    icon: ShoppingCartIcon,
   },
 ];
 

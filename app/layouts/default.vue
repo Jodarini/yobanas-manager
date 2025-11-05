@@ -23,7 +23,7 @@ await initAuth();
           </Button>
 
           <Button as-child>
-            <NuxtLink to="/add-sale">Iniciar venta</NuxtLink>
+            <!-- <NuxtLink to="/add-sale">Iniciar venta</NuxtLink> -->
           </Button>
         </div>
       </header>

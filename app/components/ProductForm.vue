@@ -24,6 +24,6 @@ const variants = {
 
 <template>
   <UpdateProductForm :brands="props.brands" :categories="props.categories" :initialValues="props.initialValues"
-    :variant="'EDIT'" />
-  <UpdateVariantsForm :data='variants' :variant="'EDIT'" />
+    :variant="props.variant" />
+  <UpdateVariantsForm :data='variants' :variant="props.variant" />
 </template>

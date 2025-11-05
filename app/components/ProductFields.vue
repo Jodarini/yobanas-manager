@@ -1,54 +1,12 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils';
-import { Check, Plus, ChevronsUpDown } from 'lucide-vue-next';
-import {
-  type insertProductSchema,
-  type updateProductSchema,
-  type Product,
-} from '~~/db/schema';
-import { useToast } from './ui/toast';
-
 const props = defineProps<{
-  brands: string[];
-  categories: string[];
-  initialValues?: Product;
-  isDeleting?: boolean;
-  validationSchema: typeof insertProductSchema | typeof updateProductSchema;
-  variant: 'ADD' | 'EDIT';
+  form: ReturnType<typeof useProductFormState>;
 }>();
-
-const { handleSubmit, setFieldValue, resetForm, isSubmitting, brandOpen, brandSearchTerm2, categoryOpen, categorySearchTerm, filteredBrands, filteredCategories, createBrand, createCategory, handleCategoryToggle } = useProductFormState(props.brands, props.categories,
-  props.initialValues);
-
-const { toast } = useToast();
-
-const onSubmit = handleSubmit(
-  async (values) => {
-    console.log(values)
-    $fetch(`/api/product/:id/addProduct`, {
-      method: 'put',
-      body: values,
-    })
-    if (props.variant === 'ADD') {
-      resetForm();
-    }
-  },
-  ({ errors }) => {
-    toast({
-      variant: 'destructive',
-      title: 'Error en el formulario',
-      description: 'Verifique los campos marcados en rojo',
-    });
-    console.error(errors);
-  }
-);
-
 
 </script>
 
 <template>
-
-
   <Card>
     <!-- Product Info Fields -->
     <CardHeader>
@@ -85,14 +43,14 @@ const onSubmit = handleSubmit(
               useGrouping: true,
               signDisplay: 'auto',
             }" :model-value="value" @update:model-value="
-                (v) => {
-                  if (v) {
-                    setFieldValue('price', v);
-                  } else {
-                    setFieldValue('price', 0);
-                  }
+              (v) => {
+                if (v) {
+                  props.form.setFieldValue('price', v);
+                } else {
+                  props.form.setFieldValue('price', 0);
                 }
-              ">
+              }
+            ">
               <NumberFieldContent>
                 <NumberFieldDecrement />
                 <FormControl>
@@ -114,7 +72,7 @@ const onSubmit = handleSubmit(
               <FormMessage />
             </div>
             <FormControl>
-              <Popover v-model:open="brandOpen">
+              <Popover v-model:open="props.form.brandOpen.value">
                 <PopoverTrigger as-child>
                   <Button type="button" variant="outline" class="w-full justify-between">
                     {{ componentField.modelValue || 'Seleccione una marca' }}
@@ -123,22 +81,23 @@ const onSubmit = handleSubmit(
                 </PopoverTrigger>
                 <PopoverContent class="p-0">
                   <Command>
-                    <CommandInput placeholder="Search brand..." v-model="brandSearchTerm2"
-                      @keydown.enter.prevent="createBrand" />
+                    <CommandInput placeholder="Search brand..." v-model="props.form.brandSearchTerm2.value"
+                      @keydown.enter.prevent="props.form.createBrand" />
                     <div v-if="
-                      brandSearchTerm2 &&
-                      !filteredBrands.includes(brandSearchTerm2)
+                      props.form.brandSearchTerm2 &&
+                      !props.form.filteredBrands.value.includes(props.form.brandSearchTerm2.value)
                     "
                       class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none">
-                      <Button type="button" variant="ghost" size="sm" class="w-full justify-start" @click="createBrand">
+                      <Button type="button" variant="ghost" size="sm" class="w-full justify-start"
+                        @click="props.form.createBrand">
                         <Plus class="mr-2 h-4 w-4" />
-                        Crear "{{ brandSearchTerm2 }}"
+                        Crear "{{ props.form.brandSearchTerm2.value }}"
                       </Button>
                     </div>
                     <CommandList>
                       <CommandEmpty>No se encontraron marcas...</CommandEmpty>
                       <CommandGroup>
-                        <CommandItem v-for="brand in filteredBrands" :key="brand" :value="brand"
+                        <CommandItem v-for="brand in props.form.filteredBrands.value" :key="brand" :value="brand"
                           @select="() => componentField.onChange(brand)">
                           <span>{{ brand }}</span>
                         </CommandItem>
@@ -157,10 +116,10 @@ const onSubmit = handleSubmit(
               <FormLabel>Categorías</FormLabel>
               <FormMessage />
             </div>
-            <Popover v-model:open="categoryOpen">
+            <Popover v-model:open="props.form.categoryOpen.value">
               <PopoverTrigger as-child>
                 <FormControl>
-                  <Button type="button" variant="outline" role="combobox" :aria-expanded="categoryOpen"
+                  <Button type="button" variant="outline" role="combobox" :aria-expanded="props.form.categoryOpen.value"
                     class="h-auto min-h-10 w-full justify-start">
                     <div class="flex flex-1 flex-wrap gap-1.5">
                       <template v-if="!value || value.length === 0">
@@ -182,17 +141,17 @@ const onSubmit = handleSubmit(
               </PopoverTrigger>
               <PopoverContent class="w-full p-0" align="start">
                 <Command>
-                  <CommandInput placeholder="Buscar categorías..." v-model="categorySearchTerm" />
+                  <CommandInput placeholder="Buscar categorías..." v-model="props.form.categorySearchTerm.value" />
 
                   <div v-if="
-                    categorySearchTerm &&
-                    !filteredCategories.includes(categorySearchTerm)
+                    props.form.categorySearchTerm.value &&
+                    !props.form.filteredCategories.value.includes(props.form.categorySearchTerm.value)
                   "
                     class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none">
                     <Button type="button" variant="ghost" size="sm" class="w-full justify-start"
-                      @click="createCategory">
+                      @click="props.form.createCategory">
                       <Plus class="mr-2 h-4 w-4" />
-                      Crear "{{ categorySearchTerm }}"
+                      Crear "{{ props.form.categorySearchTerm.value }}"
                     </Button>
                   </div>
                   <CommandList>
@@ -202,8 +161,8 @@ const onSubmit = handleSubmit(
                       </p>
                     </CommandEmpty>
                     <CommandGroup>
-                      <CommandItem v-for="category in filteredCategories" :key="category!" :value="category!"
-                        @select="handleCategoryToggle(category!)">
+                      <CommandItem v-for="category in props.form.filteredCategories" :key="category!" :value="category!"
+                        @select="props.form.handleCategoryToggle(category!)">
                         <Check :class="cn(
                           'mr-2 h-4 w-4',
                           value?.includes(category)
@@ -236,21 +195,21 @@ const onSubmit = handleSubmit(
 
     </CardContent>
 
-    <CardFooter>
-      <template v-if="props.variant === 'EDIT'">
-        <Button type="submit" class="" :disabled="isSubmitting">
-          <span v-if="isSubmitting" class="flex items-center">
-            <Spinner class="mr-2" />
-            'Actualizando producto...'
-          </span>
-          <span v-else>
-            {{
-              props.variant === 'EDIT' ? 'Actualizar producto' : 'Crear producto'
-            }}
-          </span>
-        </Button>
-      </template>
-    </CardFooter>
+    <!-- <CardFooter> -->
+    <!--   <template v-if="props.variant === 'EDIT'"> -->
+    <!--     <Button type="submit" class="" :disabled="isSubmitting"> -->
+    <!--       <span v-if="isSubmitting" class="flex items-center"> -->
+    <!--         <Spinner class="mr-2" /> -->
+    <!--         'Actualizando producto...' -->
+    <!--       </span> -->
+    <!--       <span v-else> -->
+    <!--         {{ -->
+    <!--           props.variant === 'EDIT' ? 'Actualizar producto' : 'Crear producto' -->
+    <!--         }} -->
+    <!--       </span> -->
+    <!--     </Button> -->
+    <!--   </template> -->
+    <!-- </CardFooter> -->
 
   </Card>
 </template>

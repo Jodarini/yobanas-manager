@@ -13,7 +13,9 @@ export default defineEventHandler(async (event) => {
   if (!user) throw createError({ statusCode: 401, message: 'Unauthorized' });
 
   const body = await readBody(event);
+  console.log({ body })
   const payload = updateVariantSchema.parse(body)
+  console.log({ payload })
 
   const productId = getRouterParam(event, 'id');
 
@@ -30,6 +32,8 @@ export default defineEventHandler(async (event) => {
     for (const [index, variant] of payload.variants.entries()) {
       try {
         if (variant.id) {
+
+          console.log('found id')
 
           const [updated] = await tx
             .update(productVariants)
@@ -50,6 +54,7 @@ export default defineEventHandler(async (event) => {
             throw new Error('Variant not found or access denied');
           }
         } else {
+          console.log('no id found')
           const [created] = await tx
             .insert(productVariants)
             .values({

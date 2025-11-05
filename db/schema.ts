@@ -270,7 +270,7 @@ export const updateVariantSchema = z.object({
       stock: z.number()
     })
   ),
-  productSKU: z.string()
+  productSKU: z.string().optional()
 });
 
 export const checkoutItemSchema = z.object({

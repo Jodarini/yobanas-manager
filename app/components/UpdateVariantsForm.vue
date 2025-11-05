@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { toTypedSchema } from '@vee-validate/zod';
-import { useToast } from './ui/toast';
-import { updateVariantSchema, type UpdateVariant } from '~~/db/schema';
-import { useForm } from 'vee-validate';
+import { type UpdateVariant } from '~~/db/schema';
 import { Trash2Icon, PlusCircleIcon } from 'lucide-vue-next';
+import { useToast } from './ui/toast';
 
 const props = defineProps<{
   data?: UpdateVariant;
@@ -11,25 +9,20 @@ const props = defineProps<{
   variant: 'ADD' | 'EDIT';
 }>();
 
-const formSchema = toTypedSchema(updateVariantSchema);
-
-const { handleSubmit, values, setFieldValue, resetForm, isSubmitting } =
-  useForm({
-    validationSchema: formSchema,
-    initialValues: {
-      variants: props.data?.variants || [{
-        color: 'test',
-        size: 'test',
-        stock: 1,
-      }]
-    }
-  });
-
-const route = useRoute()
 const { toast } = useToast();
 
+const { handleSubmit, checkIfVariantExists, setErrors, values, resetForm, addVariant, removeVariant, isSubmitting, meta } = useVariantsFormState(props.data);
+
+const route = useRoute()
 const onSubmit = handleSubmit(
   async (values) => {
+    const variantExists = checkIfVariantExists()
+    if (variantExists !== -1) {
+      setErrors({
+        [`variants.${variantExists}`]: 'La variante ya existe',
+      });
+      return
+    }
     $fetch(`/api/product/${route.params.id}/updateVariant`, {
       method: 'put',
       body: {
@@ -50,22 +43,6 @@ const onSubmit = handleSubmit(
   }
 );
 
-const addVariant = () => {
-  const currentVariants = values.variants || [];
-  const newVariant = {
-    size: '',
-    color: '',
-    stock: 0,
-  };
-
-  setFieldValue('variants', [...currentVariants, newVariant]);
-};
-
-const removeVariant = (index: number) => {
-  const currentVariants = [...(values.variants || [])];
-  currentVariants.splice(index, 1);
-  setFieldValue('variants', currentVariants);
-};
 </script>
 
 <template>
@@ -88,7 +65,7 @@ const removeVariant = (index: number) => {
 
                 <FormField v-slot="{ componentField }" :name="`variants[${index}].id`">
                   <FormControl>
-                    <input type="hidden" v-bind="componentField" />
+                    <Input type="hidden" v-bind="componentField" />
                   </FormControl>
                 </FormField>
 
@@ -96,11 +73,11 @@ const removeVariant = (index: number) => {
                   <FormItem class="w-full">
                     <div class='flex gap-1 h-4'>
                       <FormLabel>Talla</FormLabel>
-                      <FormMessage />
                     </div>
                     <FormControl>
                       <Input type="text" placeholder="Tamaño" v-bind="componentField" />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 </FormField>
 
@@ -108,11 +85,11 @@ const removeVariant = (index: number) => {
                   <FormItem class="w-full">
                     <div class='flex gap-1 h-4'>
                       <FormLabel>Color</FormLabel>
-                      <FormMessage />
                     </div>
                     <FormControl>
                       <Input type="text" placeholder="Color" v-bind="componentField" />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 </FormField>
 
@@ -120,14 +97,15 @@ const removeVariant = (index: number) => {
                   <FormItem class="w-full">
                     <div class='flex gap-1 h-4'>
                       <FormLabel>Stock</FormLabel>
-                      <FormMessage />
                     </div>
 
                     <FormControl>
                       <Input type="number" step="1" placeholder="0" v-bind="componentField" />
                     </FormControl>
                   </FormItem>
+                  <FormMessage />
                 </FormField>
+
 
                 <Button type="button" class="w-fit md:self-end" variant="ghost" disabled
                   @click.prevent="removeVariant(index)">
@@ -135,6 +113,11 @@ const removeVariant = (index: number) => {
                 </Button>
               </ItemContent>
             </Item>
+
+            <FormField v-slot="{ componentField, errors }" :name="`variants[${index}]`" class="mb-4">
+              <FormControl class="hidden" />
+              <FormMessage v-if="errors" class="mb-4" />
+            </FormField>
             <ItemSeparator v-if="index !== values.variants?.length! - 1" />
           </template>
         </ItemGroup>
@@ -142,7 +125,7 @@ const removeVariant = (index: number) => {
 
       </CardContent>
       <CardFooter>
-        <Button type="submit" :disabled="isSubmitting">
+        <Button type="submit" :disabled="isSubmitting || !meta.dirty">
           <span v-if="isSubmitting" class="flex items-center">
             <Spinner class="mr-2" />
             {{

@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type {
-  insertProductSchema,
-  updateProductSchema,
   UpdateVariant,
   ProductWithVariants,
   Product,
@@ -11,8 +9,6 @@ const props = defineProps<{
   brands: string[];
   categories: string[];
   initialValues?: ProductWithVariants;
-  isDeleting?: boolean;
-  validationSchema: typeof insertProductSchema | typeof updateProductSchema;
   mode: 'ADD' | 'EDIT';
 }>();
 

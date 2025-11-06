@@ -8,7 +8,7 @@ export function useProductWithVariants(mode: 'ADD' | 'EDIT', brands: string[], c
 
   const formSchema = toTypedSchema(insertProductSchema);
 
-  const { handleSubmit, values, setFieldValue, resetForm, isSubmitting, validate, meta } =
+  const { handleSubmit, values, setFieldValue, resetForm, isSubmitting, validate, meta, setErrors } =
     useForm({
       validationSchema: formSchema,
       initialValues: {
@@ -100,17 +100,25 @@ export function useProductWithVariants(mode: 'ADD' | 'EDIT', brands: string[], c
     setFieldValue('variants', currentVariants);
   };
 
-  // const productForm = useProductFormState(brands, categories);
-  // const variantsForm = useVariantsFormState();
-  //
   const onSubmit = handleSubmit(
     async (values) => {
-      console.log(values)
-      $fetch(`/api/product/add`, {
-        method: 'POST',
-        body: values,
-      })
-      resetForm();
+      try {
+
+        await $fetch(`/api/product/add`, {
+          method: 'POST',
+          body: values,
+        })
+        resetForm();
+        toast({
+          title: 'Producto creado exitosamente',
+        })
+      } catch (e) {
+        toast({
+          variant: 'destructive',
+          title: 'Error al crear el producto',
+          description: e.message,
+        })
+      }
     },
     ({ errors }) => {
       toast({
@@ -134,6 +142,7 @@ export function useProductWithVariants(mode: 'ADD' | 'EDIT', brands: string[], c
     createCategory,
     handleCategoryToggle,
     validate,
+    setErrors,
     meta,
     addVariant,
     removeVariant,

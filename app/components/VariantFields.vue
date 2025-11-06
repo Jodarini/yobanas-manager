@@ -2,12 +2,9 @@
 import { Trash2Icon, PlusCircleIcon } from 'lucide-vue-next'
 
 const props = defineProps<{
-  form: ReturnType<typeof useVariantsFormState>;
+  form: ReturnType<typeof useVariantsFormState> | ReturnType<typeof useProductWithVariants>;
   mode: 'ADD' | 'EDIT';
 }>();
-const isButtonDisabled = computed(() => {
-  return props.form.isSubmitting || !props.form.meta.value.dirty
-})
 </script>
 
 <template>
@@ -83,6 +80,7 @@ const isButtonDisabled = computed(() => {
           </Item>
 
           <FormField v-slot="{ errors }" :name="`variants[${index}]`" class="mb-4">
+            {{ props.form.values }}
             <FormItem>
               <FormControl class="hidden" />
               <FormMessage v-if="errors" class="mb-4" />
@@ -95,12 +93,10 @@ const isButtonDisabled = computed(() => {
 
     <CardFooter>
       <template v-if="props.mode === 'EDIT'">
-        <ClientOnly>
-          <Button type="submit" :disabled="props.form.isSubmitting.value || !props.form.meta.value.dirty" class="gap-2">
-            <Spinner v-if="!form.isSubmitting" class="h-4 w-4" />
-            {{ !form.isSubmitting ? 'Guardando...' : 'Actualizar producto' }}
-          </Button>
-        </ClientOnly>
+        <Button type="submit" :disabled="props.form.isSubmitting.value || !props.form.meta.value.dirty" class="gap-2">
+          <Spinner v-if="!form.isSubmitting" class="h-4 w-4" />
+          {{ !form.isSubmitting ? 'Guardando...' : 'Actualizar producto' }}
+        </Button>
       </template>
     </CardFooter>
   </Card>

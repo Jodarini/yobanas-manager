@@ -206,7 +206,7 @@ const props = defineProps<{
 
     <CardFooter>
       <template v-if="props.mode === 'EDIT'">
-        <Button type="submit" class="" :disabled="form.isSubmitting &&
+        <Button type="submit" class="" :disabled="form.isSubmitting.value ||
           !form.meta.value.dirty">
           <span v-if="!form.isSubmitting" class="flex items-center">
             <Spinner class="mr-2" />

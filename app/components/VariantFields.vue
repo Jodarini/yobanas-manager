@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { Trash2Icon, PlusCircleIcon } from 'lucide-vue-next'
 
 const props = defineProps<{
-  form: ReturnType<typeof useVariantsFormState>;
+  form: ReturnType<typeof useProductWithVariants>;
+  mode: 'ADD' | 'EDIT';
 }>();
 
 </script>
@@ -74,7 +76,7 @@ const props = defineProps<{
             </ItemContent>
           </Item>
 
-          <FormField v-slot="{ componentField, errors }" :name="`variants[${index}]`" class="mb-4">
+          <FormField v-slot="{ errors }" :name="`variants[${index}]`" class="mb-4">
             <FormControl class="hidden" />
             <FormMessage v-if="errors" class="mb-4" />
           </FormField>
@@ -84,22 +86,20 @@ const props = defineProps<{
 
 
     </CardContent>
-    <!-- <CardFooter> -->
-    <!--   <Button type="submit" :disabled="props.form.isSubmitting || !props.form.meta.value.dirty"> -->
-    <!--     <span v-if="props.form.isSubmitting" class="flex items-center"> -->
-    <!--       <Spinner class="mr-2" /> -->
-    <!--       {{ -->
-    <!--         props.variant === 'EDIT' -->
-    <!--           ? 'Actualizando producto...' -->
-    <!--           : 'Creando producto...' -->
-    <!--       }} -->
-    <!--     </span> -->
-    <!--     <span v-else> -->
-    <!--       {{ -->
-    <!--         props.variant === 'EDIT' ? 'Actualizar variantes' : 'Crear variantes' -->
-    <!--       }} -->
-    <!--     </span> -->
-    <!--   </Button> -->
-    <!-- </CardFooter> -->
+
+    <CardFooter>
+      <template v-if="props.mode === 'EDIT'">
+        <Button type="submit" class="" :disabled="form.isSubmitting &&
+          !form.meta.value.dirty">
+          <span v-if="!form.isSubmitting" class="flex items-center">
+            <Spinner class="mr-2" />
+            'Actualizando producto...'
+          </span>
+          <span v-else>
+            Actualizar producto
+          </span>
+        </Button>
+      </template>
+    </CardFooter>
   </Card>
 </template>

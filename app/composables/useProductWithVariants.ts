@@ -1,56 +1,155 @@
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
+import { toast } from "~/components/ui/toast";
+import { normalizeString } from "~/lib/utils";
+import { insertProductSchema, type Product, type UpdateVariant } from "~~/db/schema";
 
-export function useProductWithVariants(mode: 'ADD' | 'EDIT', brands: string[], categories: string[], productId?: string) {
-  const productForm = useProductFormState(brands, categories);
-  const variantsForm = useVariantsFormState();
+export function useProductWithVariants(mode: 'ADD' | 'EDIT', brands: string[], categories: string[], product: Product, variants: UpdateVariant) {
 
-  const handleAddMode = async () => {
-    // Validate both forms - cleaner approach
-    const productValidation = await productForm.validate();
-    const variantsValidation = await variantsForm.validate();
+  const formSchema = toTypedSchema(insertProductSchema);
 
-    console.log(productValidation)
-    console.log(variantsValidation)
-
-    if (!productValidation.valid || !variantsValidation.valid) {
-      return { success: false };
-    }
-
-    const combined = {
-      product: productForm.values,
-      variants: variantsForm.values.variants,
-    };
-
-    await $fetch('/api/product', {
-      method: 'post',
-      body: combined,
+  const { handleSubmit, values, setFieldValue, resetForm, isSubmitting, validate, meta } =
+    useForm({
+      validationSchema: formSchema,
+      initialValues: {
+        title: 'test',
+        description: 'test',
+        price: 1000,
+        category: ['test'],
+        brand: 'test',
+        variants: [{
+          color: 'test',
+          size: 'test',
+          stock: 1
+        }]
+      },
     });
 
-    productForm.resetForm();
-    variantsForm.resetForm();
+  const brandOpen = ref(false);
+  const brandSearchTerm2 = ref('');
+  const brandSearchTerm = ref('');
+  const categoryOpen = ref(false);
+  const categorySearchTerm = ref('');
 
-    return { success: true };
+  const filteredBrands = computed(() => {
+    if (!brandSearchTerm.value) return brands;
+    return brands.filter((b) =>
+      b.toLowerCase().includes(brandSearchTerm.value.toLowerCase())
+    );
+  });
+
+  const filteredCategories = computed(() => {
+    if (!categorySearchTerm.value) return categories;
+    return categories.filter((c) =>
+      c.toLowerCase().includes(categorySearchTerm.value.toLowerCase())
+    );
+  });
+
+  const createBrand = () => {
+    setFieldValue('brand', brandSearchTerm2.value);
+    brandOpen.value = false;
   };
 
-  const handleEditProductOnly = productForm.handleSubmit(async (values) => {
-    await $fetch(`/api/product/${productId}`, {
-      method: 'put',
-      body: values,
-    });
-  });
+  const createCategory = () => {
+    const currentValue = values.category || [];
+    setFieldValue('category', [...currentValue, categorySearchTerm.value]);
+    categorySearchTerm.value = '';
+  };
 
-  const handleEditVariantsOnly = variantsForm.handleSubmit(async (values) => {
-    await $fetch(`/api/product/${productId}/variants`, {
-      method: 'put',
-      body: values.variants,
-    });
-  });
+  function handleCategoryToggle(category: string) {
+    const current = values.category || [];
+    const next = current.includes(category)
+      ? current.filter((v) => v !== category)
+      : [...current, category];
+
+    setFieldValue('category', next);
+  }
+
+  const checkIfVariantExists = () => {
+    const currentVariants = values.variants || [];
+    const seen = new Map()
+
+    for (let i = 0; i < currentVariants.length; i++) {
+      const variant = currentVariants[i]
+      const key = `${normalizeString(variant!.size)}-${normalizeString(variant!.color)}`;
+
+      if (seen.has(key)) {
+        return i
+      }
+      seen.set(key, i)
+    }
+
+    return -1
+
+  }
+
+  const addVariant = () => {
+    const currentVariants = values.variants || [];
+    const newVariant = {
+      size: '',
+      color: '',
+      stock: 0,
+    };
+
+    setFieldValue('variants', [...currentVariants, newVariant]);
+  };
+
+  const removeVariant = (index: number) => {
+    const currentVariants = [...(values.variants || [])];
+    currentVariants.splice(index, 1);
+    setFieldValue('variants', currentVariants);
+  };
+
+  // const productForm = useProductFormState(brands, categories);
+  // const variantsForm = useVariantsFormState();
+  //
+  const onSubmit = handleSubmit(
+    async (values) => {
+      console.log(values)
+      $fetch(`/api/product/add`, {
+        method: 'POST',
+        body: values,
+      })
+      resetForm();
+    },
+    ({ errors }) => {
+      toast({
+        variant: 'destructive',
+        title: 'Error en el formulario',
+        description: 'Verifique los campos marcados en rojo',
+      });
+      console.error(errors);
+
+    }
+  )
+
+
+
 
   return {
     mode,
-    productForm,
-    variantsForm,
-    handleAddMode,
-    handleEditProductOnly,
-    handleEditVariantsOnly
+    filteredBrands,
+    filteredCategories,
+    createBrand,
+    createCategory,
+    handleCategoryToggle,
+    validate,
+    meta,
+    addVariant,
+    removeVariant,
+    checkIfVariantExists,
+    brandOpen,
+    brandSearchTerm2,
+    brandSearchTerm,
+    categoryOpen,
+    categorySearchTerm,
+    values,
+    setFieldValue,
+    resetForm,
+    isSubmitting,
+    product,
+    variants,
+    onSubmit,
+
   };
 }

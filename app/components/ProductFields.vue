@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils';
+import { Plus, ChevronsUpDown, Check } from 'lucide-vue-next'
+
 const props = defineProps<{
-  form: ReturnType<typeof useProductFormState>;
+  form: ReturnType<typeof useProductWithVariants> | ReturnType<typeof useProductFormState>;
+  mode: 'ADD' | 'EDIT';
 }>();
 
 </script>
@@ -110,9 +113,9 @@ const props = defineProps<{
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ value }" name="category">
+        <FormField v-slot="{ componentField }" name="category">
           <FormItem class="flex flex-col">
-            <div class='flex gap-1 h-4'>
+            <div class="flex gap-1 h-4">
               <FormLabel>Categorías</FormLabel>
               <FormMessage />
             </div>
@@ -122,16 +125,15 @@ const props = defineProps<{
                   <Button type="button" variant="outline" role="combobox" :aria-expanded="props.form.categoryOpen.value"
                     class="h-auto min-h-10 w-full justify-start">
                     <div class="flex flex-1 flex-wrap gap-1.5">
-                      <template v-if="!value || value.length === 0">
+                      <template v-if="!componentField.modelValue || componentField.modelValue.length === 0">
                         <span class="text-muted-foreground">
                           Seleccionar categorías...
                         </span>
                       </template>
                       <template v-else>
-                        <Badge v-for="item in value" :key="`${item}-badges`" variant="secondary" class="gap-1">
-                          <span>
-                            {{ item }}
-                          </span>
+                        <Badge v-for="item in componentField.modelValue" :key="`cat-${item}`" variant="secondary"
+                          class="gap-1">
+                          <span>{{ item }}</span>
                         </Badge>
                       </template>
                     </div>
@@ -154,6 +156,7 @@ const props = defineProps<{
                       Crear "{{ props.form.categorySearchTerm.value }}"
                     </Button>
                   </div>
+
                   <CommandList>
                     <CommandEmpty>
                       <p class="text-muted-foreground py-6 text-center text-sm">
@@ -161,15 +164,21 @@ const props = defineProps<{
                       </p>
                     </CommandEmpty>
                     <CommandGroup>
-                      <CommandItem v-for="category in props.form.filteredCategories" :key="category!" :value="category!"
-                        @select="props.form.handleCategoryToggle(category!)">
+                      <CommandItem v-for="category in props.form.filteredCategories.value" :key="category!"
+                        :value="category!" @select="() => {
+                          const current = componentField.modelValue || [];
+                          const next = current.includes(category)
+                            ? current.filter((v) => v !== category)
+                            : [...current, category];
+                          componentField.onChange(next);
+                          props.form.setFieldValue('category', next);
+                        }">
                         <Check :class="cn(
                           'mr-2 h-4 w-4',
-                          value?.includes(category)
+                          componentField.modelValue?.includes(category)
                             ? 'opacity-100'
                             : 'opacity-0'
-                        )
-                          " />
+                        )" />
                         {{ category }}
                       </CommandItem>
                     </CommandGroup>
@@ -195,21 +204,20 @@ const props = defineProps<{
 
     </CardContent>
 
-    <!-- <CardFooter> -->
-    <!--   <template v-if="props.variant === 'EDIT'"> -->
-    <!--     <Button type="submit" class="" :disabled="isSubmitting"> -->
-    <!--       <span v-if="isSubmitting" class="flex items-center"> -->
-    <!--         <Spinner class="mr-2" /> -->
-    <!--         'Actualizando producto...' -->
-    <!--       </span> -->
-    <!--       <span v-else> -->
-    <!--         {{ -->
-    <!--           props.variant === 'EDIT' ? 'Actualizar producto' : 'Crear producto' -->
-    <!--         }} -->
-    <!--       </span> -->
-    <!--     </Button> -->
-    <!--   </template> -->
-    <!-- </CardFooter> -->
+    <CardFooter>
+      <template v-if="props.mode === 'EDIT'">
+        <Button type="submit" class="" :disabled="form.isSubmitting &&
+          !form.meta.value.dirty">
+          <span v-if="!form.isSubmitting" class="flex items-center">
+            <Spinner class="mr-2" />
+            'Actualizando producto...'
+          </span>
+          <span v-else>
+            Actualizar producto
+          </span>
+        </Button>
+      </template>
+    </CardFooter>
 
   </Card>
 </template>

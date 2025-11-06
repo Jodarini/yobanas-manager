@@ -72,6 +72,6 @@ const deleteProduct = async () => {
 </script>
 
 <template>
-  <ProductForm variant="EDIT" :brands :categories :initial-values="productData" :is-deleting
+  <ProductForm mode="EDIT" :brands :categories :initial-values="productData" :is-deleting
     :validation-schema="updateProductSchema" @delete="deleteProduct" @submit="onSubmit" />
 </template>

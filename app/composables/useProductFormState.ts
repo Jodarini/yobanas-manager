@@ -6,8 +6,7 @@ export function useProductFormState(brands: string[], categories: string[], prod
 
   const formSchema = toTypedSchema(updateProductSchema2);
 
-  const { handleSubmit, values, setFieldValue, resetForm, isSubmitting, validate } =
-
+  const { handleSubmit, values, setFieldValue, resetForm, isSubmitting, validate, meta } =
     useForm({
       validationSchema: formSchema,
       initialValues: product && {
@@ -19,7 +18,7 @@ export function useProductFormState(brands: string[], categories: string[], prod
         description: product.description || undefined,
         thumbnail: product.thumbnail || undefined,
       } || {
-        title: '',
+        title: 'test',
         description: 'test',
         price: 1000,
         category: ['test'],
@@ -59,12 +58,10 @@ export function useProductFormState(brands: string[], categories: string[], prod
   };
 
   function handleCategoryToggle(category: string) {
-    const currentValue = values.category || [];
-    const isSelected = currentValue.includes(category);
-
-    const next = isSelected
-      ? currentValue.filter((v) => v !== category)
-      : [...currentValue, category];
+    const current = values.category || [];
+    const next = current.includes(category)
+      ? current.filter((v) => v !== category)
+      : [...current, category];
 
     setFieldValue('category', next);
   }
@@ -85,6 +82,7 @@ export function useProductFormState(brands: string[], categories: string[], prod
     createBrand,
     createCategory,
     handleCategoryToggle,
-    validate
+    validate,
+    meta
   }
 }

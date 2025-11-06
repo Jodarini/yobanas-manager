@@ -33,6 +33,6 @@ const handleSubmit = async (values) => {
 </script>
 
 <template>
-  <ProductForm variant="ADD" :brands :categories :form-schema :validation-schema="insertProductSchema"
+  <ProductForm mode="ADD" :brands :categories :form-schema :validation-schema="insertProductSchema"
     @submit="handleSubmit" />
 </template>

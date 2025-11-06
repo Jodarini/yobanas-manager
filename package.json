@@ -34,7 +34,7 @@
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.8",
     "tw-animate-css": "^1.3.2",
-    "vee-validate": "^4.15.0",
+    "vee-validate": "^4.15.1",
     "vue": "latest",
     "zod": "^4.1.12"
   },

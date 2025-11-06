@@ -10,7 +10,6 @@ import {
   numeric,
   index,
   uniqueIndex,
-  boolean,
 } from 'drizzle-orm/pg-core'
 import { authenticatedRole } from 'drizzle-orm/supabase'
 import { sql } from 'drizzle-orm'
@@ -261,16 +260,17 @@ export const updateProductSchema2 = z.object({
   brand: z.string().min(1, 'es obligatoria'),
   category: z.array(z.string()).min(1, 'es obligatoria'),
 })
+
 export const updateVariantSchema = z.object({
   variants: z.array(
     z.object({
-      id: z.number().optional(),
-      size: z.string(),
-      color: z.string(),
-      stock: z.number()
+      id: z.number().int().positive().optional(),  // Remove the union/transform
+      size: z.string().min(1, 'Tamaño es requerido').max(50),
+      color: z.string().min(1, 'Color es requerido').max(50),
+      stock: z.coerce.number().min(0, 'Stock no puede ser negativo'),
     })
   ),
-  productSKU: z.string().optional()
+  productSKU: z.string().optional(),
 });
 
 export const checkoutItemSchema = z.object({

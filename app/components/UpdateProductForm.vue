@@ -17,13 +17,18 @@ const { toast } = useToast();
 
 const onSubmit = form.handleSubmit(
   async (values) => {
-    console.log(values)
-    $fetch(`/api/product/:id/addProduct`, {
+    await $fetch(`/api/product/:id/addProduct`, {
       method: 'put',
       body: values,
     })
-    form.resetForm();
+
+    toast({
+      title: 'Producto actualizado exitosamente',
+    });
+
+    form.resetForm({ values }, { force: true });
   },
+
   ({ errors }) => {
     toast({
       variant: 'destructive',

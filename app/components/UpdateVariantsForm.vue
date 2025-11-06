@@ -20,13 +20,17 @@ const onSubmit = form.handleSubmit(
       });
       return
     }
-    $fetch(`/api/product/${route.params.id}/updateVariant`, {
+    await $fetch(`/api/product/${route.params.id}/updateVariant`, {
       method: 'put',
       body: {
         variants: values.variants, productSKU: props.data?.productSKU
       },
     })
-    form.resetForm();
+    toast({
+      title: 'Variante actualizada exitosamente',
+    });
+    form.resetForm({ values }, { force: true });
+
   },
   ({ errors }) => {
     toast({
@@ -44,6 +48,5 @@ const onSubmit = form.handleSubmit(
 
   <form @submit.prevent="onSubmit">
     <VariantFields :form mode='EDIT' />
-
   </form>
 </template>

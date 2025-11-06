@@ -2,10 +2,12 @@
 import { Trash2Icon, PlusCircleIcon } from 'lucide-vue-next'
 
 const props = defineProps<{
-  form: ReturnType<typeof useProductWithVariants>;
+  form: ReturnType<typeof useVariantsFormState>;
   mode: 'ADD' | 'EDIT';
 }>();
-
+const isButtonDisabled = computed(() => {
+  return props.form.isSubmitting || !props.form.meta.value.dirty
+})
 </script>
 
 <template>
@@ -23,14 +25,18 @@ const props = defineProps<{
       <ItemGroup>
         <template v-for="(_, index) in props.form.values.variants" :key="`new-${index}`">
           <Item class="flex flex-col p-0 py-4 md:flex-row">
-            <ItemContent class="flex w-full gap-4 md:flex-row ">
+            <ItemContent class="flex w-full gap-4 md:flex-row">
 
+              <!-- Hidden ID field -->
               <FormField v-slot="{ componentField }" :name="`variants[${index}].id`">
-                <FormControl>
-                  <Input type="hidden" v-bind="componentField" />
-                </FormControl>
+                <FormItem>
+                  <FormControl>
+                    <Input type="hidden" v-bind="componentField" />
+                  </FormControl>
+                </FormItem>
               </FormField>
 
+              <!-- Size field -->
               <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].size`">
                 <FormItem class="w-full">
                   <div class='flex gap-1 h-4'>
@@ -43,6 +49,7 @@ const props = defineProps<{
                 </FormItem>
               </FormField>
 
+              <!-- Color field -->
               <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].color`">
                 <FormItem class="w-full">
                   <div class='flex gap-1 h-4'>
@@ -55,19 +62,18 @@ const props = defineProps<{
                 </FormItem>
               </FormField>
 
+              <!-- Stock field - FormMessage moved inside FormItem -->
               <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].stock`">
                 <FormItem class="w-full">
                   <div class='flex gap-1 h-4'>
                     <FormLabel>Stock</FormLabel>
                   </div>
-
                   <FormControl>
                     <Input type="number" step="1" placeholder="0" v-bind="componentField" />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
-                <FormMessage />
               </FormField>
-
 
               <Button type="button" class="w-fit md:self-end" variant="ghost" disabled
                 @click.prevent="props.form.removeVariant(index)">
@@ -77,28 +83,24 @@ const props = defineProps<{
           </Item>
 
           <FormField v-slot="{ errors }" :name="`variants[${index}]`" class="mb-4">
-            <FormControl class="hidden" />
-            <FormMessage v-if="errors" class="mb-4" />
+            <FormItem>
+              <FormControl class="hidden" />
+              <FormMessage v-if="errors" class="mb-4" />
+            </FormItem>
           </FormField>
           <ItemSeparator v-if="index !== props.form.values.variants?.length! - 1" />
         </template>
       </ItemGroup>
-
-
     </CardContent>
 
     <CardFooter>
       <template v-if="props.mode === 'EDIT'">
-        <Button type="submit" class="" :disabled="form.isSubmitting &&
-          !form.meta.value.dirty">
-          <span v-if="!form.isSubmitting" class="flex items-center">
-            <Spinner class="mr-2" />
-            'Actualizando producto...'
-          </span>
-          <span v-else>
-            Actualizar producto
-          </span>
-        </Button>
+        <ClientOnly>
+          <Button type="submit" :disabled="props.form.isSubmitting.value || !props.form.meta.value.dirty" class="gap-2">
+            <Spinner v-if="!form.isSubmitting" class="h-4 w-4" />
+            {{ !form.isSubmitting ? 'Guardando...' : 'Actualizar producto' }}
+          </Button>
+        </ClientOnly>
       </template>
     </CardFooter>
   </Card>

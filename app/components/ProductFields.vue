@@ -10,14 +10,15 @@ const props = defineProps<{
 </script>
 
 <template>
-  <Card>
+  <Card class="flex-1">
     <!-- Product Info Fields -->
     <CardHeader>
       <CardTitle>Información del Producto</CardTitle>
     </CardHeader>
 
     <CardContent>
-      <div class="mb-4 flex flex-col gap-4 md:flex-row">
+
+      <div class="grid w-full items-center gap-4">
         <FormField v-slot="{ componentField }" class="flex-1" name="title">
           <FormItem class="w-full">
             <div class='flex gap-1 h-4'>
@@ -46,14 +47,14 @@ const props = defineProps<{
               useGrouping: true,
               signDisplay: 'auto',
             }" :model-value="value" @update:model-value="
-              (v) => {
-                if (v) {
-                  props.form.setFieldValue('price', v);
-                } else {
-                  props.form.setFieldValue('price', 0);
-                }
+            (v) => {
+              if (v) {
+                props.form.setFieldValue('price', v);
+              } else {
+                props.form.setFieldValue('price', 0);
               }
-            ">
+            }
+          ">
               <NumberFieldContent>
                 <NumberFieldDecrement />
                 <FormControl>
@@ -65,9 +66,7 @@ const props = defineProps<{
 
           </FormItem>
         </FormField>
-      </div>
 
-      <div class="grid w-full items-center gap-4">
         <FormField v-slot="{ componentField }" name="brand">
           <FormItem class="flex flex-col">
             <div class='flex gap-1 h-4'>

@@ -1,13 +1,11 @@
 <script setup lang="ts">
-  import { updateProductSchema, type ProductWithVariants } from '~~/db/schema';
+  import type { ProductWithVariants } from '~~/db/schema';
 
   const props = defineProps<{
     product: ProductWithVariants;
   }>();
 
   const productData = props.product;
-
-  const isDeleting = ref(false);
 
   const { data } = await useFetch('/api/products', {
     key: 'products',
@@ -25,12 +23,5 @@
 </script>
 
 <template>
-  <ProductForm
-    mode="EDIT"
-    :brands
-    :categories
-    :initial-values="productData"
-    :is-deleting
-    :validation-schema="updateProductSchema"
-  />
+  <ProductForm mode="EDIT" :brands :categories :initial-values="productData" />
 </template>

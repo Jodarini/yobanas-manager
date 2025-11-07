@@ -10,7 +10,7 @@
 </script>
 
 <template>
-  <Card class="flex-2">
+  <Card class="min-h-full flex-2">
     <CardHeader class="flex flex-col justify-between pb-0 md:flex-row">
       <CardTitle class="text-xl font-semibold">Variantes</CardTitle>
       <Button

@@ -43,7 +43,7 @@
 </script>
 
 <template>
-  <form @submit.prevent="onSubmit">
+  <form class="min-h-full flex-1" @submit.prevent="onSubmit">
     <ProductFields :form mode="EDIT" />
   </form>
 </template>

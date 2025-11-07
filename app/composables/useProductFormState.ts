@@ -37,7 +37,6 @@ export function useProductFormState(
   });
 
   const brandOpen = ref(false);
-  const brandSearchTerm2 = ref('');
   const brandSearchTerm = ref('');
   const categoryOpen = ref(false);
   const categorySearchTerm = ref('');
@@ -57,7 +56,7 @@ export function useProductFormState(
   });
 
   const createBrand = () => {
-    setFieldValue('brand', brandSearchTerm2.value);
+    setFieldValue('brand', brandSearchTerm.value);
     brandOpen.value = false;
   };
 
@@ -83,7 +82,6 @@ export function useProductFormState(
     resetForm,
     isSubmitting,
     brandOpen,
-    brandSearchTerm2,
     brandSearchTerm,
     categoryOpen,
     categorySearchTerm,

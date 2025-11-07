@@ -8,6 +8,11 @@
       | ReturnType<typeof useProductFormState>;
     mode: 'ADD' | 'EDIT';
   }>();
+
+  const brandOpen = defineModel<boolean>('brandOpen');
+  const categoryOpen = defineModel<boolean>('categoryOpen');
+  const brandSearchTerm = defineModel<string>('brandSearchTerm');
+  const categorySearchTerm = defineModel<string>('categorySearchTerm');
 </script>
 
 <template>
@@ -82,7 +87,7 @@
               <FormMessage />
             </div>
             <FormControl>
-              <Popover v-model:open="props.form.brandOpen.value">
+              <Popover v-model:open="brandOpen">
                 <PopoverTrigger as-child>
                   <Button
                     type="button"
@@ -96,15 +101,15 @@
                 <PopoverContent class="p-0">
                   <Command>
                     <CommandInput
-                      v-model="props.form.brandSearchTerm2.value"
+                      v-model="brandSearchTerm"
                       placeholder="Search brand..."
                       @keydown.enter.prevent="props.form.createBrand"
                     />
                     <div
                       v-if="
-                        props.form.brandSearchTerm2 &&
+                        brandSearchTerm &&
                         !props.form.filteredBrands.value.includes(
-                          props.form.brandSearchTerm2.value
+                          brandSearchTerm
                         )
                       "
                       class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none"
@@ -117,7 +122,7 @@
                         @click="props.form.createBrand"
                       >
                         <Plus class="mr-2 h-4 w-4" />
-                        Crear "{{ props.form.brandSearchTerm2.value }}"
+                        Crear "{{ brandSearchTerm }}"
                       </Button>
                     </div>
                     <CommandList>
@@ -146,14 +151,14 @@
               <FormLabel>Categorías</FormLabel>
               <FormMessage />
             </div>
-            <Popover v-model:open="props.form.categoryOpen.value">
+            <Popover v-model:open="categoryOpen">
               <PopoverTrigger as-child>
                 <FormControl>
                   <Button
                     type="button"
                     variant="outline"
                     role="combobox"
-                    :aria-expanded="props.form.categoryOpen.value"
+                    :aria-expanded="categoryOpen"
                     class="h-auto min-h-10 w-full justify-start"
                   >
                     <div class="flex flex-1 flex-wrap gap-1.5">
@@ -185,15 +190,15 @@
               <PopoverContent class="w-full p-0" align="start">
                 <Command>
                   <CommandInput
-                    v-model="props.form.categorySearchTerm.value"
+                    v-model="categorySearchTerm"
                     placeholder="Buscar categorías..."
                   />
 
                   <div
                     v-if="
-                      props.form.categorySearchTerm.value &&
+                      categorySearchTerm &&
                       !props.form.filteredCategories.value.includes(
-                        props.form.categorySearchTerm.value
+                        categorySearchTerm
                       )
                     "
                     class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none"
@@ -206,7 +211,7 @@
                       @click="props.form.createCategory"
                     >
                       <Plus class="mr-2 h-4 w-4" />
-                      Crear "{{ props.form.categorySearchTerm.value }}"
+                      Crear "{{ categorySearchTerm }}"
                     </Button>
                   </div>
 

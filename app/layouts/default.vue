@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Toaster from '~/components/ui/toast/Toaster.vue';
+  import Toaster from '~/components/ui/toast/Toaster.vue';
 
-const { initAuth, userId } = useAuth();
-await initAuth();
+  const { initAuth, userId } = useAuth();
+  await initAuth();
 </script>
 
 <template>
@@ -12,7 +12,9 @@ await initAuth();
     </ClientOnly>
     <AppSidebar />
     <SidebarInset class="flex flex-1 flex-col">
-      <header class="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
+      <header
+        class="border-border flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4"
+      >
         <SidebarTrigger class="-ml-1" />
 
         <div v-if="userId" class="flex flex-row gap-4">

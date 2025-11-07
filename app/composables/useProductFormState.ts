@@ -1,30 +1,40 @@
-import { toTypedSchema } from "@vee-validate/zod";
-import { useForm } from "vee-validate";
-import { updateProductSchema2, type Product } from "~~/db/schema";
+import { toTypedSchema } from '@vee-validate/zod';
+import { useForm } from 'vee-validate';
+import { updateProductSchema2, type Product } from '~~/db/schema';
 
-export function useProductFormState(brands: string[], categories: string[], product?: Product) {
-
+export function useProductFormState(
+  brands: string[],
+  categories: string[],
+  product?: Product
+) {
   const formSchema = toTypedSchema(updateProductSchema2);
 
-  const { handleSubmit, values, setFieldValue, resetForm, isSubmitting, validate, meta } =
-    useForm({
-      validationSchema: formSchema,
-      initialValues: product && {
-        id: product.id,
-        title: product.title,
-        price: Number(product.price),
-        brand: product.brand,
-        category: product.category,
-        description: product.description || undefined,
-        thumbnail: product.thumbnail || undefined,
-      } || {
-        title: 'test',
-        description: 'test',
-        price: 1000,
-        category: ['test'],
-        brand: 'test',
-      },
-    });
+  const {
+    handleSubmit,
+    values,
+    setFieldValue,
+    resetForm,
+    isSubmitting,
+    validate,
+    meta,
+  } = useForm({
+    validationSchema: formSchema,
+    initialValues: (product && {
+      id: product.id,
+      title: product.title,
+      price: Number(product.price),
+      brand: product.brand,
+      category: product.category,
+      description: product.description || undefined,
+      thumbnail: product.thumbnail || undefined,
+    }) || {
+      title: 'test',
+      description: 'test',
+      price: 1000,
+      category: ['test'],
+      brand: 'test',
+    },
+  });
 
   const brandOpen = ref(false);
   const brandSearchTerm2 = ref('');
@@ -83,6 +93,6 @@ export function useProductFormState(brands: string[], categories: string[], prod
     createCategory,
     handleCategoryToggle,
     validate,
-    meta
-  }
+    meta,
+  };
 }

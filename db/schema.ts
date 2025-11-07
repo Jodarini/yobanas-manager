@@ -10,16 +10,16 @@ import {
   numeric,
   index,
   uniqueIndex,
-} from 'drizzle-orm/pg-core'
-import { authenticatedRole } from 'drizzle-orm/supabase'
-import { sql } from 'drizzle-orm'
-import z from 'zod'
+} from 'drizzle-orm/pg-core';
+import { authenticatedRole } from 'drizzle-orm/supabase';
+import { sql } from 'drizzle-orm';
+import z from 'zod';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey().notNull(),
   fullName: text('full_name'),
   phone: varchar('phone', { length: 256 }),
-})
+});
 
 export const productsTable = pgTable(
   'products',
@@ -64,7 +64,7 @@ export const productsTable = pgTable(
       using: sql`(select auth.uid()) = ${table.user_id}`,
     }),
   ]
-)
+);
 
 export const productVariants = pgTable(
   'product_variants',
@@ -112,7 +112,7 @@ export const productVariants = pgTable(
       using: sql`(select auth.uid()) = ${table.user_id}`,
     }),
   ]
-)
+);
 
 export const sales = pgTable(
   'sales',
@@ -120,9 +120,13 @@ export const sales = pgTable(
     id: serial('id').primaryKey().notNull(),
     user_id: uuid('user_id').notNull(),
     status: varchar('status', { length: 32 }).notNull().default('paid'),
-    total_amount: numeric('total_amount', { precision: 12, scale: 2 }).notNull().default('0'),
+    total_amount: numeric('total_amount', { precision: 12, scale: 2 })
+      .notNull()
+      .default('0'),
     note: text('note'),
-    created_at: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
     deleted_at: timestamp('deleted_at', { withTimezone: true }),
   },
   (table) => [
@@ -154,7 +158,7 @@ export const sales = pgTable(
       using: sql`(select auth.uid()) = ${table.user_id}`,
     }),
   ]
-)
+);
 
 export const saleItems = pgTable(
   'sale_items',
@@ -170,7 +174,9 @@ export const saleItems = pgTable(
     quantity: integer('quantity').notNull(),
     unit_price: numeric('unit_price', { precision: 12, scale: 2 }).notNull(),
     line_total: numeric('line_total', { precision: 12, scale: 2 }).notNull(),
-    created_at: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
     deleted_at: timestamp('deleted_at', { withTimezone: true }),
   },
   (table) => [
@@ -203,16 +209,17 @@ export const saleItems = pgTable(
       using: sql`(select auth.uid()) = ${table.user_id}`,
     }),
   ]
-)
+);
 
 export const insertProductVariantSchema = z.object({
   size: z.string().min(1, 'es obligatoria').max(50),
   color: z.string().min(1, 'es obligatorio').max(50),
-  stock: z.number({ message: 'debe ser número' })
+  stock: z
+    .number({ message: 'debe ser número' })
     .int({ message: 'debe ser número' })
     .min(0, 'no puede ser negativo')
     .default(0),
-})
+});
 
 export const insertProductSchema = z.object({
   title: z.string().min(1, 'es obligatorio'),
@@ -222,22 +229,23 @@ export const insertProductSchema = z.object({
   brand: z.string().min(1, 'es obligatoria'),
   category: z.array(z.string()).min(1, 'es obligatoria'),
   variants: z.array(insertProductVariantSchema).min(1, 'es obligatoria'),
-})
+});
 
-export type InsertProduct = z.infer<typeof insertProductSchema>
-export type InsertProductVariant = z.infer<typeof insertProductVariantSchema>
+export type InsertProduct = z.infer<typeof insertProductSchema>;
+export type InsertProductVariant = z.infer<typeof insertProductVariantSchema>;
 
 export const updateProductVariantSchema = z.object({
   id: z.number().int().positive().optional(),
   size: z.string().min(1, 'es obligatoria').max(50),
   color: z.string().min(1, 'es obligatorio').max(50),
-  stock: z.number({ message: 'debe ser número' })
+  stock: z
+    .number({ message: 'debe ser número' })
     .int({ message: 'debe ser número' })
     .min(0, 'no puede ser negativo')
     .default(0),
   productId: z.number().int().optional(),
   user_id: z.string().uuid().optional(),
-})
+});
 
 export const updateProductSchema = z.object({
   id: z.number().int().positive(),
@@ -248,8 +256,7 @@ export const updateProductSchema = z.object({
   brand: z.string().min(1, 'es obligatoria'),
   category: z.array(z.string()).min(1, 'es obligatoria'),
   variants: z.array(updateProductVariantSchema).min(1, 'es obligatoria'),
-})
-
+});
 
 export const updateProductSchema2 = z.object({
   id: z.number().int().positive(),
@@ -259,12 +266,12 @@ export const updateProductSchema2 = z.object({
   thumbnail: z.string().url().optional().or(z.literal('')),
   brand: z.string().min(1, 'es obligatoria'),
   category: z.array(z.string()).min(1, 'es obligatoria'),
-})
+});
 
 export const updateVariantSchema = z.object({
   variants: z.array(
     z.object({
-      id: z.number().int().positive().optional(),  // Remove the union/transform
+      id: z.number().int().positive().optional(), // Remove the union/transform
       size: z.string().min(1, 'Tamaño es requerido').max(50),
       color: z.string().min(1, 'Color es requerido').max(50),
       stock: z.coerce.number().min(0, 'Stock no puede ser negativo'),
@@ -276,20 +283,20 @@ export const updateVariantSchema = z.object({
 export const checkoutItemSchema = z.object({
   variantId: z.number().int().positive(),
   quantity: z.number().int().positive(),
-})
+});
 
 export const checkoutPayloadSchema = z.object({
   items: z.array(checkoutItemSchema).min(1),
   note: z.string().max(1000).optional(),
-})
+});
 
-export type checkoutItem = z.infer<typeof checkoutItemSchema>
+export type checkoutItem = z.infer<typeof checkoutItemSchema>;
 
-export type UpdateProduct = z.infer<typeof updateProductSchema>
-export type UpdateVariant = z.infer<typeof updateVariantSchema>
-export type UpdateProduct2 = z.infer<typeof updateProductSchema2>
-export type UpdateProductVariant = z.infer<typeof updateProductVariantSchema>
+export type UpdateProduct = z.infer<typeof updateProductSchema>;
+export type UpdateVariant = z.infer<typeof updateVariantSchema>;
+export type UpdateProduct2 = z.infer<typeof updateProductSchema2>;
+export type UpdateProductVariant = z.infer<typeof updateProductVariantSchema>;
 
-export type Product = typeof productsTable.$inferSelect
-export type ProductVariant = typeof productVariants.$inferSelect
-export type ProductWithVariants = Product & { variants: ProductVariant[] }
+export type Product = typeof productsTable.$inferSelect;
+export type ProductVariant = typeof productVariants.$inferSelect;
+export type ProductWithVariants = Product & { variants: ProductVariant[] };

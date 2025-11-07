@@ -1,9 +1,6 @@
 import { serverSupabaseClient } from '#supabase/server';
 import { eq } from 'drizzle-orm';
-import {
-  productsTable,
-  updateProductSchema2,
-} from '~~/db/schema';
+import { productsTable, updateProductSchema2 } from '~~/db/schema';
 import { useAuthDB } from '~~/server/utils/db';
 import { buildProductSku } from '~~/db/utils/sku';
 
@@ -19,7 +16,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const body = await readBody(event);
-    console.log({ body })
+    console.log({ body });
     const product = updateProductSchema2.parse(body);
 
     return await useAuthDB(user, async (tx) => {
@@ -58,4 +55,3 @@ export default defineEventHandler(async (event) => {
     throw err;
   }
 });
-

@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
         .where(eq(productsTable.id, productId))
         .returning();
     });
-    console.log(result)
+    console.log(result);
     if (result.length === 0) {
       throw createError({
         statusCode: 404,

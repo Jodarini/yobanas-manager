@@ -17,11 +17,20 @@ export default defineEventHandler(async (event) => {
 
   try {
     const data = await useAuthDB(user, (tx) =>
-      tx.select({
-        value: sql<number>`sum(${productsTable.price} * ${productVariants.stock})`.mapWith(Number),
-        stock: sum(productVariants.stock).mapWith(Number)
-      }).from(productVariants).leftJoin(productsTable, eq(productVariants.productId, productsTable.id))
-    )
+      tx
+        .select({
+          value:
+            sql<number>`sum(${productsTable.price} * ${productVariants.stock})`.mapWith(
+              Number
+            ),
+          stock: sum(productVariants.stock).mapWith(Number),
+        })
+        .from(productVariants)
+        .leftJoin(
+          productsTable,
+          eq(productVariants.productId, productsTable.id)
+        )
+    );
     if (!data) {
       throw createError({
         statusCode: 404,
@@ -36,5 +45,4 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Error interno del servidor',
     });
   }
-
-})
+});

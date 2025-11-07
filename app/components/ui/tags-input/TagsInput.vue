@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { type HTMLAttributes, computed } from 'vue';
-import {
-  TagsInputRoot,
-  type TagsInputRootEmits,
-  type TagsInputRootProps,
-  useForwardPropsEmits,
-} from 'radix-vue';
-import { cn } from '@/lib/utils';
+  import { type HTMLAttributes, computed } from 'vue';
+  import {
+    TagsInputRoot,
+    type TagsInputRootEmits,
+    type TagsInputRootProps,
+    useForwardPropsEmits,
+  } from 'radix-vue';
+  import { cn } from '@/lib/utils';
 
-const props = defineProps<
-  TagsInputRootProps & { class?: HTMLAttributes['class'] }
->();
-const emits = defineEmits<TagsInputRootEmits>();
+  const props = defineProps<
+    TagsInputRootProps & { class?: HTMLAttributes['class'] }
+  >();
+  const emits = defineEmits<TagsInputRootEmits>();
 
-const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props;
+  const delegatedProps = computed(() => {
+    const { class: _, ...delegated } = props;
 
-  return delegated;
-});
+    return delegated;
+  });
 
-const forwarded = useForwardPropsEmits(delegatedProps, emits);
+  const forwarded = useForwardPropsEmits(delegatedProps, emits);
 </script>
 
 <template>
@@ -27,7 +27,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
     v-bind="forwarded"
     :class="
       cn(
-        'flex flex-wrap items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm',
+        'border-input bg-background flex flex-wrap items-center gap-2 rounded-md border px-3 py-2 text-sm',
         props.class
       )
     "

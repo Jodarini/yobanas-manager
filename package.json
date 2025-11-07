@@ -13,7 +13,9 @@
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:reset": "drizzle-kit drop && drizzle-kit push && npm run db:seed"
+    "db:reset": "drizzle-kit drop && drizzle-kit push && npm run db:seed",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@nuxt/image": "^1.10.0",

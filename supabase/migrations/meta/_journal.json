@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1762488096030,
+      "tag": "20251107040136_swift_the_enforcers",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,7 +1,7 @@
-import { toTypedSchema } from "@vee-validate/zod";
-import { useForm, useFieldArray } from "vee-validate";
-import { normalizeString } from "~/lib/utils";
-import { updateVariantSchema, type UpdateVariant } from "~~/db/schema";
+import { toTypedSchema } from '@vee-validate/zod';
+import { useForm, useFieldArray } from 'vee-validate';
+import { normalizeString } from '~/lib/utils';
+import { updateVariantSchema, type UpdateVariant } from '~~/db/schema';
 
 export function useVariantsFormState(data?: UpdateVariant) {
   const formSchema = toTypedSchema(updateVariantSchema);

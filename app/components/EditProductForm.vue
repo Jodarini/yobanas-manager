@@ -1,34 +1,36 @@
 <script setup lang="ts">
-import {
-  updateProductSchema,
-  type ProductWithVariants,
-} from '~~/db/schema';
+  import { updateProductSchema, type ProductWithVariants } from '~~/db/schema';
 
-const props = defineProps<{
-  product: ProductWithVariants;
-}>();
+  const props = defineProps<{
+    product: ProductWithVariants;
+  }>();
 
-const productData = props.product;
+  const productData = props.product;
 
-const isDeleting = ref(false);
+  const isDeleting = ref(false);
 
-const { data } = await useFetch('/api/products', {
-  key: 'products',
-});
+  const { data } = await useFetch('/api/products', {
+    key: 'products',
+  });
 
-const categories = computed(() => {
-  const cats = data.value?.flatMap((product) => product.category);
-  return [...new Set(cats)].sort();
-});
+  const categories = computed(() => {
+    const cats = data.value?.flatMap((product) => product.category);
+    return [...new Set(cats)].sort();
+  });
 
-const brands = computed(() => {
-  if (!data.value) return [];
-  return [...new Set(data.value.map((product) => product.brand))].sort();
-});
-
+  const brands = computed(() => {
+    if (!data.value) return [];
+    return [...new Set(data.value.map((product) => product.brand))].sort();
+  });
 </script>
 
 <template>
-  <ProductForm mode="EDIT" :brands :categories :initial-values="productData" :is-deleting
-    :validation-schema="updateProductSchema" />
+  <ProductForm
+    mode="EDIT"
+    :brands
+    :categories
+    :initial-values="productData"
+    :is-deleting
+    :validation-schema="updateProductSchema"
+  />
 </template>

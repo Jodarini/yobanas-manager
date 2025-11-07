@@ -8,7 +8,9 @@ export const useAuth = () => {
     isLoading.value = true;
 
     // Get initial session without network call
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (session?.user) {
       userId.value = session.user.id;
@@ -25,7 +27,6 @@ export const useAuth = () => {
   const signInWithPassword = async (email: string, password: string) => {
     isLoading.value = true;
     try {
-
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
@@ -38,9 +39,8 @@ export const useAuth = () => {
         return navigateTo('/');
       }
     } catch (err) {
-      console.error(err)
+      console.error(err);
     } finally {
-
       isLoading.value = false;
     }
   };

@@ -4,8 +4,8 @@ import { useAuthDB } from '../utils/db';
 import { ilike } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
-  const { search = "", page = '1', pageSize = '50' } = getQuery(event)
-  const limit = parseInt(pageSize)
+  const { search = '', page = '1', pageSize = '50' } = getQuery(event);
+  const limit = parseInt(pageSize);
   const offset = (parseInt(page) - 1) * limit;
 
   const supabase = await serverSupabaseClient(event);
@@ -22,7 +22,12 @@ export default defineEventHandler(async (event) => {
 
   try {
     const products = await useAuthDB(user, (tx) =>
-      tx.select().from(productsTable).where(ilike(productsTable.title, `%${search}%`)).limit(limit).offset(offset)
+      tx
+        .select()
+        .from(productsTable)
+        .where(ilike(productsTable.title, `%${search}%`))
+        .limit(limit)
+        .offset(offset)
     );
     if (!products) {
       throw createError({

@@ -117,12 +117,8 @@
           "name": "product_variants_product_id_products_id_fk",
           "tableFrom": "product_variants",
           "tableTo": "products",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["product_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -134,27 +130,21 @@
           "name": "users_select_own_variants",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"product_variants\".\"user_id\""
         },
         "users_insert_own_variants": {
           "name": "users_insert_own_variants",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "withCheck": "(select auth.uid()) = \"product_variants\".\"user_id\""
         },
         "users_update_own_variants": {
           "name": "users_update_own_variants",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"product_variants\".\"user_id\"",
           "withCheck": "(select auth.uid()) = \"product_variants\".\"user_id\""
         },
@@ -162,9 +152,7 @@
           "name": "users_delete_own_variants",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"product_variants\".\"user_id\""
         }
       },
@@ -270,27 +258,21 @@
           "name": "users_select_own_products",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"products\".\"user_id\""
         },
         "users_insert_own_products": {
           "name": "users_insert_own_products",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "withCheck": "(select auth.uid()) = \"products\".\"user_id\""
         },
         "users_update_own_products": {
           "name": "users_update_own_products",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"products\".\"user_id\"",
           "withCheck": "(select auth.uid()) = \"products\".\"user_id\""
         },
@@ -298,9 +280,7 @@
           "name": "users_delete_own_products",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"products\".\"user_id\""
         }
       },
@@ -413,12 +393,8 @@
           "name": "sale_items_sale_id_sales_id_fk",
           "tableFrom": "sale_items",
           "tableTo": "sales",
-          "columnsFrom": [
-            "sale_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sale_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -426,12 +402,8 @@
           "name": "sale_items_product_variant_id_product_variants_id_fk",
           "tableFrom": "sale_items",
           "tableTo": "product_variants",
-          "columnsFrom": [
-            "product_variant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["product_variant_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -443,27 +415,21 @@
           "name": "users_select_own_sale_items",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"sale_items\".\"user_id\""
         },
         "users_insert_own_sale_items": {
           "name": "users_insert_own_sale_items",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "withCheck": "(select auth.uid()) = \"sale_items\".\"user_id\""
         },
         "users_update_own_sale_items": {
           "name": "users_update_own_sale_items",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"sale_items\".\"user_id\"",
           "withCheck": "(select auth.uid()) = \"sale_items\".\"user_id\""
         },
@@ -471,9 +437,7 @@
           "name": "users_delete_own_sale_items",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"sale_items\".\"user_id\""
         }
       },
@@ -564,27 +528,21 @@
           "name": "users_select_own_sales",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"sales\".\"user_id\""
         },
         "users_insert_own_sales": {
           "name": "users_insert_own_sales",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "withCheck": "(select auth.uid()) = \"sales\".\"user_id\""
         },
         "users_update_own_sales": {
           "name": "users_update_own_sales",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"sales\".\"user_id\"",
           "withCheck": "(select auth.uid()) = \"sales\".\"user_id\""
         },
@@ -592,9 +550,7 @@
           "name": "users_delete_own_sales",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": [
-            "authenticated"
-          ],
+          "to": ["authenticated"],
           "using": "(select auth.uid()) = \"sales\".\"user_id\""
         }
       },

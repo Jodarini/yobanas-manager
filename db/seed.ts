@@ -5,8 +5,8 @@ import { productsTable, productVariants } from './schema';
 import { productsData } from './data/products';
 import { buildProductSku, buildVariantSku } from './utils/sku';
 
-
-const connectionString = 'postgresql://postgres:postgres@127.0.0.1:54322/postgres';
+const connectionString =
+  'postgresql://postgres:postgres@127.0.0.1:54322/postgres';
 const client = postgres(connectionString);
 const db = drizzle(client);
 
@@ -31,7 +31,11 @@ async function seed() {
     const inserted = await db
       .insert(productsTable)
       .values(productsWithSku)
-      .returning({ id: productsTable.id, sku: productsTable.sku, title: productsTable.title });
+      .returning({
+        id: productsTable.id,
+        sku: productsTable.sku,
+        title: productsTable.title,
+      });
 
     console.log('Inserted products:', inserted);
 
@@ -59,12 +63,18 @@ async function seed() {
 
     // 3) Build variants from inserted rows only
     const U = '0913d73e-08aa-44e5-98d7-db0f1b1b19c2';
-    function v(title: string, size: string, color: string, stock: number, sold: number) {
+    function v(
+      title: string,
+      size: string,
+      color: string,
+      stock: number,
+      sold: number
+    ) {
       const productSku = mustSkuByTitle(title);
       const productId = mustIdBySku(productSku);
       const variantSku = buildVariantSku({ productSku, color, size });
       return {
-        productId: productId,  // ← camelCase matches schema field name
+        productId: productId, // ← camelCase matches schema field name
         user_id: U,
         size,
         color,
@@ -124,4 +134,3 @@ async function seed() {
 }
 
 seed();
-

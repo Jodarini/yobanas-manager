@@ -1,29 +1,48 @@
-import { toTypedSchema } from "@vee-validate/zod";
-import { useForm } from "vee-validate";
-import { toast } from "~/components/ui/toast";
-import { normalizeString } from "~/lib/utils";
-import { insertProductSchema, type Product, type UpdateVariant } from "~~/db/schema";
+import { toTypedSchema } from '@vee-validate/zod';
+import { useForm } from 'vee-validate';
+import { toast } from '~/components/ui/toast';
+import { normalizeString } from '~/lib/utils';
+import {
+  insertProductSchema,
+  type Product,
+  type UpdateVariant,
+} from '~~/db/schema';
 
-export function useProductWithVariants(mode: 'ADD' | 'EDIT', brands: string[], categories: string[], product: Product, variants: UpdateVariant) {
-
+export function useProductWithVariants(
+  mode: 'ADD' | 'EDIT',
+  brands: string[],
+  categories: string[],
+  product: Product,
+  variants: UpdateVariant
+) {
   const formSchema = toTypedSchema(insertProductSchema);
 
-  const { handleSubmit, values, setFieldValue, resetForm, isSubmitting, validate, meta, setErrors } =
-    useForm({
-      validationSchema: formSchema,
-      initialValues: {
-        title: 'test',
-        description: 'test',
-        price: 1000,
-        category: ['test'],
-        brand: 'test',
-        variants: [{
+  const {
+    handleSubmit,
+    values,
+    setFieldValue,
+    resetForm,
+    isSubmitting,
+    validate,
+    meta,
+    setErrors,
+  } = useForm({
+    validationSchema: formSchema,
+    initialValues: {
+      title: 'test',
+      description: 'test',
+      price: 1000,
+      category: ['test'],
+      brand: 'test',
+      variants: [
+        {
           color: 'test',
           size: 'test',
-          stock: 1
-        }]
-      },
-    });
+          stock: 1,
+        },
+      ],
+    },
+  });
 
   const brandOpen = ref(false);
   const brandSearchTerm2 = ref('');
@@ -67,21 +86,20 @@ export function useProductWithVariants(mode: 'ADD' | 'EDIT', brands: string[], c
 
   const checkIfVariantExists = () => {
     const currentVariants = values.variants || [];
-    const seen = new Map()
+    const seen = new Map();
 
     for (let i = 0; i < currentVariants.length; i++) {
-      const variant = currentVariants[i]
+      const variant = currentVariants[i];
       const key = `${normalizeString(variant!.size)}-${normalizeString(variant!.color)}`;
 
       if (seen.has(key)) {
-        return i
+        return i;
       }
-      seen.set(key, i)
+      seen.set(key, i);
     }
 
-    return -1
-
-  }
+    return -1;
+  };
 
   const addVariant = () => {
     const currentVariants = values.variants || [];
@@ -103,21 +121,20 @@ export function useProductWithVariants(mode: 'ADD' | 'EDIT', brands: string[], c
   const onSubmit = handleSubmit(
     async (values) => {
       try {
-
         await $fetch(`/api/product/add`, {
           method: 'POST',
           body: values,
-        })
+        });
         resetForm();
         toast({
           title: 'Producto creado exitosamente',
-        })
+        });
       } catch (e) {
         toast({
           variant: 'destructive',
           title: 'Error al crear el producto',
           description: e.message,
-        })
+        });
       }
     },
     ({ errors }) => {
@@ -127,12 +144,8 @@ export function useProductWithVariants(mode: 'ADD' | 'EDIT', brands: string[], c
         description: 'Verifique los campos marcados en rojo',
       });
       console.error(errors);
-
     }
-  )
-
-
-
+  );
 
   return {
     mode,
@@ -159,6 +172,5 @@ export function useProductWithVariants(mode: 'ADD' | 'EDIT', brands: string[], c
     product,
     variants,
     onSubmit,
-
   };
 }

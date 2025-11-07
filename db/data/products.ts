@@ -101,4 +101,3 @@ export const productsData = [
     category: ['ropa', 'shorts'],
   },
 ];
-

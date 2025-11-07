@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { cn } from '@/lib/utils';
   import { Plus, ChevronsUpDown, Check } from 'lucide-vue-next';
+  import type { ComponentFieldBindingObject } from 'vee-validate';
 
   const props = defineProps<{
     form:
@@ -13,6 +14,21 @@
   const categoryOpen = defineModel<boolean>('categoryOpen');
   const brandSearchTerm = defineModel<string>('brandSearchTerm');
   const categorySearchTerm = defineModel<string>('categorySearchTerm');
+
+  const handleCategoryToggle = (
+    category: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    componentField: ComponentFieldBindingObject<any>
+  ) => {
+    const selectedCategories = componentField.modelValue || [];
+    const isCategorySelected = selectedCategories.includes(category);
+
+    const updatedCategories = isCategorySelected
+      ? selectedCategories.filter((cat: string) => cat !== category)
+      : [...selectedCategories, category];
+
+    componentField['onUpdate:modelValue']!(updatedCategories);
+  };
 </script>
 
 <template>
@@ -40,7 +56,7 @@
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ value }" class="flex-1" name="price">
+        <FormField v-slot="{ componentField, value }" name="price">
           <FormItem class="w-full">
             <div class="flex h-4 gap-1">
               <FormLabel>Precio</FormLabel>
@@ -59,15 +75,7 @@
                 signDisplay: 'auto',
               }"
               :model-value="value"
-              @update:model-value="
-                (v) => {
-                  if (v) {
-                    props.form.setFieldValue('price', v);
-                  } else {
-                    props.form.setFieldValue('price', 0);
-                  }
-                }
-              "
+              @update:model-value="componentField['onUpdate:modelValue']"
             >
               <NumberFieldContent>
                 <NumberFieldDecrement />
@@ -226,16 +234,7 @@
                         v-for="category in props.form.filteredCategories.value"
                         :key="category!"
                         :value="category!"
-                        @select="
-                          () => {
-                            const current = componentField.modelValue || [];
-                            const next = current.includes(category)
-                              ? current.filter((v) => v !== category)
-                              : [...current, category];
-                            componentField.onChange(next);
-                            props.form.setFieldValue('category', next);
-                          }
-                        "
+                        @select="handleCategoryToggle(category, componentField)"
                       >
                         <Check
                           :class="

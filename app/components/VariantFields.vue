@@ -8,7 +8,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <Card>
+  <Card class="flex-2">
     <CardHeader class="flex flex-col justify-between pb-0 md:flex-row ">
       <CardTitle class="text-xl font-semibold">Variantes</CardTitle>
       <Button type="button" variant="outline" class="mt-4 flex w-full gap-2 md:mt-0 md:w-fit"
@@ -80,7 +80,6 @@ const props = defineProps<{
           </Item>
 
           <FormField v-slot="{ errors }" :name="`variants[${index}]`" class="mb-4">
-            {{ props.form.values }}
             <FormItem>
               <FormControl class="hidden" />
               <FormMessage v-if="errors" class="mb-4" />

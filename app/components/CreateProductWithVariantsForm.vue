@@ -15,9 +15,12 @@ const productWithVariantsForm = useProductWithVariants('ADD', props.brands,
 
 <template>
   <form @submit.prevent="productWithVariantsForm.onSubmit">
-    <ProductFields :form='productWithVariantsForm' mode='ADD' />
-    <VariantFields :form='productWithVariantsForm' mode='ADD' />
-    <Button type="submit" :disabled="!productWithVariantsForm.meta.value.dirty">
+    <div class="flex flex-col md:flex-row gap-2 mb-2">
+      <ProductFields :form='productWithVariantsForm' mode='ADD' />
+      <VariantFields :form='productWithVariantsForm' mode='ADD' />
+    </div>
+    <Button type="submit" class="ml-auto"
+      :disabled="productWithVariantsForm.isSubmitting.value || !productWithVariantsForm.meta.value.dirty">
       Agregar producto
     </Button>
   </form>

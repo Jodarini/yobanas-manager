@@ -45,7 +45,6 @@ export function useProductWithVariants(
   });
 
   const brandOpen = ref(false);
-  const brandSearchTerm2 = ref('');
   const brandSearchTerm = ref('');
   const categoryOpen = ref(false);
   const categorySearchTerm = ref('');
@@ -65,7 +64,7 @@ export function useProductWithVariants(
   });
 
   const createBrand = () => {
-    setFieldValue('brand', brandSearchTerm2.value);
+    setFieldValue('brand', brandSearchTerm.value);
     brandOpen.value = false;
   };
 
@@ -161,7 +160,6 @@ export function useProductWithVariants(
     removeVariant,
     checkIfVariantExists,
     brandOpen,
-    brandSearchTerm2,
     brandSearchTerm,
     categoryOpen,
     categorySearchTerm,

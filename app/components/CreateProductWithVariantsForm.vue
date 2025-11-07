@@ -20,7 +20,18 @@
 <template>
   <form @submit.prevent="productWithVariantsForm.onSubmit">
     <div class="mb-2 flex flex-col gap-2 md:flex-row">
-      <ProductFields :form="productWithVariantsForm" mode="ADD" />
+      <ProductFields
+        v-model:brand-open="productWithVariantsForm.brandOpen.value"
+        v-model:category-open="productWithVariantsForm.categoryOpen.value"
+        v-model:brand-search-term="
+          productWithVariantsForm.brandSearchTerm.value
+        "
+        v-model:category-search-term="
+          productWithVariantsForm.categorySearchTerm.value
+        "
+        :form="productWithVariantsForm"
+        mode="ADD"
+      />
       <VariantFields :form="productWithVariantsForm" mode="ADD" />
     </div>
     <Button

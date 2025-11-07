@@ -11,7 +11,7 @@
 </script>
 
 <template>
-  <Card class="flex-1">
+  <Card class="min-h-full flex-1">
     <!-- Product Info Fields -->
     <CardHeader>
       <CardTitle>Información del Producto</CardTitle>

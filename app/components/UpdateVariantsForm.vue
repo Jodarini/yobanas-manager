@@ -44,7 +44,7 @@
 </script>
 
 <template>
-  <form @submit.prevent="onSubmit">
+  <form class="min-h-full flex-2" @submit.prevent="onSubmit">
     <VariantFields :form mode="EDIT" />
   </form>
 </template>

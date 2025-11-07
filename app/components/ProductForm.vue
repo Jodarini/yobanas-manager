@@ -33,12 +33,14 @@
 
 <template>
   <div v-if="props.mode === 'EDIT'">
-    <UpdateProductForm
-      :brands="props.brands"
-      :categories="props.categories"
-      :initial-values="product"
-    />
-    <UpdateVariantsForm :data="variants" />
+    <div class="mb-2 flex flex-col gap-2 md:flex-row">
+      <UpdateProductForm
+        :brands="props.brands"
+        :categories="props.categories"
+        :initial-values="product"
+      />
+      <UpdateVariantsForm :data="variants" />
+    </div>
   </div>
 
   <div v-if="props.mode === 'ADD'">

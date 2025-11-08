@@ -44,6 +44,13 @@
 
 <template>
   <form class="min-h-full flex-1" @submit.prevent="onSubmit">
-    <ProductFields :form mode="EDIT" />
+    <ProductFields
+      v-model:brand-open="form.brandOpen.value"
+      v-model:category-open="form.categoryOpen.value"
+      v-model:brand-search-term="form.brandSearchTerm.value"
+      v-model:category-search-term="form.categorySearchTerm.value"
+      :form
+      mode="EDIT"
+    />
   </form>
 </template>

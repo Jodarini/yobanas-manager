@@ -5,6 +5,7 @@
     SunIcon,
     MoonIcon,
     ShoppingCartIcon,
+    Store,
   } from 'lucide-vue-next';
 
   const { initAuth, userId, signOut, isLoading } = useAuth();
@@ -27,6 +28,11 @@
       title: 'Carrito',
       url: '/add-sale',
       icon: ShoppingCartIcon,
+    },
+    {
+      title: 'Ventas',
+      url: '/sales',
+      icon: Store,
     },
   ];
 

@@ -8,8 +8,8 @@
     Store,
   } from 'lucide-vue-next';
 
-  const { initAuth, userId, signOut, isLoading } = useAuth();
-  await initAuth();
+  const { user, signOut, isLoading } = useAuth();
+  console.log(user.value);
 
   const route = useRoute();
 
@@ -104,7 +104,7 @@
 
     <SidebarFooter>
       <div class="space-y-2 px-4 py-2 text-center">
-        <Button v-if="!userId" class="min-w-full" as-child variant="outline">
+        <Button v-if="!user" class="min-w-full" as-child variant="outline">
           <NuxtLink to="/login">Iniciar sesión</NuxtLink>
         </Button>
         <Button

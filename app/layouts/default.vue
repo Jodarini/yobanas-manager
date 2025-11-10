@@ -1,8 +1,7 @@
 <script setup lang="ts">
   import Toaster from '~/components/ui/toast/Toaster.vue';
 
-  const { initAuth, userId } = useAuth();
-  await initAuth();
+  const user = useSupabaseUser();
 </script>
 
 <template>
@@ -17,7 +16,7 @@
       >
         <SidebarTrigger class="-ml-1" />
 
-        <div v-if="userId" class="flex flex-row gap-4">
+        <div v-if="user" class="flex flex-row gap-4">
           <Button as-child>
             <NuxtLink to="/add-product" class="flex flex-row justify-evenly">
               Agregar producto

@@ -56,9 +56,8 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/',
-      include: undefined,
-      exclude: ['/', '/password/*'],
-      saveRedirectToCookie: true, // Saves the path user tried to access
+      exclude: ['/', '/login', '/signup', '/password/*'],
+      saveRedirectToCookie: true,
     },
   },
   hooks: {

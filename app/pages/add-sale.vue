@@ -1,7 +1,5 @@
 <script setup lang="ts">
-  import { cn } from '@/lib/utils';
   import { refDebounced } from '@vueuse/core';
-  import { useForm } from 'vee-validate';
   import { toast, ToastAction } from '~/components/ui/toast';
   import type { Product, ProductVariant } from '~~/db/schema';
   import { TrashIcon } from 'lucide-vue-next';
@@ -44,7 +42,6 @@
       quantity: p.stock,
     }));
     const { saleId } = await cartStore.checkout(items);
-    console.log('saleId', saleId);
     isSubmitting.value = false;
     if (saleId) {
       cartStore.emptyCart();
@@ -189,7 +186,11 @@
                     type="button"
                   >
                     {{ value?.title ?? 'Selecciona un producto' }}
-                    <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    <ClientOnly>
+                      <ChevronsUpDown
+                        class="ml-2 h-4 w-4 shrink-0 opacity-50"
+                      />
+                    </ClientOnly>
                   </Button>
                 </ComboboxTrigger>
               </ComboboxAnchor>
@@ -218,9 +219,9 @@
                     @click="selectProduct(product)"
                   >
                     {{ product.title }}
-                    <ComboboxItemIndicator>
-                      <Check :class="cn('ml-auto h-4 w-4')" />
-                    </ComboboxItemIndicator>
+                    <!-- <ComboboxItemIndicator> -->
+                    <!--   <Check :class="cn('ml-auto h-4 w-4')" /> -->
+                    <!-- </ComboboxItemIndicator> -->
                   </ComboboxItem>
                 </ComboboxGroup>
               </ComboboxList>

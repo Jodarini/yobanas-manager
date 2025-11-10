@@ -28,6 +28,7 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.43.1",
     "drizzle-zod": "^0.8.2",
+    "lucide-nuxt": "1.2.2",
     "lucide-vue-next": "^0.548.0",
     "nuxt": "^4.2.0",
     "postgres": "^3.4.7",

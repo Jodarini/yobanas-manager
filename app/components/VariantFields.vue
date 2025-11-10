@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import { Trash2Icon, PlusCircleIcon } from 'lucide-vue-next';
-
   const props = defineProps<{
     form:
       | ReturnType<typeof useVariantsFormState>

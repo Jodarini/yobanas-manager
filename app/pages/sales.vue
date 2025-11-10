@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import { Package, DollarSign, ReceiptText } from 'lucide-vue-next';
-
   const { data: salesData } = await useFetch('/api/sales', {
     key: 'sales',
     // getCachedData(key) {

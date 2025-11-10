@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { Tags, Package, DollarSign, Warehouse } from 'lucide-vue-next';
   const { data, pending, error, refresh } = await useFetch('/api/products', {
     key: 'products',
     // getCachedData(key) {

@@ -15,7 +15,6 @@
     getSortedRowModel,
     useVueTable,
   } from '@tanstack/vue-table';
-  import { ArrowUpDown, Badge, ChevronDown } from 'lucide-vue-next';
 
   import { h, ref } from 'vue';
   import {
@@ -35,50 +34,12 @@
   } from '@/components/ui/table';
   import { Checkbox } from 'radix-vue/namespaced';
   import { Button } from './ui/button';
-
-  export interface Payment {
-    id: string;
-    amount: number;
-    status: 'pending' | 'processing' | 'success' | 'failed';
-    email: string;
-  }
+  import { valueUpdater } from '@/lib/utils';
+  import { ArrowUpDown, Badge } from 'lucide-vue-next';
 
   const props = defineProps<{
     data: any[];
   }>();
-
-  // const data: Payment[] = [
-  //   {
-  //     id: 'm5gr84i9',
-  //     amount: 316,
-  //     status: 'success',
-  //     email: 'ken99@yahoo.com',
-  //   },
-  //   {
-  //     id: '3u1reuv4',
-  //     amount: 242,
-  //     status: 'success',
-  //     email: 'Abe45@gmail.com',
-  //   },
-  //   {
-  //     id: 'derv1ws0',
-  //     amount: 837,
-  //     status: 'processing',
-  //     email: 'Monserrat44@gmail.com',
-  //   },
-  //   {
-  //     id: '5kma53ae',
-  //     amount: 874,
-  //     status: 'success',
-  //     email: 'Silas22@gmail.com',
-  //   },
-  //   {
-  //     id: 'bhqecj4p',
-  //     amount: 721,
-  //     status: 'failed',
-  //     email: 'carmella@hotmail.com',
-  //   },
-  // ];
 
   const columns: ColumnDef<Payment>[] = [
     {
@@ -148,7 +109,17 @@
     },
     {
       accessorKey: 'total_amount',
-      header: () => h('div', { class: 'text-right' }, 'Total'),
+      header: ({ column }) => {
+        return h(
+          Button,
+          {
+            class: 'float-end',
+            variant: 'ghost',
+            onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+          },
+          () => ['Total', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })]
+        );
+      },
       cell: ({ row }) => {
         const amount = Number.parseFloat(row.getValue('total_amount'));
 
@@ -195,7 +166,11 @@
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    // onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
+    onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
+    onColumnFiltersChange: (updaterOrValue) =>
+      valueUpdater(updaterOrValue, columnFilters),
+    onColumnVisibilityChange: (updaterOrValue) =>
+      valueUpdater(updaterOrValue, columnVisibility),
     // onColumnFiltersChange: (updaterOrValue) =>
     //   valueUpdater(updaterOrValue, columnFilters),
     // onColumnVisibilityChange: (updaterOrValue) =>
@@ -227,12 +202,14 @@
 <template>
   <div class="w-full">
     <div class="flex items-center gap-2 py-4">
-      <Input
-        class="max-w-sm"
-        placeholder="Filtrar ventas"
-        :model-value="table.getColumn('email')?.getFilterValue() as string"
-        @update:model-value="table.getColumn('email')?.setFilterValue($event)"
-      />
+      <!-- <Input -->
+      <!--   class="max-w-sm" -->
+      <!--   placeholder="Filtrar ventas" -->
+      <!--   :model-value="table.getColumn('created_at')?.getFilterValue() as string" -->
+      <!--   @update:model-value=" -->
+      <!--     table.getColumn('created_at')?.setFilterValue($event) -->
+      <!--   " -->
+      <!-- /> -->
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
           <Button variant="outline" class="ml-auto">

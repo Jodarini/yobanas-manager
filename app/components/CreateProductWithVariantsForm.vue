@@ -42,7 +42,11 @@
         !productWithVariantsForm.meta.value.dirty
       "
     >
-      Agregar producto
+      <template v-if="productWithVariantsForm.isSubmitting.value">
+        <Spinner class="mr-2" />
+        Agregando producto...
+      </template>
+      <template v-else>Agregar producto</template>
     </Button>
   </form>
 </template>

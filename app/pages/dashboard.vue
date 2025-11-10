@@ -1,14 +1,5 @@
 <script setup lang="ts">
   import { Tags, Package, DollarSign, Warehouse } from 'lucide-vue-next';
-  const startTime = performance.now();
-  const user = useSupabaseUser();
-  const loadTime = performance.now() - startTime;
-
-  console.log(`⏱️ User loaded in: ${loadTime.toFixed(2)}ms`);
-  console.log(`👤 User email: ${user.value?.email}`);
-  console.log(
-    `💾 From cache: ${loadTime < 1 ? 'YES ✅' : 'NO ❌ (network request)'}`
-  );
   const { data, pending, error, refresh } = await useFetch('/api/products', {
     key: 'products',
     // getCachedData(key) {

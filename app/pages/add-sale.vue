@@ -12,6 +12,7 @@
   const selectedProduct = ref<Product>();
   const selectedProductId = computed(() => selectedProduct.value?.id);
   const cartStore = useCartStore();
+  const isSubmitting = ref(false);
 
   const expandedVariant = ref(null);
   const { data, pending, error, refresh } = useFetch(
@@ -37,11 +38,13 @@
   });
 
   async function onSubmit() {
+    isSubmitting.value = true;
     const items = cartStore.cart.map((p) => ({
       variantId: p.variant.id,
       quantity: p.stock,
     }));
     await cartStore.checkout(items);
+    isSubmitting.value = false;
   }
 
   function handleAddToCart(
@@ -68,12 +71,6 @@
     selectedProduct.value = product;
     searchOpen.value = false;
     expandedVariant.value = null;
-  }
-
-  function clearSelection() {
-    selectedProduct.value = undefined;
-    expandedVariant.value = null;
-    searchOpen.value = true;
   }
 
   // Optional: compute filtered products against debounced term
@@ -137,7 +134,7 @@
           default: () =>
             h(
               Button,
-              { onClick: () => goToItem('item-2', product) },
+              { onClick: () => goToItem('ventas') },
               { default: () => 'Ver' }
             ),
         }
@@ -145,20 +142,25 @@
     });
   }
 
-  const openItem = ref<string | undefined>('item-0');
+  const openItem = ref<string | undefined>('productos');
 
   function goToItem(item: string, product?: Product) {
     if (product) selectedProduct.value = product;
     openItem.value = item;
   }
   const value = ref<Product | undefined>();
+
+  function clearCart() {
+    goToItem('productos');
+    cartStore.emptyCart();
+  }
 </script>
 
 <template>
-  <Tabs default-value="productos" class="h-full w-full">
+  <Tabs v-model="openItem" default-value="productos" class="h-full w-full">
     <TabsList class="bg-accent grid w-full grid-cols-2">
       <TabsTrigger value="productos">Agrega productos</TabsTrigger>
-      <TabsTrigger value="ventas">Ventas</TabsTrigger>
+      <TabsTrigger value="ventas">Carrito</TabsTrigger>
     </TabsList>
     <TabsContent value="productos" class="max-h-full overflow-hidden">
       <Card class="flex h-full">
@@ -180,10 +182,6 @@
                     {{ value?.title ?? 'Selecciona un producto' }}
                     <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
-                  <!---->
-                  <!-- <Button :disabled="!selectedProduct" variant="outline" @click="clearSelection"> -->
-                  <!--   Limpiar -->
-                  <!-- </Button> -->
                 </ComboboxTrigger>
               </ComboboxAnchor>
 
@@ -452,12 +450,17 @@
               type="button"
               variant="outline"
               class="w-full md:w-auto"
-              @click="cartStore.emptyCart"
+              @click="clearCart"
             >
               Limpiar
             </Button>
-            <Button class="w-full md:w-auto" @click="onSubmit">
-              Completar venta
+
+            <Button type="submit" :disabled="isSubmitting" @click="onSubmit">
+              <span v-if="isSubmitting" class="flex items-center">
+                <Spinner class="mr-2" />
+                Completando venta...
+              </span>
+              <span v-else>Completar venta</span>
             </Button>
           </div>
         </CardFooter>

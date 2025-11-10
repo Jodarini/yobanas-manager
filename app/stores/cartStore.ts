@@ -60,9 +60,6 @@ export const useCartStore = defineStore('cart', () => {
   });
 
   async function checkout(items: checkoutItem[]) {
-    console.log('aslkdjflasdkjflkasjflkasjdflkajsf');
-    console.log({ items });
-    const isSubmitting = ref(true);
     try {
       const res = await $fetch('/api/sales', {
         method: 'POST',
@@ -80,8 +77,6 @@ export const useCartStore = defineStore('cart', () => {
         variant: 'destructive',
         title: 'Error al procesar la compra',
       });
-    } finally {
-      isSubmitting.value = false;
     }
   }
 

@@ -19,10 +19,12 @@
 
   const onSubmit = form.handleSubmit(
     async (values) => {
-      await $fetch(`/api/product/:id/addProduct`, {
+      await $fetch(`/api/product/:id`, {
         method: 'put',
         body: values,
       });
+
+      await refreshNuxtData('products');
 
       toast({
         title: 'Producto actualizado exitosamente',

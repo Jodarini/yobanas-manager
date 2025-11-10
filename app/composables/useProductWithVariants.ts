@@ -120,12 +120,12 @@ export function useProductWithVariants(
 
   const onSubmit = handleSubmit(
     async (values) => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
       try {
         await $fetch(`/api/product/add`, {
           method: 'POST',
           body: values,
         });
+        await refreshNuxtData('products');
         resetForm();
         toast({
           title: 'Producto creado exitosamente',

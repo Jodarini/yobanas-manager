@@ -2,16 +2,19 @@
   import { columns } from '@/components/columns';
   const user = useSupabaseUser();
 
-  const { data, status, error, execute } = await useFetch('/api/products', {
+  const { data, refresh, error, status } = await useFetch('/api/products', {
     key: 'products',
-    immediate: false,
+    // Optional: set how long data stays fresh (in milliseconds)
+    getCachedData(key) {
+      return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
+    },
   });
 
-  watch(user, async (newUser) => {
-    if (newUser) {
-      await execute();
-    }
-  });
+  // watch(user, async (newUser) => {
+  //   if (newUser) {
+  //     await execute();
+  //   }
+  // });
 </script>
 
 <template>

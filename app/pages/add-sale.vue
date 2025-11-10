@@ -43,8 +43,17 @@
       variantId: p.variant.id,
       quantity: p.stock,
     }));
-    await cartStore.checkout(items);
+    const { saleId } = await cartStore.checkout(items);
+    console.log('saleId', saleId);
     isSubmitting.value = false;
+    if (saleId) {
+      cartStore.emptyCart();
+
+      toast({
+        title: 'Venta exitosa',
+        description: 'La venta se ha registrado exitosamente',
+      });
+    }
   }
 
   function handleAddToCart(

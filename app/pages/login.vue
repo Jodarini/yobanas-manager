@@ -4,7 +4,7 @@
   const {
     signInAnonymous,
     signInWithPassword,
-    userId,
+    user,
     signOut,
     errorMessage,
     isLoading,
@@ -30,7 +30,7 @@
         <Input v-model="email" placeholder="Email" />
         <Input v-model="password" type="password" placeholder="Contraseña" />
         <Button
-          v-if="!userId"
+          v-if="!user"
           :disabled="email.length === 0 || isLoading || password.length === 0"
           class="w-full"
           type="submit"
@@ -43,9 +43,9 @@
         </Button>
       </Form>
 
-      <div v-if="!userId" class="flex flex-col items-center justify-center">
+      <div v-if="!user" class="flex flex-col items-center justify-center">
         <Button
-          v-if="!userId"
+          v-if="!user"
           variant="ghost"
           class="w-full"
           :disabled="isLoading"

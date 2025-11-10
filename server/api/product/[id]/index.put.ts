@@ -1,12 +1,8 @@
 import { serverSupabaseClient } from '#supabase/server';
 import { eq } from 'drizzle-orm';
-import {
-  productsTable,
-  productVariants,
-  updateProductSchema,
-} from '~~/db/schema';
+import { productsTable, updateProductSchema2 } from '~~/db/schema';
 import { useAuthDB } from '~~/server/utils/db';
-import { buildProductSku, buildVariantSku } from '~~/db/utils/sku';
+import { buildProductSku } from '~~/db/utils/sku';
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -20,7 +16,8 @@ export default defineEventHandler(async (event) => {
 
   try {
     const body = await readBody(event);
-    const product = updateProductSchema.parse(body);
+    console.log({ body });
+    const product = updateProductSchema2.parse(body);
 
     return await useAuthDB(user, async (tx) => {
       const productSku = buildProductSku({
@@ -28,6 +25,8 @@ export default defineEventHandler(async (event) => {
         category: product.category[0] || 'misc',
         model: product.title,
       });
+
+      // Only update product info, never touch variants
       const result = await tx
         .update(productsTable)
         .set({
@@ -41,30 +40,11 @@ export default defineEventHandler(async (event) => {
         .where(eq(productsTable.id, product.id))
         .returning();
 
-      await tx
-        .delete(productVariants)
-        .where(eq(productVariants.productId, product.id));
-
-      await tx.insert(productVariants).values(
-        product.variants.map((v) => {
-          const variantSku = buildVariantSku({
-            productSku,
-            color: v.color,
-            size: v.size,
-          });
-          return {
-            productId: product.id,
-            user_id: user.id,
-            size: v.size,
-            color: v.color,
-            stock: v.stock,
-            sku: variantSku,
-          };
-        })
-      );
+      // Variants are NOT modified in product update
+      // You should handle variant changes in a separate endpoint
 
       return {
-        message: 'Editó el producto',
+        message: 'Producto actualizado',
         product: {
           productInfo: result,
         },

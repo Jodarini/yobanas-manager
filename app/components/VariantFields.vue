@@ -143,13 +143,16 @@
       <template v-if="props.mode === 'EDIT'">
         <Button
           type="submit"
+          class="ml-auto"
           :disabled="
             props.form.isSubmitting.value || !props.form.meta.value.dirty
           "
-          class="gap-2"
         >
-          <Spinner v-if="!form.isSubmitting" class="h-4 w-4" />
-          {{ !form.isSubmitting ? 'Guardando...' : 'Actualizar producto' }}
+          <template v-if="props.form.isSubmitting.value">
+            <Spinner class="mr-2" />
+            Actualizando variantes...
+          </template>
+          <template v-else>Actualizar variantes</template>
         </Button>
       </template>
     </CardFooter>

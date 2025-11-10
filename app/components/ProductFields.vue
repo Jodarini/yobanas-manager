@@ -282,14 +282,16 @@
       <template v-if="props.mode === 'EDIT'">
         <Button
           type="submit"
-          class=""
-          :disabled="form.isSubmitting.value || !form.meta.value.dirty"
+          class="ml-auto"
+          :disabled="
+            props.form.isSubmitting.value || !props.form.meta.value.dirty
+          "
         >
-          <span v-if="!form.isSubmitting" class="flex items-center">
+          <template v-if="props.form.isSubmitting.value">
             <Spinner class="mr-2" />
-            'Actualizando producto...'
-          </span>
-          <span v-else>Actualizar producto</span>
+            Actualizando producto...
+          </template>
+          <template v-else>Actualizar producto</template>
         </Button>
       </template>
     </CardFooter>

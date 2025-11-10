@@ -12,7 +12,8 @@ const db = drizzle(client);
 
 async function seed() {
   console.log('🌱 Iniciando seed de la base de datos...');
-
+  // Modify this to your own user id
+  const U = 'e2527069-b454-4db6-b71a-e966548a0640';
   try {
     // Local-only reset
     await client`TRUNCATE TABLE sale_items, sales, product_variants, products, users RESTART IDENTITY CASCADE`;
@@ -28,9 +29,14 @@ async function seed() {
       return { ...p, sku };
     });
 
+    const productsToInsert = productsWithSku.map((p) => ({
+      ...p,
+      user_id: U,
+    }));
+
     const inserted = await db
       .insert(productsTable)
-      .values(productsWithSku)
+      .values(productsToInsert)
       .returning({
         id: productsTable.id,
         sku: productsTable.sku,
@@ -62,7 +68,6 @@ async function seed() {
     };
 
     // 3) Build variants from inserted rows only
-    const U = '0913d73e-08aa-44e5-98d7-db0f1b1b19c2';
     function v(
       title: string,
       size: string,
@@ -74,7 +79,7 @@ async function seed() {
       const productId = mustIdBySku(productSku);
       const variantSku = buildVariantSku({ productSku, color, size });
       return {
-        productId: productId, // ← camelCase matches schema field name
+        productId: productId,
         user_id: U,
         size,
         color,

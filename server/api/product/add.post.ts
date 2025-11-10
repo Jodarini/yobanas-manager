@@ -21,7 +21,17 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody(event);
-  const product = insertProductSchema.parse(body);
+  const validationResult = insertProductSchema.safeParse(body);
+
+  if (!validationResult.success) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Validation Error',
+      message: validationResult.error.issues.map((i) => i.message).join(', '),
+    });
+  }
+
+  const product = validationResult.data;
 
   try {
     return await useAuthDB(user, async (tx) => {
@@ -65,6 +75,13 @@ export default defineEventHandler(async (event) => {
       return { product: queryResult[0] };
     });
   } catch (error) {
+    if (error.code === '23505') {
+      throw createError({
+        statusCode: 409,
+        statusMessage: 'Duplicate SKU',
+        message: 'Un producto con este SKU ya existe',
+      });
+    }
     console.error('Error adding product:', error);
     throw createError({
       statusCode: 500,

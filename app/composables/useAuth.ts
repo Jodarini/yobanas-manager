@@ -1,45 +1,30 @@
 export const useAuth = () => {
   const supabase = useSupabaseClient();
-  const userId = ref<string | null>(null);
+  const user = useSupabaseUser();
   const errorMessage = ref<string | null>(null);
   const isLoading = ref(false);
 
-  const initAuth = async () => {
-    isLoading.value = true;
-
-    // Get initial session without network call
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (session?.user) {
-      userId.value = session.user.id;
-    }
-
-    // Fix the callback to use session parameter
-    supabase.auth.onAuthStateChange((_event, session) => {
-      userId.value = session?.user?.id ?? null;
-    });
-
-    isLoading.value = false;
-  };
-
   const signInWithPassword = async (email: string, password: string) => {
     isLoading.value = true;
+    errorMessage.value = null;
+
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
+
       if (error) {
-        console.error('Sign in error:', error.message);
-        console.error('Error details:', JSON.stringify(error, null, 2));
         errorMessage.value = error.message;
-      } else {
-        return navigateTo('/');
+        return false;
       }
+
+      await navigateTo('/');
+      return true;
     } catch (err) {
+      errorMessage.value = 'An unexpected error occurred';
       console.error(err);
+      return false;
     } finally {
       isLoading.value = false;
     }
@@ -47,32 +32,51 @@ export const useAuth = () => {
 
   const signInAnonymous = async () => {
     isLoading.value = true;
-    const { data, error } = await supabase.auth.signInAnonymously();
-    if (error) {
-      errorMessage.value = error.message;
-    } else {
-      userId.value = data.user!.id;
+    errorMessage.value = null;
+
+    try {
+      const { error } = await supabase.auth.signInAnonymously();
+
+      if (error) {
+        errorMessage.value = error.message;
+        return false;
+      }
+
       await navigateTo('/');
-      return data;
+      return true;
+    } catch (err) {
+      errorMessage.value = 'An unexpected error occurred';
+      console.error(err);
+      return false;
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   };
 
   const signOut = async () => {
     isLoading.value = true;
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw error;
+
+    try {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        errorMessage.value = error.message;
+        return false;
+      }
+
+      await navigateTo('/login');
+      return true;
+    } catch (err) {
+      errorMessage.value = 'Failed to sign out';
+      console.error(err);
+      return false;
+    } finally {
+      isLoading.value = false;
     }
-    userId.value = null;
-    await refreshNuxtData();
-    await navigateTo('/');
-    isLoading.value = false;
   };
 
   return {
-    initAuth,
-    userId,
+    user,
     errorMessage,
     signInWithPassword,
     signInAnonymous,

@@ -37,7 +37,7 @@ export const productsTable = pgTable(
   },
   (table) => [
     index('idx_products_user_id').on(table.user_id),
-    uniqueIndex('uq_products_sku').on(table.sku),
+    uniqueIndex('uq_products_user_sku').on(table.user_id, table.sku),
     pgPolicy('users_select_own_products', {
       as: 'permissive',
       for: 'select',
@@ -85,7 +85,7 @@ export const productVariants = pgTable(
   (table) => [
     index('idx_variants_product_id').on(table.productId),
     index('idx_variants_user_id').on(table.user_id),
-    uniqueIndex('uq_variants_sku').on(table.sku),
+    uniqueIndex('uq_variants_user_sku').on(table.user_id, table.sku),
     pgPolicy('users_select_own_variants', {
       as: 'permissive',
       for: 'select',

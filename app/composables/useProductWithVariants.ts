@@ -1,3 +1,4 @@
+import type { NuxtError } from '#app';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
 import { toast } from '~/components/ui/toast';
@@ -124,16 +125,26 @@ export function useProductWithVariants(
           method: 'POST',
           body: values,
         });
+        await refreshNuxtData('products');
         resetForm();
         toast({
           title: 'Producto creado exitosamente',
         });
       } catch (e) {
-        toast({
-          variant: 'destructive',
-          title: 'Error al crear el producto',
-          description: e.message,
-        });
+        const nuxtError = e as NuxtError<{ customField?: string }>;
+        if (nuxtError.statusCode === 409) {
+          toast({
+            variant: 'destructive',
+            title: 'Error al crear el producto',
+            description: 'Ya existe un producto con este SKU',
+          });
+        } else {
+          toast({
+            variant: 'destructive',
+            title: 'Error al crear el producto',
+            description: nuxtError.message,
+          });
+        }
       }
     },
     ({ errors }) => {

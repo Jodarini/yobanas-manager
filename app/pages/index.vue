@@ -2,15 +2,11 @@
   import { columns } from '@/components/columns';
   const user = useSupabaseUser();
 
-  const { data, status, error, execute } = await useFetch('/api/products', {
+  const { data, refresh, error, status } = await useFetch('/api/products', {
     key: 'products',
-    immediate: false,
-  });
-
-  watch(user, async (newUser) => {
-    if (newUser) {
-      await execute();
-    }
+    // getCachedData(key) {
+    //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
+    // },
   });
 </script>
 
@@ -26,9 +22,6 @@
     <template v-else-if="user">
       <div class="flex justify-between">
         <h1 class="mb-6 text-2xl">Sus productos</h1>
-        <Button as-child>
-          <NuxtLink to="add-product">Agregar producto</NuxtLink>
-        </Button>
       </div>
 
       <div

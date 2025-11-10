@@ -62,7 +62,7 @@ async function seed() {
     };
 
     // 3) Build variants from inserted rows only
-    const U = '0913d73e-08aa-44e5-98d7-db0f1b1b19c2';
+    const U = 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8';
     function v(
       title: string,
       size: string,

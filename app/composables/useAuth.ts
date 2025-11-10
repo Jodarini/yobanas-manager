@@ -1,6 +1,6 @@
 export const useAuth = () => {
   const supabase = useSupabaseClient();
-  const user = useSupabaseUser(); // Use built-in composable instead of userId
+  const user = useSupabaseUser();
   const errorMessage = ref<string | null>(null);
   const isLoading = ref(false);
 

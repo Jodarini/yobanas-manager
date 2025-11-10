@@ -3,9 +3,9 @@
 
   const { data: salesData } = await useFetch('/api/sales', {
     key: 'sales',
-    getCachedData(key) {
-      return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
-    },
+    // getCachedData(key) {
+    //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
+    // },
   });
 
   const numSales = computed(() => salesData.value?.sales.length);

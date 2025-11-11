@@ -7,15 +7,6 @@
     mode: 'ADD' | 'EDIT';
     isDeleted?: boolean;
   }>();
-
-  const hasVariantError = (index: number) => {
-    const errors = props.form.errors?.value;
-    return !!(
-      errors[`variants[${index}].size`] ||
-      errors[`variants[${index}].color`] ||
-      errors[`variants[${index}].stock`]
-    );
-  };
 </script>
 
 <template>
@@ -120,19 +111,23 @@
                   <FormMessage />
                 </FormItem>
               </FormField>
-
-              <Button
-                type="button"
-                class="w-fit"
-                :class="hasVariantError(index) ? 'self-center' : 'self-end'"
-                variant="ghost"
-                :disabled="variant.id"
-                @click.prevent="props.form.removeVariant(index)"
-              >
-                <Trash2Icon
-                  class="text-destructive dark:text-destructive-foreground"
-                />
-              </Button>
+              <FormField v-slot="{ errors }" :name="`variants[${index}]`">
+                <FormItem class="hidden">
+                  <FormControl />
+                </FormItem>
+                <Button
+                  type="button"
+                  class="w-fit"
+                  :class="errors ? 'self-end' : 'self-center'"
+                  variant="ghost"
+                  :disabled="variant.id"
+                  @click.prevent="props.form.removeVariant(index)"
+                >
+                  <Trash2Icon
+                    class="text-destructive dark:text-destructive-foreground"
+                  />
+                </Button>
+              </FormField>
             </ItemContent>
           </Item>
 

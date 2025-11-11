@@ -1,5 +1,7 @@
 <script setup lang="ts">
   import type { ProductWithVariants } from '~~/db/schema';
+  import { AlertCircle } from 'lucide-vue-next';
+  import { toast } from '~/components/ui/toast';
 
   const route = useRoute();
 
@@ -11,6 +13,26 @@
   } = await useFetch<ProductWithVariants>(`/api/product/${route.params.id}`, {
     key: `product-${route.params.id}`,
   });
+
+  const permanentDelete = async () => {
+    await $fetch(`/api/product/${route.params.id}/permaDelete`, {
+      method: 'DELETE',
+    });
+    toast({
+      title: 'El producto ha sido eliminado permanentemente',
+    });
+    navigateTo('/');
+  };
+
+  const restoreProduct = async () => {
+    await $fetch(`/api/product/${route.params.id}/restore`, {
+      method: 'PUT',
+    });
+    toast({
+      title: 'El producto ha sido restaurado',
+    });
+    refreshProduct();
+  };
 </script>
 
 <template>
@@ -60,7 +82,44 @@
     <Button variant="outline" @click="refreshProduct">Intentar de nuevo</Button>
   </div>
 
-  <div v-else-if="productData" class="flex w-full flex-col gap-6 md:flex-row">
+  <div v-else-if="productData" class="flex w-full flex-col gap-6">
+    <template v-if="productData.deleted_at">
+      <Alert variant="destructive">
+        <AlertCircle />
+        <AlertTitle>El producto que buscas ha sido eliminado.</AlertTitle>
+        <AlertDescription>
+          Puedes restaurarlo o eliminarlo permanentemente.
+        </AlertDescription>
+      </Alert>
+
+      <div class="flex w-fit gap-2">
+        <Button variant="default" class="text-white/90" @click="restoreProduct">
+          Restaurar producto
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger as-child>
+            <Button variant="destructive">Eliminar permanentemente</Button>
+          </AlertDialogTrigger>
+
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Estás absolutamente seguro?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta acción eliminará permanentemente el producto "{{
+                  productData.title
+                }}"
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction variant="destructive" @click="permanentDelete">
+                Borrar producto
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </template>
     <EditProductForm :product="productData" />
   </div>
 </template>

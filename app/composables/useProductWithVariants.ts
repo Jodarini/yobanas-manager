@@ -1,7 +1,8 @@
 import type { NuxtError } from '#app';
+import { Button, NuxtLink } from '#components';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
-import { toast } from '~/components/ui/toast';
+import { toast, ToastAction } from '~/components/ui/toast';
 import { normalizeString } from '~/lib/utils';
 import {
   insertProductSchema,
@@ -133,10 +134,23 @@ export function useProductWithVariants(
       } catch (e) {
         const nuxtError = e as NuxtError<{ customField?: string }>;
         if (nuxtError.statusCode === 409) {
+          console.log(nuxtError.data.data.existingProductId);
           toast({
             variant: 'destructive',
             title: 'Error al crear el producto',
-            description: 'Ya existe un producto con este SKU',
+            description: nuxtError.statusMessage,
+            action: h(
+              ToastAction,
+              { altText: 'Ver carrito', asChild: true },
+              {
+                default: () =>
+                  h(
+                    NuxtLink,
+                    { to: `/product/${nuxtError.data.data.existingProductId}` },
+                    { default: () => 'Ver' }
+                  ),
+              }
+            ),
           });
         } else {
           toast({

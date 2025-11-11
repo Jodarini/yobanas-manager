@@ -39,7 +39,7 @@
         :categories="props.categories"
         :initial-values="product"
       />
-      <UpdateVariantsForm :data="variants" />
+      <UpdateVariantsForm :data="variants" :is-deleted="!!product.deleted_at" />
     </div>
   </div>
 

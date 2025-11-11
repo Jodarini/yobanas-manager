@@ -7,6 +7,7 @@
       | ReturnType<typeof useProductWithVariants>
       | ReturnType<typeof useProductFormState>;
     mode: 'ADD' | 'EDIT';
+    isDeleted: boolean;
   }>();
 
   const brandOpen = defineModel<boolean>('brandOpen');
@@ -50,6 +51,7 @@
                 type="text"
                 placeholder="Nombre del producto"
                 v-bind="componentField"
+                :disabled="isDeleted"
               />
             </FormControl>
           </FormItem>
@@ -73,6 +75,7 @@
                 useGrouping: true,
                 signDisplay: 'auto',
               }"
+              :disabled="isDeleted"
               :model-value="value"
               @update:model-value="componentField['onUpdate:modelValue']"
             >
@@ -100,6 +103,7 @@
                     type="button"
                     variant="outline"
                     class="w-full justify-between"
+                    :disabled="isDeleted"
                   >
                     {{ componentField.modelValue || 'Seleccione una marca' }}
                     <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -167,6 +171,7 @@
                     role="combobox"
                     :aria-expanded="categoryOpen"
                     class="h-auto min-h-10 w-full justify-start"
+                    :disabled="isDeleted"
                   >
                     <div class="flex flex-1 flex-wrap gap-1.5">
                       <template
@@ -270,6 +275,7 @@
                 type="text"
                 placeholder="Descripción"
                 v-bind="componentField"
+                :disabled="isDeleted"
               />
             </FormControl>
           </FormItem>

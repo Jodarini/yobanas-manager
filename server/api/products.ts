@@ -1,7 +1,7 @@
 import { serverSupabaseClient } from '#supabase/server';
 import { productsTable } from '~~/db/schema';
 import { useAuthDB } from '../utils/db';
-import { ilike } from 'drizzle-orm';
+import { ilike, and, eq, isNull } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
   const { search = '', page = '1', pageSize = '50' } = getQuery(event);
@@ -25,7 +25,12 @@ export default defineEventHandler(async (event) => {
       tx
         .select()
         .from(productsTable)
-        .where(ilike(productsTable.title, `%${search}%`))
+        .where(
+          and(
+            isNull(productsTable.deleted_at),
+            ilike(productsTable.title, `%${search}%`)
+          )
+        )
         .limit(limit)
         .offset(offset)
     );

@@ -1,9 +1,10 @@
 import type { ColumnDef } from '@tanstack/vue-table';
-import type { Payment } from '@/components/columns';
+import type { Product } from '~~/db/schema';
 import { h } from 'vue';
 import { NuxtLink } from '#components';
+import DataTableDropDown from './DataTableDropDown.vue';
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: 'title',
     header: () => h('div', { class: 'text-left' }, 'Nombre'),
@@ -38,10 +39,27 @@ export const columns: ColumnDef<Payment>[] = [
       );
     },
   },
+
   {
     accessorKey: 'price',
     header: () => h('div', { class: 'text-left' }, 'Precio'),
     cell: ({ row }) => h('div', { class: 'capitalize' }, row.getValue('price')),
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    cell: ({ row }) => {
+      const product = row.original;
+
+      return h(
+        'div',
+        { class: 'relative' },
+        h(DataTableDropDown, {
+          product,
+          onExpand: row.toggleExpanded,
+        })
+      );
+    },
   },
   // {
   //   accessorKey: 'stock',

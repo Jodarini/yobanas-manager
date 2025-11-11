@@ -29,8 +29,7 @@ export default defineEventHandler(async (event) => {
   try {
     const result = await useAuthDB(user, async (db) => {
       return await db
-        .update(productsTable)
-        .set({ deleted_at: new Date() })
+        .delete(productsTable)
         .where(eq(productsTable.id, productId))
         .returning();
     });

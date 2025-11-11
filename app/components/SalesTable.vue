@@ -23,7 +23,6 @@
     DropdownMenuContent,
     DropdownMenuTrigger,
   } from '@/components/ui/dropdown-menu';
-  import { Input } from '@/components/ui/input';
   import {
     Table,
     TableBody,
@@ -171,14 +170,6 @@
       valueUpdater(updaterOrValue, columnFilters),
     onColumnVisibilityChange: (updaterOrValue) =>
       valueUpdater(updaterOrValue, columnVisibility),
-    // onColumnFiltersChange: (updaterOrValue) =>
-    //   valueUpdater(updaterOrValue, columnFilters),
-    // onColumnVisibilityChange: (updaterOrValue) =>
-    //   valueUpdater(updaterOrValue, columnVisibility),
-    // onRowSelectionChange: (updaterOrValue) =>
-    //   valueUpdater(updaterOrValue, rowSelection),
-    // onExpandedChange: (updaterOrValue) =>
-    //   valueUpdater(updaterOrValue, expanded),
     state: {
       get sorting() {
         return sorting.value;

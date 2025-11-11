@@ -28,7 +28,7 @@
     <CardContent>
       <ItemGroup>
         <template
-          v-for="(_, index) in props.form.values.variants"
+          v-for="(variant, index) in props.form.values.variants"
           :key="`new-${index}`"
         >
           <Item class="flex flex-col p-0 py-4 md:flex-row">
@@ -116,7 +116,7 @@
                 type="button"
                 class="w-fit md:self-end"
                 variant="ghost"
-                disabled
+                :disabled="variant.id"
                 @click.prevent="props.form.removeVariant(index)"
               >
                 <Trash2Icon

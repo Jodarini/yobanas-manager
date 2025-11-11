@@ -55,7 +55,6 @@ export function useVariantsFormState(data?: UpdateVariant) {
   };
 
   return {
-    // Spread form methods
     handleSubmit: form.handleSubmit,
     values: form.values,
     setFieldValue: form.setFieldValue,
@@ -64,13 +63,12 @@ export function useVariantsFormState(data?: UpdateVariant) {
     setErrors: form.setErrors,
     meta: form.meta,
     validate: form.validate,
+    errors: form.errors,
 
-    // Array management
     addVariant,
     removeVariant,
-    fields, // Add this for the template
+    fields,
 
-    // Custom logic
     checkIfVariantExists,
   };
 }

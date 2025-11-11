@@ -7,6 +7,15 @@
     mode: 'ADD' | 'EDIT';
     isDeleted?: boolean;
   }>();
+
+  const hasVariantError = (index: number) => {
+    const errors = props.form.errors.value;
+    return !!(
+      errors[`variants[${index}].size`] ||
+      errors[`variants[${index}].color`] ||
+      errors[`variants[${index}].stock`]
+    );
+  };
 </script>
 
 <template>
@@ -95,7 +104,7 @@
                 class="w-full"
                 :name="`variants[${index}].stock`"
               >
-                <FormItem class="w-full">
+                <FormItem class="w-full content-baseline">
                   <div class="flex h-4 gap-1">
                     <FormLabel>Stock</FormLabel>
                   </div>
@@ -114,7 +123,8 @@
 
               <Button
                 type="button"
-                class="w-fit md:self-end"
+                class="w-fit"
+                :class="hasVariantError(index) ? 'self-center' : 'self-end'"
                 variant="ghost"
                 :disabled="variant.id"
                 @click.prevent="props.form.removeVariant(index)"

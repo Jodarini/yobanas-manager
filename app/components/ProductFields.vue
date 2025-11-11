@@ -46,7 +46,6 @@
               <FormLabel>Nombre</FormLabel>
               <FormMessage />
             </div>
-            {{ isDeleted }}
             <FormControl>
               <Input
                 type="text"

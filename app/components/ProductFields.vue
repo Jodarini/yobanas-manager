@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { cn } from '@/lib/utils';
-  import { Plus, ChevronsUpDown, Check } from 'lucide-vue-next';
   import type { ComponentFieldBindingObject } from 'vee-validate';
 
   const props = defineProps<{

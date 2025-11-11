@@ -38,6 +38,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxt/eslint',
     '@nuxtjs/supabase',
+    'lucide-nuxt'
   ],
   image: {
     dir: 'public', // or 'assets/images' if using assets

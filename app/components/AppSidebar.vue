@@ -9,7 +9,6 @@
   } from 'lucide-vue-next';
 
   const { user, signOut, isLoading } = useAuth();
-  console.log(user.value);
 
   const route = useRoute();
 

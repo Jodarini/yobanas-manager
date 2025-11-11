@@ -6,7 +6,6 @@
     brands: string[];
     categories: string[];
     initialValues?: Product;
-    isDeleting?: boolean;
   }>();
 
   const form = useProductFormState(
@@ -52,6 +51,7 @@
       v-model:brand-search-term="form.brandSearchTerm.value"
       v-model:category-search-term="form.categorySearchTerm.value"
       :form
+      :is-deleted="!!initialValues?.deleted_at"
       mode="EDIT"
     />
   </form>

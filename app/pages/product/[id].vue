@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import type { ProductWithVariants } from '~~/db/schema';
+  import { AlertCircle } from 'lucide-vue-next';
 
   const route = useRoute();
 
@@ -60,7 +61,16 @@
     <Button variant="outline" @click="refreshProduct">Intentar de nuevo</Button>
   </div>
 
-  <div v-else-if="productData" class="flex w-full flex-col gap-6 md:flex-row">
+  <div v-else-if="productData" class="flex w-full flex-col gap-6">
+    <template v-if="productData.deleted_at">
+      <Alert variant="destructive">
+        <AlertCircle />
+        <AlertTitle>El producto que buscas ha sido eliminado.</AlertTitle>
+        <AlertDescription>
+          Puedes restaurarlo o eliminarlo permanentemente.
+        </AlertDescription>
+      </Alert>
+    </template>
     <EditProductForm :product="productData" />
   </div>
 </template>

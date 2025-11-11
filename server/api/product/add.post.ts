@@ -6,6 +6,7 @@ import {
 import { useAuthDB } from '~~/server/utils/db';
 import { serverSupabaseClient } from '#supabase/server';
 import { buildProductSku, buildVariantSku } from '~~/db/utils/sku';
+import { and, eq } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -33,14 +34,13 @@ export default defineEventHandler(async (event) => {
 
   const product = validationResult.data;
 
+  const productSku = buildProductSku({
+    brand: product.brand,
+    category: product.category[0] || 'misc',
+    model: product.title,
+  });
   try {
     return await useAuthDB(user, async (tx) => {
-      const productSku = buildProductSku({
-        brand: product.brand,
-        category: product.category[0] || 'misc',
-        model: product.title,
-      });
-
       const queryResult = await tx
         .insert(productsTable)
         .values({
@@ -76,11 +76,50 @@ export default defineEventHandler(async (event) => {
     });
   } catch (error) {
     if (error.code === '23505') {
-      throw createError({
-        statusCode: 409,
-        statusMessage: 'Duplicate SKU',
-        message: 'Un producto con este SKU ya existe',
+      const existingProduct = await useAuthDB(user, async (tx) => {
+        const results = await tx
+          .select({
+            id: productsTable.id,
+            title: productsTable.title,
+            deleted_at: productsTable.deleted_at,
+          })
+          .from(productsTable)
+          .where(
+            and(
+              eq(productsTable.sku, productSku),
+              eq(productsTable.user_id, user.id)
+            )
+          )
+          .limit(1);
+
+        return results[0];
       });
+      console.log('product exists', existingProduct);
+      // Handle based on deletion status
+      if (existingProduct?.deleted_at) {
+        throw createError({
+          statusCode: 409,
+          message: 'SKU Previously Deleted',
+          statusMessage:
+            'Este SKU pertenece a un producto eliminado. Puedes restaurarlo o eliminarlo permanentemente.',
+          data: {
+            existingProductId: existingProduct.id,
+            existingProductTitle: existingProduct.title,
+            isDeleted: true,
+          },
+        });
+      } else {
+        throw createError({
+          statusCode: 409,
+          statusMessage: 'Duplicate SKU',
+          message: 'Un producto activo con este SKU ya existe',
+          data: {
+            existingProductId: existingProduct?.id,
+            existingProductTitle: existingProduct?.title,
+            isDeleted: false,
+          },
+        });
+      }
     }
     console.error('Error adding product:', error);
     throw createError({

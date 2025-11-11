@@ -4,7 +4,7 @@
 
   const props = defineProps<{
     data?: UpdateVariant;
-    isDeleting?: boolean;
+    isDeleted?: boolean;
   }>();
 
   const { toast } = useToast();
@@ -46,6 +46,6 @@
 
 <template>
   <form class="min-h-full flex-2" @submit.prevent="onSubmit">
-    <VariantFields :form mode="EDIT" />
+    <VariantFields :form mode="EDIT" :is-deleted="isDeleted" />
   </form>
 </template>

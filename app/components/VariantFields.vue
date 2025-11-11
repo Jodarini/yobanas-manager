@@ -5,6 +5,7 @@
       | ReturnType<typeof useVariantsFormState>
       | ReturnType<typeof useProductWithVariants>;
     mode: 'ADD' | 'EDIT';
+    isDeleted?: boolean;
   }>();
 </script>
 
@@ -16,6 +17,7 @@
         type="button"
         variant="outline"
         class="mt-4 flex w-full gap-2 md:mt-0 md:w-fit"
+        :disabled="isDeleted"
         @click.prevent="props.form.addVariant"
       >
         <PlusCircleIcon />
@@ -58,6 +60,7 @@
                       type="text"
                       placeholder="Tamaño"
                       v-bind="componentField"
+                      :disabled="isDeleted"
                     />
                   </FormControl>
                   <FormMessage />
@@ -79,6 +82,7 @@
                       type="text"
                       placeholder="Color"
                       v-bind="componentField"
+                      :disabled="isDeleted"
                     />
                   </FormControl>
                   <FormMessage />
@@ -101,6 +105,7 @@
                       step="1"
                       placeholder="0"
                       v-bind="componentField"
+                      :disabled="isDeleted"
                     />
                   </FormControl>
                   <FormMessage />
@@ -144,7 +149,9 @@
           type="submit"
           class="ml-auto"
           :disabled="
-            props.form.isSubmitting.value || !props.form.meta.value.dirty
+            props.form.isSubmitting.value ||
+            !props.form.meta.value.dirty ||
+            isDeleted
           "
         >
           <template v-if="props.form.isSubmitting.value">

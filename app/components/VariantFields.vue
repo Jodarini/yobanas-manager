@@ -9,7 +9,7 @@
   }>();
 
   const hasVariantError = (index: number) => {
-    const errors = props.form.errors.value;
+    const errors = props.form.errors?.value;
     return !!(
       errors[`variants[${index}].size`] ||
       errors[`variants[${index}].color`] ||
@@ -136,16 +136,18 @@
             </ItemContent>
           </Item>
 
-          <FormField
-            v-slot="{ errors }"
-            :name="`variants[${index}]`"
-            class="mb-4"
-          >
-            <FormItem>
-              <FormControl class="hidden" />
-              <FormMessage v-if="errors" class="mb-4" />
-            </FormItem>
-          </FormField>
+          <template v-if="props.mode === 'EDIT'">
+            <FormField
+              v-slot="{ errors }"
+              :name="`variants[${index}]`"
+              class="mb-4"
+            >
+              <FormItem>
+                <FormControl class="hidden" />
+                <FormMessage v-if="errors" class="mb-4" />
+              </FormItem>
+            </FormField>
+          </template>
           <ItemSeparator
             v-if="index !== props.form.values.variants?.length! - 1"
           />

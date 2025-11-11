@@ -28,6 +28,7 @@ export function useProductWithVariants(
     validate,
     meta,
     setErrors,
+    errors,
   } = useForm({
     validationSchema: formSchema,
     initialValues: {
@@ -195,5 +196,6 @@ export function useProductWithVariants(
     product,
     variants,
     onSubmit,
+    errors,
   };
 }

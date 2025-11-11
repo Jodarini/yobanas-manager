@@ -3,6 +3,18 @@ import { productsTable } from '~~/db/schema';
 import { serverSupabaseClient } from '#supabase/server';
 
 export default defineEventHandler(async (event) => {
+  const supabase = await serverSupabaseClient(event);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw createError({
+      statusCode: 401,
+      message: 'Unauthorized - Please sign in',
+    });
+  }
+
   const { id } = getRouterParams(event);
 
   if (!id || isNaN(parseInt(id))) {
@@ -14,30 +26,11 @@ export default defineEventHandler(async (event) => {
 
   const productId = parseInt(id);
 
-  const supabase = await serverSupabaseClient(event);
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to get session',
-    });
-  }
-
-  if (!user) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized',
-    });
-  }
-
   try {
     const result = await useAuthDB(user, async (db) => {
       return await db
-        .delete(productsTable)
+        .update(productsTable)
+        .set({ deleted_at: new Date() })
         .where(eq(productsTable.id, productId))
         .returning();
     });

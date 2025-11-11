@@ -1,7 +1,7 @@
 import { serverSupabaseClient } from '#supabase/server';
 import { productsTable } from '~~/db/schema';
 import { useAuthDB } from '../utils/db';
-import { ilike, and, eq, isNull } from 'drizzle-orm';
+import { ilike, and, isNull } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
   const { search = '', page = '1', pageSize = '50' } = getQuery(event);

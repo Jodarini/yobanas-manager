@@ -28,7 +28,7 @@
     <CardContent>
       <ItemGroup>
         <template
-          v-for="(_, index) in props.form.values.variants"
+          v-for="(variant, index) in props.form.values.variants"
           :key="`new-${index}`"
         >
           <Item class="flex flex-col p-0 py-4 md:flex-row">
@@ -95,7 +95,7 @@
                 class="w-full"
                 :name="`variants[${index}].stock`"
               >
-                <FormItem class="w-full">
+                <FormItem class="w-full content-baseline">
                   <div class="flex h-4 gap-1">
                     <FormLabel>Stock</FormLabel>
                   </div>
@@ -111,31 +111,38 @@
                   <FormMessage />
                 </FormItem>
               </FormField>
-
-              <Button
-                type="button"
-                class="w-fit md:self-end"
-                variant="ghost"
-                disabled
-                @click.prevent="props.form.removeVariant(index)"
-              >
-                <Trash2Icon
-                  class="text-destructive dark:text-destructive-foreground"
-                />
-              </Button>
+              <FormField v-slot="{ errors }" :name="`variants[${index}]`">
+                <FormItem class="hidden">
+                  <FormControl />
+                </FormItem>
+                <Button
+                  type="button"
+                  class="w-fit"
+                  :class="errors ? 'self-end' : 'self-center'"
+                  variant="ghost"
+                  :disabled="variant.id"
+                  @click.prevent="props.form.removeVariant(index)"
+                >
+                  <Trash2Icon
+                    class="text-destructive dark:text-destructive-foreground"
+                  />
+                </Button>
+              </FormField>
             </ItemContent>
           </Item>
 
-          <FormField
-            v-slot="{ errors }"
-            :name="`variants[${index}]`"
-            class="mb-4"
-          >
-            <FormItem>
-              <FormControl class="hidden" />
-              <FormMessage v-if="errors" class="mb-4" />
-            </FormItem>
-          </FormField>
+          <template v-if="props.mode === 'EDIT'">
+            <FormField
+              v-slot="{ errors }"
+              :name="`variants[${index}]`"
+              class="mb-4"
+            >
+              <FormItem>
+                <FormControl class="hidden" />
+                <FormMessage v-if="errors" class="mb-4" />
+              </FormItem>
+            </FormField>
+          </template>
           <ItemSeparator
             v-if="index !== props.form.values.variants?.length! - 1"
           />

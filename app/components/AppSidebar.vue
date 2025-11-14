@@ -15,12 +15,12 @@
   const menuItems = [
     {
       title: 'Dashboard',
-      url: '/dashboard',
+      url: '/',
       icon: DatabaseIcon,
     },
     {
       title: 'Productos',
-      url: '/',
+      url: '/products',
       icon: Package,
     },
     {

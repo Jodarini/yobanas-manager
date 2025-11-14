@@ -2,6 +2,15 @@
   import Toaster from '~/components/ui/toast/Toaster.vue';
 
   const user = useSupabaseUser();
+
+  const route = useRoute();
+  const breadcrumbs = computed(() => {
+    const segments = route.path.split('/').filter((item) => item !== '');
+    return segments.map((segment, index) => {
+      const path = '/' + segments.slice(0, index + 1).join('/');
+      return { label: segment, path };
+    });
+  });
 </script>
 
 <template>
@@ -14,7 +23,26 @@
       <header
         class="border-border flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4"
       >
-        <SidebarTrigger class="-ml-1" />
+        <div class="flex flex-row items-center gap-4">
+          <SidebarTrigger class="-ml-1" />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <NuxtLink href="/">Home</NuxtLink>
+              <BreadcrumbSeparator />
+              <template
+                v-for="(breadcrumb, index) in breadcrumbs"
+                :key="breadcrumb.path"
+              >
+                <BreadcrumbItem>
+                  <NuxtLink :href="breadcrumb.path">
+                    {{ breadcrumb.label }}
+                  </NuxtLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator v-if="index !== breadcrumbs.length - 1" />
+              </template>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
         <div v-if="user" class="flex flex-row gap-4">
           <Button as-child>

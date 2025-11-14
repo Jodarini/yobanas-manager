@@ -13,7 +13,7 @@ export const columns: ColumnDef<Product>[] = [
         NuxtLink,
         {
           class: 'capitalize font-medium',
-          to: `/product/${row.original.id}`,
+          to: `/products/${row.original.id}`,
         },
         () => String(row.getValue('title'))
       ),

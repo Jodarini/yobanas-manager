@@ -7,7 +7,7 @@
       | ReturnType<typeof useProductWithVariants>
       | ReturnType<typeof useProductFormState>;
     mode: 'ADD' | 'EDIT';
-    isDeleted: boolean;
+    isDeleted?: boolean;
   }>();
 
   const brandOpen = defineModel<boolean>('brandOpen');

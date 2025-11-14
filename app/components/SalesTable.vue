@@ -31,36 +31,38 @@
     TableHeader,
     TableRow,
   } from '@/components/ui/table';
-  import { Checkbox } from 'radix-vue/namespaced';
+  // import { Checkbox } from '@/components/ui/checkbox';
   import { Button } from './ui/button';
   import { valueUpdater } from '@/lib/utils';
   import { ArrowUpDown, Badge } from 'lucide-vue-next';
+  import type { Sale } from '~~/db/schema';
+  import { NuxtLink } from '#components';
 
   const props = defineProps<{
     data: any[];
   }>();
 
-  const columns: ColumnDef<Payment>[] = [
-    {
-      id: 'select',
-      header: ({ table }) =>
-        h(Checkbox, {
-          modelValue:
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate'),
-          'onUpdate:modelValue': (value) =>
-            table.toggleAllPageRowsSelected(!!value),
-          ariaLabel: 'Select all',
-        }),
-      cell: ({ row }) =>
-        h(Checkbox, {
-          modelValue: row.getIsSelected(),
-          'onUpdate:modelValue': (value) => row.toggleSelected(!!value),
-          ariaLabel: 'Select row',
-        }),
-      enableSorting: false,
-      enableHiding: false,
-    },
+  const columns: ColumnDef<Sale>[] = [
+    // {
+    //   id: 'select',
+    //   header: ({ table }) =>
+    //     h(Checkbox, {
+    //       modelValue:
+    //         table.getIsAllPageRowsSelected() ||
+    //         (table.getIsSomePageRowsSelected() && 'indeterminate'),
+    //       'onUpdate:modelValue': (value) =>
+    //         table.toggleAllPageRowsSelected(!!value),
+    //       ariaLabel: 'Select all',
+    //     }),
+    //   cell: ({ row }) =>
+    //     h(Checkbox, {
+    //       modelValue: row.getIsSelected(),
+    //       'onUpdate:modelValue': (value) => row.toggleSelected(!!value),
+    //       ariaLabel: 'Select row',
+    //     }),
+    //   enableSorting: false,
+    //   enableHiding: false,
+    // },
     {
       accessorKey: 'id',
       header: 'ID',
@@ -80,7 +82,7 @@
         return h(
           Badge,
           { class: `capitalize ${statusClasses[status]}` },
-          row.getValue('status')
+          () => row.getValue('status') // Wrap in arrow function
         );
       },
     },
@@ -129,6 +131,25 @@
         }).format(amount);
 
         return h('div', { class: 'text-right font-medium' }, formatted);
+      },
+    },
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        const sale = row.original;
+
+        return h(
+          'div',
+          { class: 'relative' },
+          h(
+            NuxtLink,
+            {
+              to: `/sales/${sale.id}`,
+            },
+            { default: () => 'Ver' }
+          )
+        );
       },
     },
     // {

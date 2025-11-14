@@ -13,7 +13,7 @@ const db = drizzle(client);
 async function seed() {
   console.log('🌱 Iniciando seed de la base de datos...');
   // Modify this to your own user id
-  const U = 'e2527069-b454-4db6-b71a-e966548a0640';
+  const U = 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8';
   try {
     // Local-only reset
     await client`TRUNCATE TABLE sale_items, sales, product_variants, products, users RESTART IDENTITY CASCADE`;

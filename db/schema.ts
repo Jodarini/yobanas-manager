@@ -14,6 +14,7 @@ import {
 import { authenticatedRole } from 'drizzle-orm/supabase';
 import { sql } from 'drizzle-orm';
 import z from 'zod';
+import { createSelectSchema } from 'drizzle-zod';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey().notNull(),
@@ -159,6 +160,9 @@ export const sales = pgTable(
     }),
   ]
 );
+
+export const selectSaleSchema = createSelectSchema(sales);
+export type Sale = z.infer<typeof selectSaleSchema>;
 
 export const saleItems = pgTable(
   'sale_items',

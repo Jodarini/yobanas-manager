@@ -1,6 +1,6 @@
 import { serverSupabaseClient } from '#supabase/server';
-import { saleItems, sales } from '~~/db/schema';
-import { eq } from 'drizzle-orm'
+import { productsTable, productVariants, saleItems, sales } from '~~/db/schema';
+import { eq } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -12,23 +12,27 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, message: 'Unauthorized' });
   }
 
-  const id = getRouterParam(event, 'id');
-  // const { id } = getRouterParams(event)
+  const id = Number(getRouterParam(event, 'id'));
 
   try {
     return await useAuthDB(user, async (tx) => {
-      const sale = await tx.select().from(sales).where(eq(sales.id, id))
-      return sale
-      const saleData = await tx.select().from(sales);
-      const sale_items = await tx.select().from(saleItems);
+      const salesData = await tx
+        .select()
+        .from(sales)
+        .leftJoin(saleItems, eq(saleItems.sale_id, sales.id))
+        .leftJoin(
+          productVariants,
+          eq(productVariants.id, saleItems.product_variant_id)
+        )
+        .leftJoin(
+          productsTable,
+          eq(productsTable.id, productVariants.productId)
+        )
+        .where(eq(sales.id, id));
 
-      return {
-        sales: saleData,
-        sale_items: sale_items,
-      };
+      return salesData;
     });
   } catch (err) {
     console.error('Error processing checkout:', err);
   }
 });
-

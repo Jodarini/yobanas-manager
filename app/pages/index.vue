@@ -4,6 +4,7 @@
   const { data, pending, error, refresh } = await useFetch('/api/products', {
     key: 'products',
     immediate: !!user.value,
+    watch: [user],
     // getCachedData(key) {
     //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
     // },
@@ -12,6 +13,7 @@
   const { data: dashboardData } = await useFetch('/api/dashboard/stats', {
     key: 'stats',
     immediate: !!user.value,
+    watch: [user],
     // getCachedData(key) {
     //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
     // },

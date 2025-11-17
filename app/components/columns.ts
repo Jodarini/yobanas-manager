@@ -5,6 +5,20 @@ import { NuxtLink } from '#components';
 import DataTableDropDown from './DataTableDropDown.vue';
 
 export const columns: ColumnDef<Product>[] = [
+
+  // {
+  //   accessorKey: 'sku',
+  //   header: () => h('div', { class: 'text-left' }, 'SKU'),
+  //   cell: ({ row }) =>
+  //     h(
+  //       NuxtLink,
+  //       {
+  //         class: 'capitalize font-medium',
+  //         to: `/products/${row.original.id}`,
+  //       },
+  //       () => String(row.getValue('sku'))
+  //     ),
+  // },
   {
     accessorKey: 'title',
     header: () => h('div', { class: 'text-left' }, 'Nombre'),

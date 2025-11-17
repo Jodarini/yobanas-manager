@@ -1,25 +1,20 @@
 <script setup lang="ts">
-  import { PlusCircleIcon, Trash2Icon } from 'lucide-vue-next';
-  const props = defineProps<{
-    form:
-      | ReturnType<typeof useVariantsFormState>
-      | ReturnType<typeof useProductWithVariants>;
-    mode: 'ADD' | 'EDIT';
-    isDeleted?: boolean;
-  }>();
+import { PlusCircleIcon, Trash2Icon } from 'lucide-vue-next';
+const props = defineProps<{
+  form:
+  | ReturnType<typeof useVariantsFormState>
+  | ReturnType<typeof useProductWithVariants>;
+  mode: 'ADD' | 'EDIT';
+  isDeleted?: boolean;
+}>();
 </script>
 
 <template>
   <Card class="min-h-full flex-2">
     <CardHeader class="flex flex-col justify-between pb-0 md:flex-row">
       <CardTitle class="text-xl font-semibold">Variantes</CardTitle>
-      <Button
-        type="button"
-        variant="outline"
-        class="mt-4 flex w-full gap-2 md:mt-0 md:w-fit"
-        :disabled="isDeleted"
-        @click.prevent="props.form.addVariant"
-      >
+      <Button type="button" variant="outline" class="mt-4 flex w-full gap-2 md:mt-0 md:w-fit" :disabled="isDeleted"
+        @click.prevent="props.form.addVariant">
         <PlusCircleIcon />
         Agregar variante
       </Button>
@@ -27,17 +22,11 @@
 
     <CardContent>
       <ItemGroup>
-        <template
-          v-for="(variant, index) in props.form.values.variants"
-          :key="`new-${index}`"
-        >
+        <template v-for="(variant, index) in props.form.values.variants" :key="`new-${index}`">
           <Item class="flex flex-col p-0 py-4 md:flex-row">
             <ItemContent class="flex w-full gap-4 md:flex-row">
               <!-- Hidden ID field -->
-              <FormField
-                v-slot="{ componentField }"
-                :name="`variants[${index}].id`"
-              >
+              <FormField v-slot="{ componentField }" :name="`variants[${index}].id`">
                 <FormItem>
                   <FormControl>
                     <Input type="hidden" v-bind="componentField" />
@@ -46,67 +35,39 @@
               </FormField>
 
               <!-- Size field -->
-              <FormField
-                v-slot="{ componentField }"
-                class="w-full"
-                :name="`variants[${index}].size`"
-              >
+              <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].size`">
                 <FormItem class="w-full">
                   <div class="flex h-4 gap-1">
                     <FormLabel>Talla</FormLabel>
                   </div>
                   <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Tamaño"
-                      v-bind="componentField"
-                      :disabled="isDeleted"
-                    />
+                    <Input type="text" placeholder="Tamaño" v-bind="componentField" :disabled="isDeleted" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
 
               <!-- Color field -->
-              <FormField
-                v-slot="{ componentField }"
-                class="w-full"
-                :name="`variants[${index}].color`"
-              >
+              <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].color`">
                 <FormItem class="w-full">
                   <div class="flex h-4 gap-1">
                     <FormLabel>Color</FormLabel>
                   </div>
                   <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Color"
-                      v-bind="componentField"
-                      :disabled="isDeleted"
-                    />
+                    <Input type="text" placeholder="Color" v-bind="componentField" :disabled="isDeleted" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               </FormField>
 
               <!-- Stock field - FormMessage moved inside FormItem -->
-              <FormField
-                v-slot="{ componentField }"
-                class="w-full"
-                :name="`variants[${index}].stock`"
-              >
+              <FormField v-slot="{ componentField }" class="w-full" :name="`variants[${index}].stock`">
                 <FormItem class="w-full content-baseline">
                   <div class="flex h-4 gap-1">
                     <FormLabel>Stock</FormLabel>
                   </div>
                   <FormControl>
-                    <Input
-                      type="number"
-                      step="1"
-                      placeholder="0"
-                      v-bind="componentField"
-                      :disabled="isDeleted"
-                    />
+                    <Input type="number" step="1" placeholder="0" v-bind="componentField" :disabled="isDeleted" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -115,52 +76,33 @@
                 <FormItem class="hidden">
                   <FormControl />
                 </FormItem>
-                <Button
-                  type="button"
-                  class="w-fit"
-                  :class="errors ? 'self-end' : 'self-center'"
-                  variant="ghost"
-                  :disabled="variant.id"
-                  @click.prevent="props.form.removeVariant(index)"
-                >
-                  <Trash2Icon
-                    class="text-destructive dark:text-destructive-foreground"
-                  />
+                <Button type="button" class="w-fit" :class="errors ? 'self-end' : 'self-center'" variant="ghost"
+                  :disabled="variant.id" @click.prevent="props.form.removeVariant(index)">
+                  <Trash2Icon class="text-destructive-foreground dark:text-destructive-foreground" />
                 </Button>
               </FormField>
             </ItemContent>
           </Item>
 
           <template v-if="props.mode === 'EDIT'">
-            <FormField
-              v-slot="{ errors }"
-              :name="`variants[${index}]`"
-              class="mb-4"
-            >
+            <FormField v-slot="{ errors }" :name="`variants[${index}]`" class="mb-4">
               <FormItem>
                 <FormControl class="hidden" />
                 <FormMessage v-if="errors" class="mb-4" />
               </FormItem>
             </FormField>
           </template>
-          <ItemSeparator
-            v-if="index !== props.form.values.variants?.length! - 1"
-          />
+          <ItemSeparator v-if="index !== props.form.values.variants?.length! - 1" />
         </template>
       </ItemGroup>
     </CardContent>
 
     <CardFooter>
       <template v-if="props.mode === 'EDIT'">
-        <Button
-          type="submit"
-          class="ml-auto"
-          :disabled="
-            props.form.isSubmitting.value ||
-            !props.form.meta.value.dirty ||
-            isDeleted
-          "
-        >
+        <Button type="submit" class="ml-auto" :disabled="props.form.isSubmitting.value ||
+          !props.form.meta.value.dirty ||
+          isDeleted
+          ">
           <template v-if="props.form.isSubmitting.value">
             <Spinner class="mr-2" />
             Actualizando variantes...

@@ -147,7 +147,7 @@ export function useProductWithVariants(
                 default: () =>
                   h(
                     NuxtLink,
-                    { to: `/product/${nuxtError.data.data.existingProductId}` },
+                    { to: `/products/${nuxtError.data.data.existingProductId}` },
                     { default: () => 'Ver' }
                   ),
               }

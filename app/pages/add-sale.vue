@@ -163,6 +163,17 @@ function clearCart() {
   goToItem('productos');
   cartStore.emptyCart();
 }
+
+const remainingStock = computed(() => {
+  return (variantId: number) => {
+    const variant = filteredVariants.value.find(v => v.id === variantId)
+    if (!variant) return 0
+    const cartItem = cartStore.cart.find(p => p.variant.id === variantId)
+    const stockInCart = cartItem?.stock ?? 0
+    return variant.stock - stockInCart
+  }
+})
+
 </script>
 
 <template>
@@ -275,7 +286,10 @@ function clearCart() {
                           </p>
                           <p class="text-muted-foreground text-xs">
                             Stock: {{ variant.stock }}
+                            En carrito: {{cartStore.cart.find((p) => p.variant.id
+                              === variant.id)?.stock || 0}}
                           </p>
+
                         </div>
                         <div class="flex gap-2">
                           <!-- Quantity -->
@@ -291,7 +305,7 @@ function clearCart() {
 
                           <!-- Quick add -->
                           <Button type="button" @click="quickAdd(selectedProduct, variant)"
-                            :disabled="variant.stock === 0">
+                            :disabled="remainingStock(variant.id) === 0">
                             Agregar
                           </Button>
                         </div>

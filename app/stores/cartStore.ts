@@ -63,20 +63,26 @@ export const useCartStore = defineStore('cart', () => {
     try {
       const res = await $fetch('/api/sales', {
         method: 'POST',
-        body: { items: items },
+        body: { items },
       });
+
       toast({
         title: 'Compra exitosa',
         description: 'Se han registrado los productos',
       });
 
-      return res;
+      await refreshNuxtData('products');
+      return { data: res, error: null };
     } catch (err) {
-      console.error(err);
+      console.error('Checkout error:', err);
+
       toast({
         variant: 'destructive',
         title: 'Error al procesar la compra',
+        description: err instanceof Error ? err.message : 'Error desconocido',
       });
+
+      return { data: null, error: err };
     }
   }
 

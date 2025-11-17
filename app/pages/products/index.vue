@@ -1,13 +1,14 @@
 <script setup lang="ts">
-  import { columns } from '@/components/columns';
-  const user = useSupabaseUser();
+import { columns } from '@/components/columns';
+const user = useSupabaseUser();
 
-  const { data, refresh, error, status } = await useFetch('/api/products', {
-    key: 'products',
-    // getCachedData(key) {
-    //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
-    // },
-  });
+const { data, refresh, error, status } = await useFetch('/api/products', {
+  key: 'products',
+  // getCachedData(key) {
+  //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
+  // },
+});
+console.log(data.value)
 </script>
 
 <template>
@@ -24,14 +25,9 @@
         <h1 class="mb-6 text-2xl">Sus productos</h1>
       </div>
 
-      <div
-        v-if="status === 'pending'"
-        class="flex min-h-[400px] items-center justify-center"
-      >
+      <div v-if="status === 'pending'" class="flex min-h-[400px] items-center justify-center">
         <div class="flex flex-col items-center gap-4">
-          <div
-            class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900"
-          />
+          <div class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900" />
           <p class="text-gray-600">Cargando producto...</p>
         </div>
       </div>

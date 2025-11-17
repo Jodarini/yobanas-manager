@@ -135,7 +135,6 @@ export function useProductWithVariants(
       } catch (e) {
         const nuxtError = e as NuxtError<{ customField?: string }>;
         if (nuxtError.statusCode === 409) {
-          console.log(nuxtError.data.data.existingProductId);
           toast({
             variant: 'destructive',
             title: 'Error al crear el producto',

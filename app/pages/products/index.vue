@@ -8,7 +8,6 @@ const { data, refresh, error, status } = await useFetch('/api/products', {
   //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
   // },
 });
-console.log(data.value)
 </script>
 
 <template>

@@ -71,6 +71,7 @@ function handleAddToCart(
     variant: variant,
     stock: quantity,
   });
+  variantStockToAdd[variant.id] = 1
 }
 
 const searchOpen = ref(false);
@@ -169,7 +170,8 @@ const remainingStock = computed(() => {
     if (!variant) return 0
     const cartItem = cartStore.cart.find(p => p.variant.id === variant.id)
     const stockInCart = cartItem?.stock ?? 0
-    return variant.stock - stockInCart
+    const remaining = variant.stock - stockInCart
+    return remaining
   }
 })
 

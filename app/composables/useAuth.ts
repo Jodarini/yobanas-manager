@@ -15,14 +15,24 @@ export const useAuth = () => {
       });
 
       if (error) {
-        errorMessage.value = error.message;
+        switch (error.code) {
+          case 'invalid_credentials':
+            errorMessage.value = 'Usuario o contraseña incorrectos';
+            break;
+          case 'user_banned':
+            errorMessage.value = 'Usuario baneado';
+          case 'email_not_confirmed':
+            errorMessage.value = 'Email no confirmado';
+          default:
+            errorMessage.value = error.message;
+        }
         return false;
       }
 
       await navigateTo('/');
       return true;
     } catch (err) {
-      errorMessage.value = 'An unexpected error occurred';
+      errorMessage.value = 'Ocurrió un error inesperado';
       console.error(err);
       return false;
     } finally {

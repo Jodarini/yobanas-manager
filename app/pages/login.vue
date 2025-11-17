@@ -1,17 +1,17 @@
 <script setup lang="ts">
-  import { useAuth } from '~/composables/useAuth';
+import { useAuth } from '~/composables/useAuth';
 
-  const {
-    signInAnonymous,
-    signInWithPassword,
-    user,
-    signOut,
-    errorMessage,
-    isLoading,
-  } = useAuth();
+const {
+  signInAnonymous,
+  signInWithPassword,
+  user,
+  signOut,
+  errorMessage,
+  isLoading,
+} = useAuth();
 
-  const email = ref('');
-  const password = ref('');
+const email = ref('');
+const password = ref('');
 </script>
 
 <template>
@@ -23,18 +23,11 @@
       </CardDescription>
     </CardHeader>
     <CardContent class="flex flex-col items-center justify-center gap-4">
-      <Form
-        class="flex w-full flex-col gap-2"
-        @submit="signInWithPassword(email, password)"
-      >
+      <Form class="flex w-full flex-col gap-2" @submit="signInWithPassword(email, password)">
         <Input v-model="email" placeholder="Email" />
         <Input v-model="password" type="password" placeholder="Contraseña" />
-        <Button
-          v-if="!user"
-          :disabled="email.length === 0 || isLoading || password.length === 0"
-          class="w-full"
-          type="submit"
-        >
+        <Button v-if="!user" :disabled="email.length === 0 || isLoading || password.length === 0" class="w-full"
+          type="submit">
           <span v-if="isLoading" class="flex items-center">
             <Spinner class="mr-2" />
             Iniciando sesión...
@@ -44,16 +37,14 @@
       </Form>
 
       <div v-if="!user" class="flex flex-col items-center justify-center">
-        <Button
-          v-if="!user"
-          variant="ghost"
-          class="w-full"
-          :disabled="isLoading"
-          @click="signInAnonymous"
-        >
+        <Button v-if="!user" variant="link" class="w-full text-muted-foreground text-xs hover:cursor-pointer"
+          :disabled="isLoading" @click="signInAnonymous">
           Ingresa como invitado
         </Button>
-        <NuxtLink to="/password/reset">¿Olvidaste tu contraseña?</NuxtLink>
+
+        <Button as-child v-if="!user" variant="link" class="w-full text-muted-foreground text-xs hover:cursor-pointer">
+          <NuxtLink to="/password/reset">¿Olvidaste tu contraseña?</NuxtLink>
+        </Button>
       </div>
 
       <Button v-else class="w-full" :disabled="isLoading" @click="signOut">
@@ -63,10 +54,7 @@
         </span>
         <span v-else>Cerrar sesión</span>
       </Button>
-      <p
-        v-if="errorMessage"
-        class="text-destructive dark:text-destructive-foreground"
-      >
+      <p v-if="errorMessage" class="text-xs text-destructive-foreground dark:text-destructive-foreground">
         {{ errorMessage }}
       </p>
     </CardContent>

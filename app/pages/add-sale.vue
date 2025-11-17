@@ -144,8 +144,8 @@ function quickAdd(product: Product, variant: ProductVariant) {
         default: () =>
           h(
             Button,
-            { onClick: () => goToItem('ventas') },
-            { default: () => 'Ver' }
+            { variant: 'outline', onClick: () => goToItem('ventas') },
+            { default: () => 'Ver' },
           ),
       }
     ),

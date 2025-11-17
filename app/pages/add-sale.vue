@@ -165,10 +165,9 @@ function clearCart() {
 }
 
 const remainingStock = computed(() => {
-  return (variantId: number) => {
-    const variant = filteredVariants.value.find(v => v.id === variantId)
+  return (variant: ProductVariant) => {
     if (!variant) return 0
-    const cartItem = cartStore.cart.find(p => p.variant.id === variantId)
+    const cartItem = cartStore.cart.find(p => p.variant.id === variant.id)
     const stockInCart = cartItem?.stock ?? 0
     return variant.stock - stockInCart
   }
@@ -294,7 +293,7 @@ const remainingStock = computed(() => {
                         <div class="flex gap-2">
                           <!-- Quantity -->
                           <NumberField v-model="variantStockToAdd[variant.id]" :default-value="1" :min="1" class="w-28"
-                            :max="variant.stock">
+                            :max="remainingStock(variant)">
                             <Label hidden>Cantidad</Label>
                             <NumberFieldContent>
                               <NumberFieldDecrement />
@@ -305,7 +304,7 @@ const remainingStock = computed(() => {
 
                           <!-- Quick add -->
                           <Button type="button" @click="quickAdd(selectedProduct, variant)"
-                            :disabled="remainingStock(variant.id) === 0">
+                            :disabled="remainingStock(variant) === 0">
                             Agregar
                           </Button>
                         </div>

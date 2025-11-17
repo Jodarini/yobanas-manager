@@ -83,7 +83,7 @@
     <p class="mb-4 text-gray-600">
       El producto que buscas no existe o ha sido eliminado.
     </p>
-    <NuxtLink to="/">
+    <NuxtLink to="/products">
       <Button variant="outline">Ver todos los productos</Button>
     </NuxtLink>
     <Button variant="outline" @click="refreshProduct">Intentar de nuevo</Button>

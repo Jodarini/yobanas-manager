@@ -457,7 +457,6 @@
               @click="onSubmit"
             >
               <span v-if="isSubmitting" class="flex items-center">
-                {{ isSubmitting }}
                 <Spinner class="mr-2" />
                 Completando venta...
               </span>

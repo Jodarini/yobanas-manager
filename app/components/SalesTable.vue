@@ -89,6 +89,15 @@
     },
     {
       accessorKey: 'created_at',
+      filterFn: (row, columnId, filterValue) => {
+        const date = new Date(row.getValue(columnId));
+        const formatted = new Intl.DateTimeFormat('es-CO', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }).format(date);
+        return formatted.toLowerCase().includes(filterValue.toLowerCase());
+      },
       header: ({ column }) => {
         return h(
           Button,

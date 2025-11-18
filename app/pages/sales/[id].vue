@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { formatCurrency } from '~/lib/utils';
-const route = useRoute();
-const { data, error } = await useFetch(`/api/sale/${route.params.id}`);
-
+  import { formatCurrency } from '~/lib/utils';
+  const route = useRoute();
+  const { data, error } = await useFetch(`/api/sale/${route.params.id}`);
 </script>
 
 <template>
@@ -32,26 +31,33 @@ const { data, error } = await useFetch(`/api/sale/${route.params.id}`);
               <TableRow v-for="sale in data" :key="sale.products?.id">
                 <TableCell class="font-medium">
                   {{ sale.products?.title }}
-                  <div class="flex flex-row text-muted-foreground">
-                    {{ sale.product_variants?.size }} • {{
-                      sale.product_variants?.color }}
+                  <div class="text-muted-foreground flex flex-row">
+                    {{ sale.product_variants?.size }} •
+                    {{ sale.product_variants?.color }}
                   </div>
                 </TableCell>
                 <TableCell>{{ sale.sale_items?.quantity }}</TableCell>
-                <TableCell>{{ formatCurrency(sale.sale_items?.unit_price)
-                }}</TableCell>
+                <TableCell>
+                  {{ formatCurrency(sale.sale_items?.unit_price) }}
+                </TableCell>
                 <TableCell class="text-right">
-                  {{ formatCurrency(sale.sale_items?.quantity *
-                    sale.sale_items?.unit_price) }}
+                  {{
+                    formatCurrency(
+                      sale.sale_items?.quantity * sale.sale_items?.unit_price
+                    )
+                  }}
+                </TableCell>
+                <TableCell class="text-right">
+                  <Button as-child variant="outline">
+                    <NuxtLink as-child :to="`/products/${sale.products?.id}`">
+                      Ver
+                    </NuxtLink>
+                  </Button>
                 </TableCell>
               </TableRow>
               <TableRow class="bg-muted/10">
-                <TableCell colspan="2" class="font-medium">
-                </TableCell>
-                <TableCell>
+                <TableCell colspan="5" class="text-left md:text-right">
                   Total general:
-                </TableCell>
-                <TableCell class="text-right">
                   {{ formatCurrency(data[0]?.sales.total_amount) }}
                 </TableCell>
               </TableRow>

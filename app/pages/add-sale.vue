@@ -190,18 +190,28 @@
           <CardContent class="min-h-0 flex-1 p-4 lg:p-6">
             <Input
               v-model="searchTerm"
+              class="mb-2"
               placeholder="Buscar producto"
               @click="selectedProduct = null"
             />
 
-            <div v-if="!selectedProduct" class="flex flex-col gap-2">
+            <div
+              v-if="!selectedProduct"
+              class="flex max-h-full flex-col overflow-y-auto pb-4"
+            >
               <Button
-                v-for="product in filteredProducts"
+                v-for="(product, index) in filteredProducts"
                 :key="product.sku"
                 type="button"
                 :value="product"
                 variant="ghost"
-                class="justify-start"
+                class="border-border justify-start rounded-none py-5"
+                :class="[
+                  index === filteredProducts.length - 1
+                    ? 'border-none'
+                    : 'border-b',
+                  index === 0 && 'border-t',
+                ]"
                 @click="selectProduct(product)"
               >
                 {{ product.title }}
@@ -316,7 +326,7 @@
                         >
                           <Label hidden>Cantidad</Label>
                           <NumberFieldContent>
-                            <NumberFieldDecrement @pointerdown.prevent />
+                            <NumberFieldDecrement @pointerdown.stop />
                             <NumberFieldInput />
                             <NumberFieldIncrement @pointerdown.prevent />
                           </NumberFieldContent>

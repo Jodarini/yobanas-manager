@@ -2,7 +2,7 @@
 export const productsData = [
   {
     // 1
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Camiseta básica de algodón',
     description: 'Camiseta 100% algodón peinado, corte clásico.',
     price: '39000.00',
@@ -12,7 +12,7 @@ export const productsData = [
   },
   {
     // 2
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Pantalón jogger',
     description: 'Jogger deportivo con ajuste elástico y bolsillos.',
     price: '89000.00',
@@ -22,7 +22,7 @@ export const productsData = [
   },
   {
     // 3
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Chaqueta rompevientos',
     description: 'Chaqueta ligera resistente al agua y al viento.',
     price: '159000.00',
@@ -32,7 +32,7 @@ export const productsData = [
   },
   {
     // 4
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Zapatillas urbanas',
     description: 'Zapatillas cómodas para uso diario, suela de goma.',
     price: '229000.00',
@@ -42,7 +42,7 @@ export const productsData = [
   },
   {
     // 5
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Gorra clásica',
     description: 'Gorra ajustable de 6 paneles con visera curva.',
     price: '45000.00',
@@ -52,7 +52,7 @@ export const productsData = [
   },
   {
     // 6
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Sudadera con capucha',
     description: 'Sudadera fleece, interior afelpado, capucha y bolsillo.',
     price: '119000.00',
@@ -62,7 +62,7 @@ export const productsData = [
   },
   {
     // 7
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Camisa de lino',
     description: 'Camisa liviana de lino para clima cálido.',
     price: '139000.00',
@@ -72,7 +72,7 @@ export const productsData = [
   },
   {
     // 8
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Medias deportivas',
     description: 'Medias de compresión ligera para entrenamiento.',
     price: '19000.00',
@@ -82,7 +82,7 @@ export const productsData = [
   },
   {
     // 9
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Cinturón de cuero',
     description: 'Cinturón 100% cuero con hebilla metálica.',
     price: '69000.00',
@@ -92,7 +92,7 @@ export const productsData = [
   },
   {
     // 10
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Short deportivo',
     description: 'Short ligero, secado rápido, ideal para running.',
     price: '59000.00',
@@ -102,7 +102,7 @@ export const productsData = [
   },
   {
     // 11
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Polo manga larga',
     description: 'Polo clásico de algodón piqué con manga larga.',
     price: '79000.00',
@@ -112,7 +112,7 @@ export const productsData = [
   },
   {
     // 12
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Jeans slim fit',
     description: 'Jeans de corte ajustado con elasticidad.',
     price: '149000.00',
@@ -122,7 +122,7 @@ export const productsData = [
   },
   {
     // 13
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Blazer casual',
     description: 'Blazer no estructurado para look smart casual.',
     price: '249000.00',
@@ -132,7 +132,7 @@ export const productsData = [
   },
   {
     // 14
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Botines de cuero',
     description: 'Botines con cierre lateral y suela de goma.',
     price: '319000.00',
@@ -142,7 +142,7 @@ export const productsData = [
   },
   {
     // 15
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Bufanda de lana',
     description: 'Bufanda tejida de lana merino suave.',
     price: '55000.00',
@@ -152,7 +152,7 @@ export const productsData = [
   },
   {
     // 16
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Chaqueta de cuero',
     description: 'Chaqueta de cuero genuino estilo biker.',
     price: '589000.00',
@@ -162,7 +162,7 @@ export const productsData = [
   },
   {
     // 17
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Pantalón cargo',
     description: 'Pantalón utilitario con múltiples bolsillos.',
     price: '109000.00',
@@ -172,7 +172,7 @@ export const productsData = [
   },
   {
     // 18
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Vestido casual',
     description: 'Vestido midi de algodón con corte relajado.',
     price: '129000.00',
@@ -182,7 +182,7 @@ export const productsData = [
   },
   {
     // 19
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Blusa de seda',
     description: 'Blusa elegante de seda con cuello camisero.',
     price: '179000.00',
@@ -192,7 +192,7 @@ export const productsData = [
   },
   {
     // 20
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Falda plisada',
     description: 'Falda midi con plisado permanente.',
     price: '99000.00',
@@ -202,7 +202,7 @@ export const productsData = [
   },
   {
     // 21
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Suéter de lana',
     description: 'Suéter clásico de lana con cuello redondo.',
     price: '139000.00',
@@ -212,7 +212,7 @@ export const productsData = [
   },
   {
     // 22
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Sandalias de cuero',
     description: 'Sandalias artesanales de cuero natural.',
     price: '149000.00',
@@ -222,7 +222,7 @@ export const productsData = [
   },
   {
     // 23
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Mocasines',
     description: 'Mocasines casuales sin cordones.',
     price: '189000.00',
@@ -232,7 +232,7 @@ export const productsData = [
   },
   {
     // 24
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Camisa a cuadros',
     description: 'Camisa de franela con patrón de cuadros.',
     price: '89000.00',
@@ -242,7 +242,7 @@ export const productsData = [
   },
   {
     // 25
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Shorts cargo',
     description: 'Shorts cargo con bolsillos laterales.',
     price: '79000.00',
@@ -252,7 +252,7 @@ export const productsData = [
   },
   {
     // 26
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Traje formal',
     description: 'Traje de dos piezas en lana italiana.',
     price: '699000.00',
@@ -262,7 +262,7 @@ export const productsData = [
   },
   {
     // 27
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Corbata de seda',
     description: 'Corbata clásica de seda tejida.',
     price: '49000.00',
@@ -272,7 +272,7 @@ export const productsData = [
   },
   {
     // 28
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Pijama de algodón',
     description: 'Set de pijama suave de algodón.',
     price: '89000.00',
@@ -282,7 +282,7 @@ export const productsData = [
   },
   {
     // 29
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Pantaloneta de baño',
     description: 'Pantaloneta de secado rápido para playa.',
     price: '69000.00',
@@ -292,7 +292,7 @@ export const productsData = [
   },
   {
     // 30
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Bikini',
     description: 'Bikini de dos piezas con protección UV.',
     price: '119000.00',
@@ -302,7 +302,7 @@ export const productsData = [
   },
   {
     // 31
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Guantes de cuero',
     description: 'Guantes forrados para invierno.',
     price: '79000.00',
@@ -312,7 +312,7 @@ export const productsData = [
   },
   {
     // 32
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Boina',
     description: 'Boina clásica de lana.',
     price: '55000.00',
@@ -322,7 +322,7 @@ export const productsData = [
   },
   {
     // 33
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Abrigo largo',
     description: 'Abrigo de lana hasta la rodilla.',
     price: '449000.00',
@@ -332,7 +332,7 @@ export const productsData = [
   },
   {
     // 34
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Cardigan',
     description: 'Cardigan de punto con botones.',
     price: '109000.00',
@@ -342,7 +342,7 @@ export const productsData = [
   },
   {
     // 35
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Leggings deportivos',
     description: 'Leggings de compresión con tecnología de secado.',
     price: '79000.00',
@@ -352,7 +352,7 @@ export const productsData = [
   },
   {
     // 36
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Top deportivo',
     description: 'Top con soporte para entrenamiento intenso.',
     price: '69000.00',
@@ -362,7 +362,7 @@ export const productsData = [
   },
   {
     // 37
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Zapatillas running',
     description: 'Zapatillas con amortiguación para correr.',
     price: '289000.00',
@@ -372,7 +372,7 @@ export const productsData = [
   },
   {
     // 38
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Mochila urbana',
     description: 'Mochila con compartimento para laptop.',
     price: '159000.00',
@@ -382,7 +382,7 @@ export const productsData = [
   },
   {
     // 39
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Maletín ejecutivo',
     description: 'Maletín de cuero para documentos.',
     price: '329000.00',
@@ -392,7 +392,7 @@ export const productsData = [
   },
   {
     // 40
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Cartera de cuero',
     description: 'Cartera bifold con múltiples compartimentos.',
     price: '89000.00',
@@ -402,7 +402,7 @@ export const productsData = [
   },
   {
     // 41
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Riñonera deportiva',
     description: 'Riñonera ajustable para deportes.',
     price: '49000.00',
@@ -412,7 +412,7 @@ export const productsData = [
   },
   {
     // 42
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Reloj análogo',
     description: 'Reloj clásico con correa de acero.',
     price: '249000.00',
@@ -422,7 +422,7 @@ export const productsData = [
   },
   {
     // 43
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Gafas de sol',
     description: 'Gafas con protección UV400.',
     price: '129000.00',
@@ -432,7 +432,7 @@ export const productsData = [
   },
   {
     // 44
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Pulsera de cuero',
     description: 'Pulsera trenzada ajustable.',
     price: '35000.00',
@@ -442,7 +442,7 @@ export const productsData = [
   },
   {
     // 45
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Collar de plata',
     description: 'Collar de cadena de plata 925.',
     price: '159000.00',
@@ -452,7 +452,7 @@ export const productsData = [
   },
   {
     // 46
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Aretes de acero',
     description: 'Aretes hipoalergénicos de acero inoxidable.',
     price: '45000.00',
@@ -462,7 +462,7 @@ export const productsData = [
   },
   {
     // 47
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Pantuflas casa',
     description: 'Pantuflas acolchadas para uso en casa.',
     price: '49000.00',
@@ -472,7 +472,7 @@ export const productsData = [
   },
   {
     // 48
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Bata de baño',
     description: 'Bata suave de toalla con capucha.',
     price: '89000.00',
@@ -482,7 +482,7 @@ export const productsData = [
   },
   {
     // 49
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Toalla deportiva',
     description: 'Toalla de microfibra de secado rápido.',
     price: '35000.00',
@@ -492,7 +492,7 @@ export const productsData = [
   },
   {
     // 50
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Gorro de lana',
     description: 'Gorro tejido para clima frío.',
     price: '39000.00',
@@ -502,7 +502,7 @@ export const productsData = [
   },
   {
     // 51
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Chaleco acolchado',
     description: 'Chaleco ligero con relleno sintético.',
     price: '139000.00',
@@ -512,7 +512,7 @@ export const productsData = [
   },
   {
     // 52
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Camisa polo',
     description: 'Polo clásico de algodón piqué.',
     price: '69000.00',
@@ -522,7 +522,7 @@ export const productsData = [
   },
   {
     // 53
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Bermuda de lino',
     description: 'Bermuda fresca de lino natural.',
     price: '89000.00',
@@ -532,7 +532,7 @@ export const productsData = [
   },
   {
     // 54
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Sobrecamisa',
     description: 'Sobrecamisa tipo chacket para entretiempo.',
     price: '149000.00',
@@ -542,7 +542,7 @@ export const productsData = [
   },
   {
     // 55
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Parka impermeable',
     description: 'Parka técnica con capucha desmontable.',
     price: '389000.00',
@@ -552,7 +552,7 @@ export const productsData = [
   },
   {
     // 56
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Hoodie oversized',
     description: 'Sudadera holgada de corte moderno.',
     price: '129000.00',
@@ -562,7 +562,7 @@ export const productsData = [
   },
   {
     // 57
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Camiseta térmica',
     description: 'Capa base térmica para actividades al aire libre.',
     price: '69000.00',
@@ -572,7 +572,7 @@ export const productsData = [
   },
   {
     // 58
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Pantalón de vestir',
     description: 'Pantalón formal de corte recto.',
     price: '139000.00',
@@ -582,7 +582,7 @@ export const productsData = [
   },
   {
     // 59
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Zapatos oxford',
     description: 'Zapatos clásicos con cordones para ocasiones formales.',
     price: '279000.00',
@@ -592,7 +592,7 @@ export const productsData = [
   },
   {
     // 60
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Tenis casual',
     description: 'Tenis versátiles para uso diario.',
     price: '199000.00',
@@ -602,7 +602,7 @@ export const productsData = [
   },
   {
     // 61
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Botas trabajo',
     description: 'Botas resistentes con puntera de acero.',
     price: '349000.00',
@@ -612,7 +612,7 @@ export const productsData = [
   },
   {
     // 62
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Chaleco formal',
     description: 'Chaleco de vestir para traje de tres piezas.',
     price: '119000.00',
@@ -622,7 +622,7 @@ export const productsData = [
   },
   {
     // 63
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Pajarita',
     description: 'Pajarita ajustable para eventos formales.',
     price: '45000.00',
@@ -632,7 +632,7 @@ export const productsData = [
   },
   {
     // 64
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Tirantes',
     description: 'Tirantes elásticos con clips metálicos.',
     price: '39000.00',
@@ -642,7 +642,7 @@ export const productsData = [
   },
   {
     // 65
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Gemelos camisa',
     description: 'Gemelos elegantes de acero inoxidable.',
     price: '69000.00',
@@ -652,7 +652,7 @@ export const productsData = [
   },
   {
     // 66
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Bandana',
     description: 'Bandana de algodón multiuso.',
     price: '25000.00',
@@ -662,7 +662,7 @@ export const productsData = [
   },
   {
     // 67
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Calcetines tobilleros',
     description: 'Pack de calcetines tobilleros de algodón.',
     price: '29000.00',
@@ -672,7 +672,7 @@ export const productsData = [
   },
   {
     // 68
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Calcetines largos',
     description: 'Calcetines deportivos hasta la rodilla.',
     price: '35000.00',
@@ -682,7 +682,7 @@ export const productsData = [
   },
   {
     // 69
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Boxer brief',
     description: 'Ropa interior ajustada de algodón elástico.',
     price: '39000.00',
@@ -692,7 +692,7 @@ export const productsData = [
   },
   {
     // 70
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Camisilla básica',
     description: 'Camisilla sin mangas tipo tank top.',
     price: '25000.00',
@@ -702,7 +702,7 @@ export const productsData = [
   },
   {
     // 71
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Short de gimnasio',
     description: 'Short deportivo con forro interno.',
     price: '59000.00',
@@ -712,7 +712,7 @@ export const productsData = [
   },
   {
     // 72
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Polera térmica',
     description: 'Polera de cuello alto para abrigo.',
     price: '79000.00',
@@ -722,7 +722,7 @@ export const productsData = [
   },
   {
     // 73
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Jogger premium',
     description: 'Pantalón jogger de tela técnica.',
     price: '119000.00',
@@ -732,7 +732,7 @@ export const productsData = [
   },
   {
     // 74
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Chaqueta bomber',
     description: 'Chaqueta bomber clásica con cierre.',
     price: '189000.00',
@@ -742,7 +742,7 @@ export const productsData = [
   },
   {
     // 75
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Sudadera cuello redondo',
     description: 'Sudadera básica sin capucha.',
     price: '99000.00',
@@ -752,7 +752,7 @@ export const productsData = [
   },
   {
     // 76
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Camisa jean',
     description: 'Camisa de mezclilla clásica.',
     price: '109000.00',
@@ -762,7 +762,7 @@ export const productsData = [
   },
   {
     // 77
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Pantalón chino',
     description: 'Pantalón casual de sarga de algodón.',
     price: '99000.00',
@@ -772,7 +772,7 @@ export const productsData = [
   },
   {
     // 78
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Zapatos náuticos',
     description: 'Zapatos tipo boat shoe de cuero.',
     price: '219000.00',
@@ -782,7 +782,7 @@ export const productsData = [
   },
   {
     // 79
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Sombrero panamá',
     description: 'Sombrero tejido a mano estilo panamá.',
     price: '129000.00',
@@ -792,7 +792,7 @@ export const productsData = [
   },
   {
     // 80
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Canguro deportivo',
     description: 'Bolso canguro para ciclismo o running.',
     price: '59000.00',
@@ -802,7 +802,7 @@ export const productsData = [
   },
   {
     // 81
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Riñonera crossbody',
     description: 'Riñonera convertible en bolso cruzado.',
     price: '79000.00',
@@ -812,7 +812,7 @@ export const productsData = [
   },
   {
     // 82
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Morral escolar',
     description: 'Mochila espaciosa para estudiantes.',
     price: '139000.00',
@@ -822,7 +822,7 @@ export const productsData = [
   },
   {
     // 83
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Chaqueta softshell',
     description: 'Chaqueta flexible resistente al viento.',
     price: '209000.00',
@@ -832,7 +832,7 @@ export const productsData = [
   },
   {
     // 84
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Polera básica',
     description: 'Polera de cuello alto en algodón.',
     price: '49000.00',
@@ -842,7 +842,7 @@ export const productsData = [
   },
   {
     // 85
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Camiseta oversize',
     description: 'Camiseta de corte holgado moderno.',
     price: '59000.00',
@@ -852,7 +852,7 @@ export const productsData = [
   },
   {
     // 86
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Jean regular fit',
     description: 'Jeans de corte regular clásico.',
     price: '129000.00',
@@ -862,7 +862,7 @@ export const productsData = [
   },
   {
     // 87
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Zapatillas skate',
     description: 'Zapatillas con suela plana para skateboarding.',
     price: '179000.00',
@@ -872,7 +872,7 @@ export const productsData = [
   },
   {
     // 88
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Gorra snapback',
     description: 'Gorra con visera plana ajustable.',
     price: '55000.00',
@@ -882,7 +882,7 @@ export const productsData = [
   },
   {
     // 89
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Shorts playa',
     description: 'Shorts ligeros con estampado tropical.',
     price: '69000.00',
@@ -892,7 +892,7 @@ export const productsData = [
   },
   {
     // 90
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Chaleco técnico',
     description: 'Chaleco con múltiples bolsillos funcionales.',
     price: '159000.00',
@@ -902,7 +902,7 @@ export const productsData = [
   },
   {
     // 91
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Buzo deportivo',
     description: 'Conjunto de sudadera y pantalón deportivo.',
     price: '189000.00',
@@ -912,7 +912,7 @@ export const productsData = [
   },
   {
     // 92
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Camisa larga vestir',
     description: 'Camisa formal de manga larga.',
     price: '99000.00',
@@ -922,7 +922,7 @@ export const productsData = [
   },
   {
     // 93
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Pantalón cargo técnico',
     description: 'Cargo pants con tela ripstop.',
     price: '149000.00',
@@ -932,7 +932,7 @@ export const productsData = [
   },
   {
     // 94
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Sandalias deportivas',
     description: 'Sandalias con soporte para trekking.',
     price: '119000.00',
@@ -942,7 +942,7 @@ export const productsData = [
   },
   {
     // 95
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Guayabera',
     description: 'Camisa tradicional con bolsillos frontales.',
     price: '109000.00',
@@ -952,7 +952,7 @@ export const productsData = [
   },
   {
     // 96
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Pantaloneta ciclismo',
     description: 'Pantaloneta con badana para ciclismo.',
     price: '89000.00',
@@ -962,7 +962,7 @@ export const productsData = [
   },
   {
     // 97
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Jersey ciclismo',
     description: 'Camiseta técnica para ciclismo con bolsillos traseros.',
     price: '129000.00',
@@ -972,7 +972,7 @@ export const productsData = [
   },
   {
     // 98
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Gorro ciclismo',
     description: 'Gorro bajo casco para ciclismo.',
     price: '29000.00',
@@ -982,7 +982,7 @@ export const productsData = [
   },
   {
     // 99
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Mallas compresión',
     description: 'Mallas de compresión para recuperación.',
     price: '99000.00',
@@ -992,7 +992,7 @@ export const productsData = [
   },
   {
     // 100
-    user_id: 'f2355eff-89c0-40f9-bd72-7d2d41b27ae8',
+    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
     title: 'Bolso gimnasio',
     description: 'Bolso deportivo con compartimento para zapatos.',
     price: '119000.00',

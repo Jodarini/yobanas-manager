@@ -316,9 +316,9 @@
                         >
                           <Label hidden>Cantidad</Label>
                           <NumberFieldContent>
-                            <NumberFieldDecrement @mousedown.prevent />
+                            <NumberFieldDecrement @pointerdown.prevent />
                             <NumberFieldInput />
-                            <NumberFieldIncrement @mousedown.prevent />
+                            <NumberFieldIncrement @pointerdown.prevent />
                           </NumberFieldContent>
                         </NumberField>
 

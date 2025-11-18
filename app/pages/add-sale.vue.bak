@@ -1,29 +1,31 @@
 <script setup lang="ts">
+  import { refDebounced } from '@vueuse/core';
   import { toast, ToastAction } from '~/components/ui/toast';
   import type { Product, ProductVariant } from '~~/db/schema';
   import { TrashIcon } from 'lucide-vue-next';
   import { Button } from '~/components/ui/button';
 
   const searchTerm = ref('');
-  const selectedProduct = ref<Product | null>(null);
+  const debouncedSearchTerm = refDebounced(searchTerm, 500); // 300ms debounce
+  const selectedProduct = ref<Product>();
   const selectedProductId = computed(() => selectedProduct.value?.id);
   const cartStore = useCartStore();
   const isSubmitting = ref(false);
 
   const expandedVariant = ref(null);
-
-  const { data, pending, error, refresh } = await useFetch('/api/products', {
-    key: 'products',
-    // getCachedData(key) {
-    //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
-    // },
-  });
+  const { data, pending, error, refresh } = useFetch(
+    () => `/api/products?search=${debouncedSearchTerm.value}`,
+    {
+      watch: [debouncedSearchTerm],
+      lazy: true,
+    }
+  );
 
   const {
     data: variants,
     pending: variantsPending,
-    refresh: variantsRefresh,
     execute,
+    refresh: variantsRefresh,
   } = useFetch(() => `/api/product/${selectedProductId.value}/variants`, {
     key: () => `product-variants-${selectedProductId.value}`,
     immediate: false,
@@ -51,7 +53,6 @@
         description: 'La venta se ha registrado exitosamente',
       });
     }
-    goToItem('productos');
     variantsRefresh();
   }
 
@@ -82,10 +83,7 @@
     expandedVariant.value = null;
   }
 
-  watch(searchTerm, () => {
-    selectedProduct.value = null;
-  });
-
+  // Optional: compute filtered products against debounced term
   const filteredProducts = computed(() => {
     if (!data?.value) return [];
     const q = (searchTerm.value || '').toLowerCase();
@@ -93,6 +91,8 @@
     return data.value.filter((p) => p.title.toLowerCase().includes(q));
   });
 
+  // quick filters
+  // const showAvailableOnly = ref(true);
   const sizeFilter = ref<string | null>(null);
   const colorFilter = ref<string | null>(null);
 
@@ -120,6 +120,7 @@
 
   const filteredVariants = computed(() => {
     let list = variants.value ?? [];
+    // if (showAvailableOnly.value) list = list.filter((v) => (v.stock ?? 0) > 0);
     if (sizeFilter.value)
       list = list.filter((v) => String(v.size) === sizeFilter.value);
     if (colorFilter.value)
@@ -131,7 +132,8 @@
   function quickAdd(product: Product, variant: ProductVariant) {
     const qty = variantStockToAdd[variant.id] ?? 1;
     handleAddToCart(product, variant, qty);
-
+    // preserve focus for fast repeated adds
+    // optional: fire a light toast
     toast({
       title: 'Agregado',
       description: `${product.title} • ${variant.size} • ${variant.color} x${qty}`,
@@ -156,6 +158,7 @@
     if (product) selectedProduct.value = product;
     openItem.value = item;
   }
+  const value = ref<Product | undefined>();
 
   function clearCart() {
     goToItem('productos');
@@ -188,29 +191,57 @@
           </CardHeader>
 
           <CardContent class="min-h-0 flex-1 p-4 lg:p-6">
-            <Input
-              v-model="searchTerm"
-              placeholder="Buscar producto"
-              @click="selectedProduct = null"
-            />
+            <Combobox v-model="value" by="label">
+              <ComboboxAnchor as-child class="mb-4">
+                <ComboboxTrigger as-child>
+                  <Button
+                    variant="outline"
+                    class="w-full justify-between"
+                    type="button"
+                  >
+                    {{ value?.title ?? 'Selecciona un producto' }}
+                    <ClientOnly>
+                      <ChevronsUpDown
+                        class="ml-2 h-4 w-4 shrink-0 opacity-50"
+                      />
+                    </ClientOnly>
+                  </Button>
+                </ComboboxTrigger>
+              </ComboboxAnchor>
 
-            <div v-if="!selectedProduct" class="flex flex-col gap-2">
-              <Button
-                v-for="product in filteredProducts"
-                :key="product.sku"
-                type="button"
-                :value="product"
-                variant="ghost"
-                class="justify-start"
-                @click="selectProduct(product)"
-              >
-                {{ product.title }}
-              </Button>
-            </div>
+              <ComboboxList class="md:w-xl" align="start">
+                <div class="relative w-full max-w-full items-center">
+                  <ComboboxInput
+                    v-model="searchTerm"
+                    class="h-10 rounded-none border-0 focus-visible:ring-0"
+                    placeholder="Selecciona un producto..."
+                  />
+                  <span
+                    class="absolute inset-y-0 start-0 flex items-center justify-center px-3"
+                  >
+                    <Search class="text-muted-foreground size-4" />
+                  </span>
+                </div>
 
-            <div
-              class="border-border mt-2 flex h-full flex-col gap-4 border-t py-2 lg:flex-row"
-            >
+                <ComboboxEmpty>Productos no encontrados.</ComboboxEmpty>
+
+                <ComboboxGroup>
+                  <ComboboxItem
+                    v-for="product in filteredProducts"
+                    :key="product.title"
+                    :value="product"
+                    @click="selectProduct(product)"
+                  >
+                    {{ product.title }}
+                    <!-- <ComboboxItemIndicator> -->
+                    <!--   <Check :class="cn('ml-auto h-4 w-4')" /> -->
+                    <!-- </ComboboxItemIndicator> -->
+                  </ComboboxItem>
+                </ComboboxGroup>
+              </ComboboxList>
+            </Combobox>
+
+            <div class="flex h-full flex-col gap-4 lg:flex-row">
               <!-- Detail (Variants + Summary) -->
               <section class="flex min-h-0 w-full flex-1 flex-col gap-4">
                 <!-- Variants panel -->
@@ -225,7 +256,6 @@
                       <!--   @click="showAvailableOnly = !showAvailableOnly"> -->
                       <!--   Solo disponibles -->
                       <!-- </Button> -->
-                      <h3>{{ selectedProduct.title }}</h3>
 
                       <!-- Size chips -->
                       <div class="flex items-center gap-2">
@@ -455,11 +485,7 @@
               Limpiar
             </Button>
 
-            <Button
-              type="submit"
-              :disabled="isSubmitting || cartStore.cart.length === 0"
-              @click="onSubmit"
-            >
+            <Button type="submit" :disabled="isSubmitting" @click="onSubmit">
               <span v-if="isSubmitting" class="flex items-center">
                 {{ isSubmitting }}
                 <Spinner class="mr-2" />

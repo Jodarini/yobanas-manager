@@ -4,7 +4,7 @@ import { useAuthDB } from '../utils/db';
 import { ilike, and, isNull } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
-  const { search = '', page = '1', pageSize = '200' } = getQuery(event);
+  const { search = '', page = '1', pageSize = '' } = getQuery(event);
   const limit = parseInt(pageSize);
   const offset = (parseInt(page) - 1) * limit;
 

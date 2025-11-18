@@ -21,3 +21,21 @@ export const normalizeString = (str) => {
     .normalize('NFD') // Decompose accented characters
     .replace(/[\u0300-\u036f]/g, ''); // Remove accent marks
 };
+
+export const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+
+export const formatDate = (date: Date) => {
+  return new Intl.DateTimeFormat('es-CO', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+}
+

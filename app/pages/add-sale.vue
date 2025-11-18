@@ -217,16 +217,12 @@
                 <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
                   <!-- Sticky product/context bar with quick filters -->
                   <div v-if="selectedProduct" class="border-border border-b">
-                    <!-- Quick filters row -->
+                    <h3 class="mb-2 text-2xl font-bold">
+                      {{ selectedProduct.title }}
+                    </h3>
                     <div
                       class="flex items-center gap-2 overflow-x-auto px-2 pb-2"
                     >
-                      <!-- <Button type="button" size="sm" variant="outline" :class="{ 'bg-accent': showAvailableOnly }" -->
-                      <!--   @click="showAvailableOnly = !showAvailableOnly"> -->
-                      <!--   Solo disponibles -->
-                      <!-- </Button> -->
-                      <h3>{{ selectedProduct.title }}</h3>
-
                       <!-- Size chips -->
                       <div class="flex items-center gap-2">
                         <Button
@@ -294,7 +290,9 @@
                       class="border-border bg-card/40 hover:bg-card/60 border-b p-2 transition-colors"
                     >
                       <!-- Compact row -->
-                      <div class="flex flex-row justify-between">
+                      <div
+                        class="flex flex-col justify-between gap-2 md:flex-row"
+                      >
                         <div>
                           <p class="truncate text-sm font-medium">
                             {{ variant.size }} • {{ variant.color }}
@@ -308,32 +306,30 @@
                             }}
                           </p>
                         </div>
-                        <div class="flex gap-2">
-                          <!-- Quantity -->
-                          <NumberField
-                            v-model="variantStockToAdd[variant.id]"
-                            :default-value="1"
-                            :min="1"
-                            class="w-28"
-                            :max="remainingStock(variant)"
-                          >
-                            <Label hidden>Cantidad</Label>
-                            <NumberFieldContent>
-                              <NumberFieldDecrement />
-                              <NumberFieldInput />
-                              <NumberFieldIncrement />
-                            </NumberFieldContent>
-                          </NumberField>
+                        <!-- Quantity -->
+                        <NumberField
+                          v-model="variantStockToAdd[variant.id]"
+                          :default-value="1"
+                          :min="1"
+                          class="w-full md:w-28"
+                          :max="remainingStock(variant)"
+                        >
+                          <Label hidden>Cantidad</Label>
+                          <NumberFieldContent>
+                            <NumberFieldDecrement />
+                            <NumberFieldInput />
+                            <NumberFieldIncrement />
+                          </NumberFieldContent>
+                        </NumberField>
 
-                          <!-- Quick add -->
-                          <Button
-                            type="button"
-                            :disabled="remainingStock(variant) === 0"
-                            @click="quickAdd(selectedProduct, variant)"
-                          >
-                            Agregar
-                          </Button>
-                        </div>
+                        <!-- Quick add -->
+                        <Button
+                          type="button"
+                          :disabled="remainingStock(variant) === 0"
+                          @click="quickAdd(selectedProduct, variant)"
+                        >
+                          Agregar
+                        </Button>
                       </div>
 
                       <!-- Optional details -->

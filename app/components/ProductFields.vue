@@ -1,34 +1,41 @@
 <script setup lang="ts">
-import { cn } from '@/lib/utils';
-import type { ComponentFieldBindingObject } from 'vee-validate';
+  import { cn } from '@/lib/utils';
+  import type { ComponentFieldBindingObject } from 'vee-validate';
 
-const props = defineProps<{
-  form:
-  | ReturnType<typeof useProductWithVariants>
-  | ReturnType<typeof useProductFormState>;
-  mode: 'ADD' | 'EDIT';
-  isDeleted?: boolean;
-}>();
+  const emit = defineEmits(['createVariant']);
 
-const brandOpen = defineModel<boolean>('brandOpen');
-const categoryOpen = defineModel<boolean>('categoryOpen');
-const brandSearchTerm = defineModel<string>('brandSearchTerm');
-const categorySearchTerm = defineModel<string>('categorySearchTerm');
+  function handleAddVariant() {
+    emit('createVariant');
+  }
 
-const handleCategoryToggle = (
-  category: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  componentField: ComponentFieldBindingObject<any>
-) => {
-  const selectedCategories = componentField.modelValue || [];
-  const isCategorySelected = selectedCategories.includes(category);
+  const props = defineProps<{
+    form:
+      | ReturnType<typeof useProductWithVariants>
+      | ReturnType<typeof useProductFormState>;
+    mode: 'ADD' | 'EDIT';
+    isDeleted?: boolean;
+    hasVariants?: boolean;
+  }>();
 
-  const updatedCategories = isCategorySelected
-    ? selectedCategories.filter((cat: string) => cat !== category)
-    : [...selectedCategories, category];
+  const brandOpen = defineModel<boolean>('brandOpen');
+  const categoryOpen = defineModel<boolean>('categoryOpen');
+  const brandSearchTerm = defineModel<string>('brandSearchTerm');
+  const categorySearchTerm = defineModel<string>('categorySearchTerm');
 
-  componentField['onUpdate:modelValue']!(updatedCategories);
-};
+  const handleCategoryToggle = (
+    category: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    componentField: ComponentFieldBindingObject<any>
+  ) => {
+    const selectedCategories = componentField.modelValue || [];
+    const isCategorySelected = selectedCategories.includes(category);
+
+    const updatedCategories = isCategorySelected
+      ? selectedCategories.filter((cat: string) => cat !== category)
+      : [...selectedCategories, category];
+
+    componentField['onUpdate:modelValue']!(updatedCategories);
+  };
 </script>
 
 <template>
@@ -47,7 +54,12 @@ const handleCategoryToggle = (
               <FormMessage />
             </div>
             <FormControl>
-              <Input type="text" placeholder="Nombre del producto" v-bind="componentField" :disabled="isDeleted" />
+              <Input
+                type="text"
+                placeholder="Nombre del producto"
+                v-bind="componentField"
+                :disabled="isDeleted"
+              />
             </FormControl>
           </FormItem>
         </FormField>
@@ -58,16 +70,22 @@ const handleCategoryToggle = (
               <FormLabel>Precio</FormLabel>
               <FormMessage />
             </div>
-            <NumberField class="gap-2" :min="0" :format-options="{
-              style: 'currency',
-              currency: 'COP',
-              currencyDisplay: 'symbol',
-              currencySign: 'accounting',
-              trailingZeroDisplay: 'stripIfInteger',
-              useGrouping: true,
-              signDisplay: 'auto',
-            }" :disabled="isDeleted" :model-value="value"
-              @update:model-value="componentField['onUpdate:modelValue']">
+            <NumberField
+              class="gap-2"
+              :min="0"
+              :format-options="{
+                style: 'currency',
+                currency: 'COP',
+                currencyDisplay: 'symbol',
+                currencySign: 'accounting',
+                trailingZeroDisplay: 'stripIfInteger',
+                useGrouping: true,
+                signDisplay: 'auto',
+              }"
+              :disabled="isDeleted"
+              :model-value="value"
+              @update:model-value="componentField['onUpdate:modelValue']"
+            >
               <NumberFieldContent>
                 <NumberFieldDecrement />
                 <FormControl>
@@ -88,24 +106,39 @@ const handleCategoryToggle = (
             <FormControl>
               <Popover v-model:open="brandOpen">
                 <PopoverTrigger as-child>
-                  <Button type="button" variant="outline" class="w-full justify-between" :disabled="isDeleted">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    class="w-full justify-between"
+                    :disabled="isDeleted"
+                  >
                     {{ componentField.modelValue || 'Seleccione una marca' }}
                     <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent class="p-0">
                   <Command>
-                    <CommandInput v-model="brandSearchTerm" placeholder="Search brand..."
-                      @keydown.enter.prevent="props.form.createBrand" />
-                    <div v-if="
-                      brandSearchTerm &&
-                      !props.form.filteredBrands.value.includes(
-                        brandSearchTerm
-                      )
-                    "
-                      class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none">
-                      <Button type="button" variant="ghost" size="sm" class="w-full justify-start"
-                        @click="props.form.createBrand">
+                    <CommandInput
+                      v-model="brandSearchTerm"
+                      placeholder="Search brand..."
+                      @keydown.enter.prevent="props.form.createBrand"
+                    />
+                    <div
+                      v-if="
+                        brandSearchTerm &&
+                        !props.form.filteredBrands.value.includes(
+                          brandSearchTerm
+                        )
+                      "
+                      class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none"
+                    >
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        class="w-full justify-start"
+                        @click="props.form.createBrand"
+                      >
                         <Plus class="mr-2 h-4 w-4" />
                         Crear "{{ brandSearchTerm }}"
                       </Button>
@@ -113,8 +146,12 @@ const handleCategoryToggle = (
                     <CommandList>
                       <CommandEmpty>No se encontraron marcas...</CommandEmpty>
                       <CommandGroup>
-                        <CommandItem v-for="brand in props.form.filteredBrands.value" :key="brand" :value="brand"
-                          @select="() => componentField.onChange(brand)">
+                        <CommandItem
+                          v-for="brand in props.form.filteredBrands.value"
+                          :key="brand"
+                          :value="brand"
+                          @select="() => componentField.onChange(brand)"
+                        >
                           <span>{{ brand }}</span>
                         </CommandItem>
                       </CommandGroup>
@@ -135,20 +172,32 @@ const handleCategoryToggle = (
             <Popover v-model:open="categoryOpen">
               <PopoverTrigger as-child>
                 <FormControl>
-                  <Button type="button" variant="outline" role="combobox" :aria-expanded="categoryOpen"
-                    class="h-auto min-h-10 w-full justify-start" :disabled="isDeleted">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    role="combobox"
+                    :aria-expanded="categoryOpen"
+                    class="h-auto min-h-10 w-full justify-start"
+                    :disabled="isDeleted"
+                  >
                     <div class="flex flex-1 flex-wrap gap-1.5">
-                      <template v-if="
-                        !componentField.modelValue ||
-                        componentField.modelValue.length === 0
-                      ">
+                      <template
+                        v-if="
+                          !componentField.modelValue ||
+                          componentField.modelValue.length === 0
+                        "
+                      >
                         <span class="text-muted-foreground">
                           Seleccionar categorías...
                         </span>
                       </template>
                       <template v-else>
-                        <Badge v-for="item in componentField.modelValue" :key="`cat-${item}`" variant="secondary"
-                          class="gap-1">
+                        <Badge
+                          v-for="item in componentField.modelValue"
+                          :key="`cat-${item}`"
+                          variant="secondary"
+                          class="gap-1"
+                        >
                           <span>{{ item }}</span>
                         </Badge>
                       </template>
@@ -159,17 +208,27 @@ const handleCategoryToggle = (
               </PopoverTrigger>
               <PopoverContent class="w-full p-0" align="start">
                 <Command>
-                  <CommandInput v-model="categorySearchTerm" placeholder="Buscar categorías..." />
+                  <CommandInput
+                    v-model="categorySearchTerm"
+                    placeholder="Buscar categorías..."
+                  />
 
-                  <div v-if="
-                    categorySearchTerm &&
-                    !props.form.filteredCategories.value.includes(
-                      categorySearchTerm
-                    )
-                  "
-                    class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none">
-                    <Button type="button" variant="ghost" size="sm" class="w-full justify-start"
-                      @click="props.form.createCategory">
+                  <div
+                    v-if="
+                      categorySearchTerm &&
+                      !props.form.filteredCategories.value.includes(
+                        categorySearchTerm
+                      )
+                    "
+                    class="relative flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-none select-none"
+                  >
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      class="w-full justify-start"
+                      @click="props.form.createCategory"
+                    >
                       <Plus class="mr-2 h-4 w-4" />
                       Crear "{{ categorySearchTerm }}"
                     </Button>
@@ -182,15 +241,22 @@ const handleCategoryToggle = (
                       </p>
                     </CommandEmpty>
                     <CommandGroup>
-                      <CommandItem v-for="category in props.form.filteredCategories.value" :key="category!"
-                        :value="category!" @select="handleCategoryToggle(category, componentField)">
-                        <Check :class="cn(
-                          'mr-2 h-4 w-4',
-                          componentField.modelValue?.includes(category)
-                            ? 'opacity-100'
-                            : 'opacity-0'
-                        )
-                          " />
+                      <CommandItem
+                        v-for="category in props.form.filteredCategories.value"
+                        :key="category!"
+                        :value="category!"
+                        @select="handleCategoryToggle(category, componentField)"
+                      >
+                        <Check
+                          :class="
+                            cn(
+                              'mr-2 h-4 w-4',
+                              componentField.modelValue?.includes(category)
+                                ? 'opacity-100'
+                                : 'opacity-0'
+                            )
+                          "
+                        />
                         {{ category }}
                       </CommandItem>
                     </CommandGroup>
@@ -201,42 +267,66 @@ const handleCategoryToggle = (
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField }" class="w-full" name="description">
+        <FormField
+          v-slot="{ componentField }"
+          class="w-full"
+          name="description"
+        >
           <FormItem class="w-full">
             <div class="flex h-4 gap-1">
               <FormLabel>Descripción</FormLabel>
               <FormMessage />
             </div>
             <FormControl>
-              <Textarea type="text" placeholder="Descripción" v-bind="componentField" :disabled="isDeleted" />
+              <Textarea
+                type="text"
+                placeholder="Descripción"
+                v-bind="componentField"
+                :disabled="isDeleted"
+              />
             </FormControl>
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField, value }" name="stock">
-          <FormItem class="w-full">
-            <div class="flex h-4 gap-1">
-              <FormLabel>Stock</FormLabel>
-              <FormMessage />
-            </div>
-            <NumberField class="gap-2" :min="0" :disabled="isDeleted" :model-value="value">
-              <NumberFieldContent>
-                <NumberFieldDecrement />
-                <FormControl>
-                  <NumberFieldInput />
-                </FormControl>
-                <NumberFieldIncrement />
-              </NumberFieldContent>
-            </NumberField>
-          </FormItem>
-        </FormField>
+        <template v-if="!props.hasVariants">
+          <FormField v-slot="{ componentField }" name="stock">
+            <FormItem class="w-full">
+              <div class="flex h-4 gap-1">
+                <FormLabel>Stock</FormLabel>
+                <FormMessage />
+              </div>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="stock"
+                  v-bind="componentField"
+                />
+              </FormControl>
+            </FormItem>
+          </FormField>
+        </template>
       </div>
     </CardContent>
 
     <CardFooter>
       <template v-if="props.mode === 'EDIT'">
-        <Button type="submit" class="ml-auto" :disabled="props.form.isSubmitting.value || !props.form.meta.value.dirty
-          ">
+        <template v-if="!props.hasVariants">
+          <Button
+            type="button"
+            class="ml-auto"
+            variant="outline"
+            @click="handleAddVariant"
+          >
+            Crear variantes
+          </Button>
+        </template>
+        <Button
+          type="submit"
+          class="ml-auto"
+          :disabled="
+            props.form.isSubmitting.value || !props.form.meta.value.dirty
+          "
+        >
           <template v-if="props.form.isSubmitting.value">
             <Spinner class="mr-2" />
             Actualizando producto...

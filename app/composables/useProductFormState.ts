@@ -8,6 +8,7 @@ export function useProductFormState(
   product?: Product
 ) {
   const formSchema = toTypedSchema(updateProductSchema2);
+  console.log({ product });
 
   const {
     handleSubmit,
@@ -34,7 +35,7 @@ export function useProductFormState(
       price: 1000,
       category: ['test'],
       brand: 'testerino',
-      stock: 1
+      stock: 1,
     },
   });
 

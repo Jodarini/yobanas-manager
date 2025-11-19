@@ -41,6 +41,22 @@ export default defineEventHandler(async (event) => {
   });
   try {
     return await useAuthDB(user, async (tx) => {
+      if (product.stock) {
+        await tx.insert(productsTable).values({
+          user_id: user.id,
+          sku: productSku,
+          title: product.title,
+          description: product.description,
+          price: String(product.price),
+          brand: product.brand,
+          thumbnail:
+            product.thumbnail ||
+            'https://cdn.dummyjson.com/products/VERYPOGGERSs/mens-shoes/Nike%20Air%20Jordan%201%20Red%20And%20Black/1.png',
+          category: product.category || 'NONE',
+          stock: product.stock,
+        });
+        return;
+      }
       const queryResult = await tx
         .insert(productsTable)
         .values({

@@ -1,21 +1,15 @@
 import type { NuxtError } from '#app';
-import { Button, NuxtLink } from '#components';
+import { NuxtLink } from '#components';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
 import { toast, ToastAction } from '~/components/ui/toast';
 import { normalizeString } from '~/lib/utils';
-import {
-  insertProductSchema,
-  type Product,
-  type UpdateVariant,
-} from '~~/db/schema';
+import { insertProductSchema } from '~~/db/schema';
 
 export function useProductWithVariants(
   mode: 'ADD' | 'EDIT',
   brands: string[],
-  categories: string[],
-  product: Product,
-  variants: UpdateVariant
+  categories: string[]
 ) {
   const formSchema = toTypedSchema(insertProductSchema);
 
@@ -37,13 +31,8 @@ export function useProductWithVariants(
       price: 1000,
       category: ['test'],
       brand: 'test',
-      variants: [
-        {
-          color: 'test',
-          size: 'test',
-          stock: 1,
-        },
-      ],
+      stock: 1,
+      variants: undefined,
     },
   });
 
@@ -92,7 +81,11 @@ export function useProductWithVariants(
 
     for (let i = 0; i < currentVariants.length; i++) {
       const variant = currentVariants[i];
-      const key = `${normalizeString(variant!.size)}-${normalizeString(variant!.color)}`;
+
+      // Add null/undefined check
+      if (!variant) continue;
+
+      const key = `${normalizeString(variant.size)}-${normalizeString(variant.color)}`;
 
       if (seen.has(key)) {
         return i;
@@ -146,7 +139,9 @@ export function useProductWithVariants(
                 default: () =>
                   h(
                     NuxtLink,
-                    { to: `/products/${nuxtError.data.data.existingProductId}` },
+                    {
+                      to: `/products/${nuxtError.data.data.existingProductId}`,
+                    },
                     { default: () => 'Ver' }
                   ),
               }
@@ -192,8 +187,6 @@ export function useProductWithVariants(
     setFieldValue,
     resetForm,
     isSubmitting,
-    product,
-    variants,
     onSubmit,
     errors,
   };

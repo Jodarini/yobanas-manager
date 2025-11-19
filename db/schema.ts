@@ -34,6 +34,7 @@ export const productsTable = pgTable(
     thumbnail: text('thumbnail'),
     brand: text('brand').notNull(),
     category: text('category').array().notNull(),
+    stock: integer('stock'),
     deleted_at: timestamp('deleted_at', { withTimezone: true }),
   },
   (table) => [
@@ -233,6 +234,11 @@ export const insertProductSchema = z.object({
   brand: z.string().min(1, 'es obligatoria'),
   category: z.array(z.string()).min(1, 'es obligatoria'),
   variants: z.array(insertProductVariantSchema).min(1, 'es obligatoria'),
+  stock: z
+    .number({ message: 'debe ser número' })
+    .int({ message: 'debe ser número' })
+    .min(0, 'no puede ser negativo')
+    .default(0),
 });
 
 export type InsertProduct = z.infer<typeof insertProductSchema>;
@@ -270,6 +276,7 @@ export const updateProductSchema2 = z.object({
   thumbnail: z.string().url().optional().or(z.literal('')),
   brand: z.string().min(1, 'es obligatoria'),
   category: z.array(z.string()).min(1, 'es obligatoria'),
+  stock: z.number().positive().optional(),
 });
 
 export const updateVariantSchema = z.object({

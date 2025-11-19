@@ -27,12 +27,14 @@ export function useProductFormState(
       category: product.category,
       description: product.description || undefined,
       thumbnail: product.thumbnail || undefined,
+      stock: product.stock || undefined,
     }) || {
       title: 'test',
       description: 'test',
       price: 1000,
       category: ['test'],
-      brand: 'test',
+      brand: 'testerino',
+      stock: 1
     },
   });
 

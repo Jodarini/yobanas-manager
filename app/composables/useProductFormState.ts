@@ -8,7 +8,6 @@ export function useProductFormState(
   product?: Product
 ) {
   const formSchema = toTypedSchema(updateProductSchema2);
-  console.log({ product });
 
   const {
     handleSubmit,

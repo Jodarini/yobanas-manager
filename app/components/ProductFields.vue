@@ -2,19 +2,12 @@
   import { cn } from '@/lib/utils';
   import type { ComponentFieldBindingObject } from 'vee-validate';
 
-  const emit = defineEmits(['createVariant']);
-
-  function handleAddVariant() {
-    emit('createVariant');
-  }
-
   const props = defineProps<{
     form:
       | ReturnType<typeof useProductWithVariants>
       | ReturnType<typeof useProductFormState>;
     mode: 'ADD' | 'EDIT';
     isDeleted?: boolean;
-    hasVariants?: boolean;
   }>();
 
   const brandOpen = defineModel<boolean>('brandOpen');
@@ -36,6 +29,8 @@
 
     componentField['onUpdate:modelValue']!(updatedCategories);
   };
+
+  const { hasVariants } = useProductState();
 </script>
 
 <template>
@@ -288,7 +283,7 @@
           </FormItem>
         </FormField>
 
-        <template v-if="!props.hasVariants">
+        <template v-if="!hasVariants">
           <FormField v-slot="{ componentField }" name="stock">
             <FormItem class="w-full">
               <div class="flex h-4 gap-1">
@@ -310,16 +305,6 @@
 
     <CardFooter>
       <template v-if="props.mode === 'EDIT'">
-        <template v-if="!props.hasVariants">
-          <Button
-            type="button"
-            class="ml-auto"
-            variant="outline"
-            @click="handleAddVariant"
-          >
-            Crear variantes
-          </Button>
-        </template>
         <Button
           type="submit"
           class="ml-auto"

@@ -12,6 +12,7 @@ export function useProductWithVariants(
   categories: string[]
 ) {
   const formSchema = toTypedSchema(insertProductSchema);
+  const { hasVariants, setHasVariants } = useProductState();
 
   const {
     handleSubmit,
@@ -105,12 +106,16 @@ export function useProductWithVariants(
     };
 
     setFieldValue('variants', [...currentVariants, newVariant]);
+    setHasVariants(true);
   };
 
   const removeVariant = (index: number) => {
     const currentVariants = [...(values.variants || [])];
     currentVariants.splice(index, 1);
     setFieldValue('variants', currentVariants);
+    if (currentVariants.length === 0) {
+      setHasVariants(false);
+    }
   };
 
   const onSubmit = handleSubmit(

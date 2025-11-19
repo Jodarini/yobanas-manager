@@ -10,15 +10,9 @@
     props.brands,
     props.categories
   );
-
-  const emit = defineEmits(['createVariant']);
-  function handleAddVariant() {
-    emit('createVariant');
-  }
 </script>
 
 <template>
-  {{ productWithVariantsForm.values }}
   <form @submit.prevent="productWithVariantsForm.onSubmit">
     <div class="mb-2 flex flex-col gap-2 md:flex-row">
       <ProductFields
@@ -33,21 +27,9 @@
         :form="productWithVariantsForm"
         mode="ADD"
       />
-      <template v-if="hasVariants">
-        <VariantFields :form="productWithVariantsForm" mode="ADD" />
-      </template>
+      <VariantFields :form="productWithVariantsForm" mode="ADD" />
     </div>
 
-    <template v-if="!hasVariants">
-      <Button
-        type="button"
-        class="ml-auto"
-        variant="outline"
-        @click="handleAddVariant"
-      >
-        Crear variantes
-      </Button>
-    </template>
     <Button
       type="submit"
       class="ml-auto"

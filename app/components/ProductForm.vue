@@ -31,14 +31,14 @@
     productSKU: props.initialValues?.sku,
   } as UpdateVariant;
 
-  const productHasVariants = ref(false);
+  const hasVariants = ref(false);
 
   if (props.initialValues?.variants) {
-    productHasVariants.value = props.initialValues?.variants.length > 0;
+    hasVariants.value = props.initialValues?.variants.length > 0;
   }
 
   function handleCreateVariant() {
-    productHasVariants.value = true;
+    hasVariants.value = true;
   }
 </script>
 
@@ -49,15 +49,10 @@
         :brands="props.brands"
         :categories="props.categories"
         :initial-values="product"
-        :has-variants="productHasVariants"
+        :has-variants="hasVariants"
         @create-variant="handleCreateVariant"
       />
-      <template v-if="props.initialValues?.variants && productHasVariants">
-        <UpdateVariantsForm
-          :data="variants"
-          :is-deleted="!!product.deleted_at"
-        />
-      </template>
+      <UpdateVariantsForm :data="variants" :is-deleted="!!product.deleted_at" />
     </div>
   </div>
 
@@ -65,7 +60,7 @@
     <CreateProductWithVariantsForm
       :brands="props.brands"
       :categories="props.categories"
-      :has-variants="productHasVariants"
+      :has-variants="hasVariants"
       @create-variant="handleCreateVariant"
     />
   </div>

@@ -260,7 +260,6 @@
                     <h3 class="mb-2 text-2xl font-bold">
                       {{ selectedProduct.title }}
                     </h3>
-                    {{ selectedProduct }}
                     <template v-if="selectedProduct.stock">
                       <Button type="button" @click="quickAdd(selectedProduct)">
                         Agregar
@@ -418,7 +417,6 @@
         </CardHeader>
         <CardContent class="flex-1 overflow-y-auto">
           <div class="flex flex-col gap-2">
-            {{ cartStore.cart }}
             <div
               v-for="prod in cartStore.cart"
               :key="prod.variant?.id || prod.id"

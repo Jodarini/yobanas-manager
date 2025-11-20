@@ -9,6 +9,9 @@
     props.brands,
     props.categories
   );
+
+  const { hasVariants, setHasVariants } = useProductState();
+  setHasVariants(false);
 </script>
 
 <template>

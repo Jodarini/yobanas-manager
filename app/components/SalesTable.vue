@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { formatCurrency } from '~/lib/utils';
+  import { formatCurrency, formatDate } from '~/lib/utils';
   import type {
     ColumnDef,
     ColumnFiltersState,
@@ -91,11 +91,7 @@
       accessorKey: 'created_at',
       filterFn: (row, columnId, filterValue) => {
         const date = new Date(row.getValue(columnId));
-        const formatted = new Intl.DateTimeFormat('es-CO', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }).format(date);
+        const formatted = formatDate(date);
         return formatted.toLowerCase().includes(filterValue.toLowerCase());
       },
       header: ({ column }) => {
@@ -110,11 +106,7 @@
       },
       cell: ({ row }) => {
         const date = new Date(row.getValue('created_at'));
-        const formatted = new Intl.DateTimeFormat('es-CO', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }).format(date);
+        const formatted = formatDate(date);
         return h('div', { class: 'lowercase' }, formatted);
       },
     },
@@ -187,7 +179,12 @@
     // },
   ];
 
-  const sorting = ref<SortingState>([]);
+  const sorting = ref<SortingState>([
+    {
+      id: 'created_at',
+      desc: true, // newest first (descending)
+    },
+  ]);
   const columnFilters = ref<ColumnFiltersState>([]);
   const columnVisibility = ref<VisibilityState>({});
   const rowSelection = ref({});

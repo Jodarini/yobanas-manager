@@ -1,13 +1,10 @@
 <script setup lang="ts">
-  import { formatCurrency } from '~/lib/utils';
+  import { formatCurrency, formatDate } from '~/lib/utils';
   const route = useRoute();
   const { data, error } = await useFetch(`/api/sale/${route.params.id}`);
 </script>
 
 <template>
-  <pre>
-    {{ data }}
-  </pre>
   <div>
     <!-- <h1>Venta #{{ data.id }}</h1> -->
     <div v-if="error">
@@ -77,7 +74,7 @@
             <div>
               <label class="text-muted-foreground">Fecha</label>
               <p class="">
-                {{ data[0]?.sales.created_at }}
+                {{ formatDate(data[0]?.sales.created_at) }}
               </p>
             </div>
             <Separator />

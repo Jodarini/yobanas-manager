@@ -34,11 +34,22 @@ export const productsTable = pgTable(
     thumbnail: text('thumbnail'),
     brand: text('brand').notNull(),
     category: text('category').array().notNull(),
-    stock: integer('stock'),
+    stock: integer('stock').default(0),
+    sold_count: integer('sold_count').notNull().default(0),
+    last_sold_at: timestamp('last_sold_at', { withTimezone: true }),
     deleted_at: timestamp('deleted_at', { withTimezone: true }),
+    created_at: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updated_at: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
   },
   (table) => [
     index('idx_products_user_id').on(table.user_id),
+    index('idx_products_created_at').on(table.created_at),
+    index('idx_products_user_created').on(table.user_id, table.created_at),
     uniqueIndex('uq_products_user_sku').on(table.user_id, table.sku),
     pgPolicy('users_select_own_products', {
       as: 'permissive',

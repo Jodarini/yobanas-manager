@@ -5,7 +5,6 @@ import { NuxtLink } from '#components';
 import DataTableDropDown from './DataTableDropDown.vue';
 
 export const columns: ColumnDef<Product>[] = [
-
   // {
   //   accessorKey: 'sku',
   //   header: () => h('div', { class: 'text-left' }, 'SKU'),
@@ -19,6 +18,12 @@ export const columns: ColumnDef<Product>[] = [
   //       () => String(row.getValue('sku'))
   //     ),
   // },
+  {
+    accessorKey: 'created_at',
+    header: 'Date Sort',
+    enableHiding: true,
+    // This column will be hidden by default
+  },
   {
     accessorKey: 'title',
     header: () => h('div', { class: 'text-left' }, 'Nombre'),

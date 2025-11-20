@@ -14,26 +14,31 @@ export const useCartStore = defineStore('cart', () => {
   const cart = ref<CartProduct[]>([]);
 
   function addItem(item: CartProduct) {
-    const productIsAlreadyInCart = cart.value.find(
+    const existingProduct = cart.value.find(
       (product) =>
-        product.variant?.id === item.variant?.id || product.id === item.id
+        (product.variant?.id === item.variant?.id &&
+          product.variant?.id !== undefined) ||
+        (!product.variant && !item.variant && product.id === item.id)
     );
-    if (productIsAlreadyInCart) {
-      if (
-        (item.variant?.stock &&
-          productIsAlreadyInCart.stock + item.stock > item.variant?.stock) ||
-        (item.stock && productIsAlreadyInCart.stock + item.stock > item.stock)
-      ) {
-        item.stock = item.variant?.stock || item.stock;
+
+    if (existingProduct) {
+      const maxStock = item.variant?.stock ?? item.stock;
+      const newTotal = existingProduct.stock + item.stock;
+
+      if (newTotal > maxStock) {
         toast({
           variant: 'destructive',
           title: 'No hay stock suficiente',
+          description: `Solo hay ${maxStock} disponibles`,
         });
+        existingProduct.stock = maxStock;
         return;
       }
-      productIsAlreadyInCart.stock += item.stock;
+
+      existingProduct.stock = newTotal;
       return;
     }
+
     cart.value.unshift(item);
   }
 
@@ -42,10 +47,10 @@ export const useCartStore = defineStore('cart', () => {
       (product) => product.variant?.id === id || product.id === id
     );
     if (product) {
-      product.stock = quantity;
-      if (product.stock > product.variant?.stock) {
-        product.stock = product.variant?.stock;
-      }
+      const maxStock = product.variant?.stock ?? product.stock;
+
+      product.stock = Math.min(quantity, maxStock);
+
       if (product.stock === 0) {
         removeItem(id);
       }
@@ -54,7 +59,7 @@ export const useCartStore = defineStore('cart', () => {
 
   function removeItem(id: number) {
     cart.value = cart.value.filter(
-      (product) => product.variant?.id !== id || product.id !== id
+      (product) => product.variant?.id !== id && product.id !== id
     );
   }
 

@@ -31,16 +31,39 @@
   });
 
   watch(selectedProductId, async () => {
+    if (!selectedProduct.value) return;
+
+    // Check if product has variants (stock is null) or direct stock
+    if (
+      selectedProduct.value.stock !== null &&
+      selectedProduct.value.stock !== undefined
+    ) {
+      // Product without variants - clear variants state
+      variants.value = null;
+      return;
+    }
+
+    // Product has variants - fetch them
     await execute();
   });
 
   async function onSubmit() {
     isSubmitting.value = true;
 
-    const items = cartStore.cart.map((p) => ({
-      variantId: p.variant.id,
-      quantity: p.stock,
-    }));
+    const items = cartStore.cart.map((p) => {
+      if (p.variant?.id) {
+        return {
+          variantId: p.variant.id,
+          quantity: p.stock,
+        };
+      } else {
+        return {
+          productId: p.id,
+          quantity: p.stock,
+        };
+      }
+    });
+
     const res = await cartStore.checkout(items);
 
     isSubmitting.value = false;
@@ -69,12 +92,12 @@
       price: product.price,
       variant: variant || undefined,
       stock: quantity,
+      maxStock: variant?.stock || product.stock,
     });
-    if (variant) {
-      variantStockToAdd[variant.id] = 1;
-    } else {
-      variantStockToAdd[product.id] = 1;
-    }
+
+    // Reset quantity input
+    const key = variant ? variant.id : `product-${product.id}`;
+    variantStockToAdd[key] = 1;
   }
 
   const searchOpen = ref(false);
@@ -136,7 +159,7 @@
     let qty = 0;
     if (variant) {
       qty = variantStockToAdd[variant.id] ?? 1;
-      handleAddToCart(product, variant, qty);
+      handleAddToCart(product, qty, variant);
     } else {
       qty = variantStockToAdd[product.id] ?? 1;
       handleAddToCart(product, qty);
@@ -172,15 +195,12 @@
     cartStore.emptyCart();
   }
 
-  const remainingStock = computed(() => {
-    return (variant: ProductVariant) => {
-      if (!variant) return 0;
-      const cartItem = cartStore.cart.find((p) => p.variant.id === variant.id);
-      const stockInCart = cartItem?.stock ?? 0;
-      const remaining = variant.stock - stockInCart;
-      return remaining;
-    };
-  });
+  function remainingStock(variant: ProductVariant) {
+    if (!variant) return 0;
+    const cartItem = cartStore.cart.find((p) => p.variant?.id === variant.id);
+    const stockInCart = cartItem?.stock ?? 0;
+    return variant.stock - stockInCart;
+  }
 </script>
 
 <template>
@@ -401,7 +421,7 @@
             {{ cartStore.cart }}
             <div
               v-for="prod in cartStore.cart"
-              :key="prod.id"
+              :key="prod.variant?.id || prod.id"
               class="border-border overflow-y-auto border-b p-3"
             >
               <div
@@ -419,10 +439,13 @@
                     <NumberField
                       :default-value="prod.stock"
                       :min="1"
-                      :max="prod.variant?.stock"
+                      :max="prod.variant?.stock || prod.maxStock"
                       @update:model-value="
                         (val) =>
-                          cartStore.handleQuantityChange(prod.variant.id, val)
+                          cartStore.handleQuantityChange(
+                            prod.variant?.id || prod.id,
+                            val
+                          )
                       "
                     >
                       <Label hidden>Cantidad</Label>
@@ -447,7 +470,7 @@
                   <Button
                     type="button"
                     variant="destructive"
-                    @click="cartStore.removeItem(prod.variant.id)"
+                    @click="cartStore.removeItem(prod.variant?.id || prod.id)"
                   >
                     <TrashIcon class="h-4 w-4" />
                   </Button>

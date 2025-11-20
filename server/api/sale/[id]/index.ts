@@ -1,6 +1,6 @@
 import { serverSupabaseClient } from '#supabase/server';
 import { productsTable, productVariants, saleItems, sales } from '~~/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
         )
         .leftJoin(
           productsTable,
-          eq(productsTable.id, productVariants.productId)
+          sql`${productsTable.id} = COALESCE(${productVariants.productId}, ${saleItems.product_id})`
         )
         .where(eq(sales.id, id));
 

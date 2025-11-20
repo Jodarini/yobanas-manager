@@ -5,6 +5,9 @@
 </script>
 
 <template>
+  <pre>
+    {{ data }}
+  </pre>
   <div>
     <!-- <h1>Venta #{{ data.id }}</h1> -->
     <div v-if="error">

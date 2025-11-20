@@ -1,4 +1,4 @@
-import type { ProductVariant, checkoutItem } from '~~/db/schema';
+import type { Product, ProductVariant, checkoutItem } from '~~/db/schema';
 import { toast } from '~/components/ui/toast';
 
 export const useCartStore = defineStore('cart', () => {
@@ -6,7 +6,8 @@ export const useCartStore = defineStore('cart', () => {
     title: string;
     id: number;
     price: number;
-    variant: ProductVariant;
+    variant?: ProductVariant;
+    product?: Product;
     stock: number;
   };
 
@@ -14,11 +15,16 @@ export const useCartStore = defineStore('cart', () => {
 
   function addItem(item: CartProduct) {
     const productIsAlreadyInCart = cart.value.find(
-      (product) => product.variant.id === item.variant.id
+      (product) =>
+        product.variant?.id === item.variant?.id || product.id === item.id
     );
     if (productIsAlreadyInCart) {
-      if (productIsAlreadyInCart.stock + item.stock > item.variant.stock) {
-        item.stock = item.variant.stock;
+      if (
+        (item.variant?.stock &&
+          productIsAlreadyInCart.stock + item.stock > item.variant?.stock) ||
+        (item.stock && productIsAlreadyInCart.stock + item.stock > item.stock)
+      ) {
+        item.stock = item.variant?.stock || item.stock;
         toast({
           variant: 'destructive',
           title: 'No hay stock suficiente',
@@ -32,11 +38,13 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   function handleQuantityChange(id: number, quantity: number) {
-    const product = cart.value.find((product) => product.variant.id === id);
+    const product = cart.value.find(
+      (product) => product.variant?.id === id || product.id === id
+    );
     if (product) {
       product.stock = quantity;
-      if (product.stock > product.variant.stock) {
-        product.stock = product.variant.stock;
+      if (product.stock > product.variant?.stock) {
+        product.stock = product.variant?.stock;
       }
       if (product.stock === 0) {
         removeItem(id);
@@ -45,7 +53,9 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   function removeItem(id: number) {
-    cart.value = cart.value.filter((product) => product.variant.id !== id);
+    cart.value = cart.value.filter(
+      (product) => product.variant?.id !== id || product.id !== id
+    );
   }
 
   function emptyCart() {

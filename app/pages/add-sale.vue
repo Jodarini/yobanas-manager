@@ -57,8 +57,8 @@
 
   function handleAddToCart(
     product: Product,
-    variant: ProductVariant,
-    quantity: number
+    quantity: number,
+    variant?: ProductVariant
   ) {
     if (quantity === undefined) {
       quantity = 1;
@@ -67,10 +67,14 @@
       title: product.title,
       id: product.id,
       price: product.price,
-      variant: variant,
+      variant: variant || undefined,
       stock: quantity,
     });
-    variantStockToAdd[variant.id] = 1;
+    if (variant) {
+      variantStockToAdd[variant.id] = 1;
+    } else {
+      variantStockToAdd[product.id] = 1;
+    }
   }
 
   const searchOpen = ref(false);
@@ -128,13 +132,19 @@
   });
 
   // keep focus after add and show minimal feedback
-  function quickAdd(product: Product, variant: ProductVariant) {
-    const qty = variantStockToAdd[variant.id] ?? 1;
-    handleAddToCart(product, variant, qty);
+  function quickAdd(product: Product, variant?: ProductVariant) {
+    let qty = 0;
+    if (variant) {
+      qty = variantStockToAdd[variant.id] ?? 1;
+      handleAddToCart(product, variant, qty);
+    } else {
+      qty = variantStockToAdd[product.id] ?? 1;
+      handleAddToCart(product, qty);
+    }
 
     toast({
       title: 'Agregado',
-      description: `${product.title} • ${variant.size} • ${variant.color} x${qty}`,
+      // description: `${product.title} • ${variant.size} • ${variant.color} x${qty}`,
       action: h(
         ToastAction,
         { altText: 'Ver carrito', asChild: true },
@@ -230,7 +240,14 @@
                     <h3 class="mb-2 text-2xl font-bold">
                       {{ selectedProduct.title }}
                     </h3>
+                    {{ selectedProduct }}
+                    <template v-if="selectedProduct.stock">
+                      <Button type="button" @click="quickAdd(selectedProduct)">
+                        Agregar
+                      </Button>
+                    </template>
                     <div
+                      v-else
                       class="flex items-center gap-2 overflow-x-auto px-2 pb-2"
                     >
                       <!-- Size chips -->
@@ -311,7 +328,7 @@
                             Stock: {{ variant.stock }} En carrito:
                             {{
                               cartStore.cart.find(
-                                (p) => p.variant.id === variant.id
+                                (p) => p.variant?.id === variant.id
                               )?.stock || 0
                             }}
                           </p>
@@ -381,6 +398,7 @@
         </CardHeader>
         <CardContent class="flex-1 overflow-y-auto">
           <div class="flex flex-col gap-2">
+            {{ cartStore.cart }}
             <div
               v-for="prod in cartStore.cart"
               :key="prod.id"
@@ -392,7 +410,7 @@
                 <div class="min-w-0">
                   <p class="truncate text-sm font-semibold">
                     {{ prod.title }}
-                    <span class="text-muted-foreground">
+                    <span v-if="prod.variant" class="text-muted-foreground">
                       • {{ prod.variant.size }} • {{ prod.variant.color }}
                     </span>
                   </p>
@@ -401,7 +419,7 @@
                     <NumberField
                       :default-value="prod.stock"
                       :min="1"
-                      :max="prod.variant.stock"
+                      :max="prod.variant?.stock"
                       @update:model-value="
                         (val) =>
                           cartStore.handleQuantityChange(prod.variant.id, val)

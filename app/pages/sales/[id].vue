@@ -31,9 +31,12 @@
               <TableRow v-for="sale in data" :key="sale.products?.id">
                 <TableCell class="font-medium">
                   {{ sale.products?.title }}
-                  <div class="text-muted-foreground flex flex-row">
-                    {{ sale.product_variants?.size }} •
-                    {{ sale.product_variants?.color }}
+                  <div
+                    v-if="sale.product_variants"
+                    class="text-muted-foreground flex flex-row"
+                  >
+                    {{ sale.product_variants.size }} •
+                    {{ sale.product_variants.color }}
                   </div>
                 </TableCell>
                 <TableCell>{{ sale.sale_items?.quantity }}</TableCell>

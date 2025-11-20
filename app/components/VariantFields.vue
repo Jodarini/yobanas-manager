@@ -9,7 +9,6 @@
   }>();
 
   const { hasVariants, setHasVariants } = useProductState();
-  console.log(props.form.values.variants.length);
   if (props.form.values.variants?.length === 0) {
     setHasVariants(false);
   }

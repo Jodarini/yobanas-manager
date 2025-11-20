@@ -4,7 +4,7 @@ import { normalizeString } from '~/lib/utils';
 import { updateVariantSchema, type UpdateVariant } from '~~/db/schema';
 
 export function useVariantsFormState(data?: UpdateVariant) {
-  const { hasVariants, setHasVariants } = useProductState();
+  const { setHasVariants } = useProductState();
   const formSchema = toTypedSchema(updateVariantSchema);
 
   const form = useForm({
@@ -19,7 +19,7 @@ export function useVariantsFormState(data?: UpdateVariant) {
     setHasVariants(true);
   }
 
-  const { remove, push, fields } = useFieldArray('variants');
+  const { remove, push, fields, update } = useFieldArray('variants');
 
   const checkIfVariantExists = () => {
     const currentVariants = form.values.variants || [];
@@ -69,5 +69,6 @@ export function useVariantsFormState(data?: UpdateVariant) {
     removeVariant,
     fields,
     checkIfVariantExists,
+    update,
   };
 }

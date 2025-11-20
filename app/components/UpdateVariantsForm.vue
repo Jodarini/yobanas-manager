@@ -20,18 +20,37 @@
         });
         return;
       }
-      await $fetch(`/api/product/${route.params.id}/updateVariant`, {
-        method: 'put',
-        body: {
-          variants: values.variants,
-          productSKU: props.data?.productSKU,
-        },
+      const result = await $fetch(
+        `/api/product/${route.params.id}/updateVariant`,
+        {
+          method: 'put',
+          body: {
+            variants: values.variants,
+            productSKU: props.data?.productSKU,
+          },
+        }
+      );
+
+      let createdIndex = 0;
+      form.values.variants?.forEach((variant, index) => {
+        if (variant.id) {
+          return;
+        }
+        form.setFieldValue(
+          `variants.${index}.id`,
+          result.data.created[createdIndex]?.variantId
+        );
+        createdIndex++;
       });
 
       toast({
         title: 'Variante actualizada exitosamente',
       });
-      form.resetForm({ values }, { force: true });
+      // refreshNuxtData('products');
+      // form.resetForm({ values }, { force: true });
+      form.resetForm({
+        values: form.values,
+      });
     },
     ({ errors }) => {
       toast({

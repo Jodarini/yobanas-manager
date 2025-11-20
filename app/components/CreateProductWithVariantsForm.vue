@@ -2,7 +2,6 @@
   const props = defineProps<{
     brands: string[];
     categories: string[];
-    hasVariants: boolean;
   }>();
 
   const productWithVariantsForm = useProductWithVariants(

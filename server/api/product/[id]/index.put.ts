@@ -18,22 +18,18 @@ export default defineEventHandler(async (event) => {
     const product = updateProductSchema2.parse(body);
 
     return await useAuthDB(user, async (tx) => {
-
-      // Only update product info, never touch variants
       const result = await tx
         .update(productsTable)
         .set({
           title: product.title,
           description: product.description,
-          price: product.price,
+          price: String(product.price),
           category: product.category,
           brand: product.brand,
+          stock: product.stock || null,
         })
         .where(eq(productsTable.id, product.id))
         .returning();
-
-      // Variants are NOT modified in product update
-      // You should handle variant changes in a separate endpoint
 
       return {
         message: 'Producto actualizado',

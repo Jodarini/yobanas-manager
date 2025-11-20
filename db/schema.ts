@@ -173,9 +173,12 @@ export const saleItems = pgTable(
     sale_id: integer('sale_id')
       .notNull()
       .references(() => sales.id, { onDelete: 'cascade' }),
-    product_variant_id: integer('product_variant_id')
-      .notNull()
-      .references(() => productVariants.id, { onDelete: 'restrict' }),
+    product_variant_id: integer('product_variant_id').references(
+      () => productVariants.id,
+      { onDelete: 'restrict' }
+    ),
+    product_id: integer('product_id') // Add this
+      .references(() => productsTable.id, { onDelete: 'restrict' }),
     quantity: integer('quantity').notNull(),
     unit_price: numeric('unit_price', { precision: 12, scale: 2 }).notNull(),
     line_total: numeric('line_total', { precision: 12, scale: 2 }).notNull(),
@@ -188,6 +191,7 @@ export const saleItems = pgTable(
     index('idx_sale_items_sale_id').on(table.sale_id),
     index('idx_sale_items_variant_id').on(table.product_variant_id),
     index('idx_sale_items_user_id').on(table.user_id),
+    index('idx_sale_items_product_id').on(table.product_id),
     pgPolicy('users_select_own_sale_items', {
       as: 'permissive',
       for: 'select',
@@ -290,10 +294,16 @@ export const updateVariantSchema = z.object({
   productSKU: z.string().optional(),
 });
 
-export const checkoutItemSchema = z.object({
-  variantId: z.number().int().positive(),
-  quantity: z.number().int().positive(),
-});
+export const checkoutItemSchema = z
+  .object({
+    variantId: z.number().int().positive().optional(),
+    productId: z.number().int().positive().optional(),
+    quantity: z.number().int().positive(),
+  })
+  .refine((data) => data.variantId || data.productId, {
+    message: 'Either variantId or productId must be provided',
+    path: ['variantId'],
+  });
 
 export const checkoutPayloadSchema = z.object({
   items: z.array(checkoutItemSchema).min(1),

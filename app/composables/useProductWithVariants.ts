@@ -26,15 +26,15 @@ export function useProductWithVariants(
     errors,
   } = useForm({
     validationSchema: formSchema,
-    initialValues: {
-      title: 'test',
-      description: 'test',
-      price: 1000,
-      category: ['test'],
-      brand: 'test',
-      stock: 1,
-      variants: undefined,
-    },
+    // initialValues: {
+    //   title: 'test',
+    //   description: 'test',
+    //   price: 1000,
+    //   category: ['test'],
+    //   brand: 'test',
+    //   stock: 1,
+    //   variants: undefined,
+    // },
   });
 
   const brandOpen = ref(false);

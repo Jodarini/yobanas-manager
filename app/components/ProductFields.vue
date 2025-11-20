@@ -9,6 +9,7 @@
     mode: 'ADD' | 'EDIT';
     isDeleted?: boolean;
   }>();
+  console.log(props.form.values);
 
   const brandOpen = defineModel<boolean>('brandOpen');
   const categoryOpen = defineModel<boolean>('categoryOpen');

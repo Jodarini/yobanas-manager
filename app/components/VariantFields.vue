@@ -8,7 +8,11 @@
     isDeleted?: boolean;
   }>();
 
-  const { hasVariants } = useProductState();
+  const { hasVariants, setHasVariants } = useProductState();
+  console.log(props.form.values.variants.length);
+  if (props.form.values.variants?.length === 0) {
+    setHasVariants(false);
+  }
 </script>
 
 <template>
@@ -29,9 +33,11 @@
 
     <CardContent>
       <template v-if="!hasVariants">
-        <span class="text-muted-foreground w-full text-center">
-          Este producto no tiene variantes
-        </span>
+        <div class="w-full text-center">
+          <span class="text-muted-foreground w-full text-center">
+            Este producto no tiene variantes
+          </span>
+        </div>
       </template>
       <ItemGroup v-else>
         <template
@@ -158,7 +164,7 @@
     </CardContent>
 
     <CardFooter>
-      <template v-if="props.mode === 'EDIT'">
+      <template v-if="props.mode === 'EDIT' && hasVariants">
         <Button
           type="submit"
           class="ml-auto"

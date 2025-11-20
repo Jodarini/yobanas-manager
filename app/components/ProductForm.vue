@@ -30,16 +30,6 @@
     variants: props.initialValues?.variants || [],
     productSKU: props.initialValues?.sku,
   } as UpdateVariant;
-
-  const hasVariants = ref(false);
-
-  if (props.initialValues?.variants) {
-    hasVariants.value = props.initialValues?.variants.length > 0;
-  }
-
-  function handleCreateVariant() {
-    hasVariants.value = true;
-  }
 </script>
 
 <template>
@@ -49,8 +39,6 @@
         :brands="props.brands"
         :categories="props.categories"
         :initial-values="product"
-        :has-variants="hasVariants"
-        @create-variant="handleCreateVariant"
       />
       <UpdateVariantsForm :data="variants" :is-deleted="!!product.deleted_at" />
     </div>
@@ -60,8 +48,6 @@
     <CreateProductWithVariantsForm
       :brands="props.brands"
       :categories="props.categories"
-      :has-variants="hasVariants"
-      @create-variant="handleCreateVariant"
     />
   </div>
 </template>

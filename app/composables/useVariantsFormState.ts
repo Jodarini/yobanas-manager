@@ -10,17 +10,14 @@ export function useVariantsFormState(data?: UpdateVariant) {
   const form = useForm({
     validationSchema: formSchema,
     initialValues: {
-      variants: data?.variants || [
-        {
-          id: undefined,
-          color: 'test',
-          size: 'test',
-          stock: 1,
-        },
-      ],
+      variants: data?.variants || undefined,
       productSKU: '',
     },
   });
+
+  if (data?.variants?.length > 0) {
+    setHasVariants(true);
+  }
 
   const { remove, push, fields } = useFieldArray('variants');
 

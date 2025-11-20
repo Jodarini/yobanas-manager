@@ -6,9 +6,7 @@
     brands: string[];
     categories: string[];
     initialValues?: Product;
-    hasVariants: boolean;
   }>();
-  console.log({ props });
 
   const form = useProductFormState(
     props.brands,
@@ -43,8 +41,6 @@
       console.error(errors);
     }
   );
-
-  const emit = defineEmits(['createVariant']);
 </script>
 
 <template>
@@ -56,9 +52,7 @@
       v-model:category-search-term="form.categorySearchTerm.value"
       :form
       :is-deleted="!!initialValues?.deleted_at"
-      :has-variants="props.hasVariants"
       mode="EDIT"
-      @create-variant="emit('createVariant')"
     />
   </form>
 </template>

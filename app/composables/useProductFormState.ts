@@ -38,6 +38,12 @@ export function useProductFormState(
     },
   });
 
+  // const variantForm = useVariantsFormState();
+  // // console.log(variantForm.values.variants);
+  // if (variantForm.values.variants) {
+  //   productState.setHasVariants(true);
+  // }
+
   const brandOpen = ref(false);
   const brandSearchTerm = ref('');
   const categoryOpen = ref(false);

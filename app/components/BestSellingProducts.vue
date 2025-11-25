@@ -25,23 +25,25 @@
       <CardTitle>Más vendidos</CardTitle>
     </CardHeader>
     <CardContent>
-      <div
-        v-for="(item, index) in newArray.slice(0, 5)"
-        :key="index"
-        class="flex flex-row justify-between"
-      >
-        <div class="flex flex-col">
-          <div class="font-bold">{{ item.products?.title }}</div>
-          <div class="text-muted-foreground">
-            {{ item.sale_items.quantity }} unidades vendidas
+      <div class="flex flex-col gap-2">
+        <div
+          v-for="(item, index) in newArray.slice(0, 5)"
+          :key="index"
+          class="flex flex-row justify-between"
+        >
+          <div class="flex flex-col">
+            <div class="font-bold">{{ item.products?.title }}</div>
+            <div class="text-muted-foreground">
+              {{ item.sale_items.quantity }} unidades vendidas
+            </div>
           </div>
-        </div>
-        <div class="font-extrabold">
-          {{
-            formatCurrency(
-              item.sale_items.quantity * Number(item.sale_items.unit_price)
-            )
-          }}
+          <div class="font-extrabold">
+            {{
+              formatCurrency(
+                item.sale_items.quantity * Number(item.sale_items.unit_price)
+              )
+            }}
+          </div>
         </div>
       </div>
     </CardContent>

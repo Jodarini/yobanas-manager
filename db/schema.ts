@@ -36,15 +36,18 @@ export const productsTable = pgTable(
     category: text('category').array().notNull(),
     stock: integer('stock').default(0),
     sold_count: integer('sold_count').notNull().default(0),
-    last_sold_at: timestamp('last_sold_at', { withTimezone: true }),
-    deleted_at: timestamp('deleted_at', { withTimezone: true }),
-    created_at: timestamp('created_at', { withTimezone: true })
+    last_sold_at: timestamp('last_sold_at', {
+      withTimezone: true,
+      mode: 'string',
+    }),
+    deleted_at: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
+    created_at: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .notNull()
       .defaultNow(),
-    updated_at: timestamp('updated_at', { withTimezone: true })
+    updated_at: timestamp('updated_at', { withTimezone: true, mode: 'string' })
       .notNull()
       .defaultNow()
-      .$onUpdate(() => new Date()),
+      .$onUpdate(() => sql`now()`),
   },
   (table) => [
     index('idx_products_user_id').on(table.user_id),
@@ -92,8 +95,11 @@ export const productVariants = pgTable(
     color: varchar('color', { length: 50 }).notNull(),
     stock: integer('stock').notNull().default(0),
     sold_count: integer('sold_count').notNull().default(0),
-    last_sold_at: timestamp('last_sold_at', { withTimezone: true }),
-    deleted_at: timestamp('deleted_at', { withTimezone: true }),
+    last_sold_at: timestamp('last_sold_at', {
+      withTimezone: true,
+      mode: 'string',
+    }),
+    deleted_at: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
   },
   (table) => [
     index('idx_variants_product_id').on(table.productId),
@@ -137,10 +143,10 @@ export const sales = pgTable(
       .notNull()
       .default('0'),
     note: text('note'),
-    created_at: timestamp('created_at', { withTimezone: true })
+    created_at: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .notNull()
       .defaultNow(),
-    deleted_at: timestamp('deleted_at', { withTimezone: true }),
+    deleted_at: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
   },
   (table) => [
     index('idx_sales_user_id').on(table.user_id),
@@ -188,15 +194,16 @@ export const saleItems = pgTable(
       () => productVariants.id,
       { onDelete: 'restrict' }
     ),
-    product_id: integer('product_id') // Add this
-      .references(() => productsTable.id, { onDelete: 'restrict' }),
+    product_id: integer('product_id').references(() => productsTable.id, {
+      onDelete: 'restrict',
+    }),
     quantity: integer('quantity').notNull(),
     unit_price: numeric('unit_price', { precision: 12, scale: 2 }).notNull(),
     line_total: numeric('line_total', { precision: 12, scale: 2 }).notNull(),
-    created_at: timestamp('created_at', { withTimezone: true })
+    created_at: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .notNull()
       .defaultNow(),
-    deleted_at: timestamp('deleted_at', { withTimezone: true }),
+    deleted_at: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
   },
   (table) => [
     index('idx_sale_items_sale_id').on(table.sale_id),
@@ -230,6 +237,9 @@ export const saleItems = pgTable(
     }),
   ]
 );
+
+export const selectSale_items_Schema = createSelectSchema(saleItems);
+export type Sale_Item = z.infer<typeof selectSale_items_Schema>;
 
 export const insertProductVariantSchema = z.object({
   size: z.string().min(1, 'es obligatoria').max(50),
@@ -296,7 +306,7 @@ export const updateProductSchema2 = z.object({
 export const updateVariantSchema = z.object({
   variants: z.array(
     z.object({
-      id: z.number().int().positive().optional(), // Remove the union/transform
+      id: z.number().int().positive().optional(),
       size: z.string().min(1, 'Tamaño es requerido').max(50),
       color: z.string().min(1, 'Color es requerido').max(50),
       stock: z.coerce.number().min(0, 'Stock no puede ser negativo'),

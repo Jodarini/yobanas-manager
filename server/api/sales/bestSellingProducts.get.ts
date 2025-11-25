@@ -1,6 +1,5 @@
 import { serverSupabaseClient } from '#supabase/server';
-import { productVariants, saleItems, sales, productsTable } from '~~/db/schema';
-import { eq, sql } from 'drizzle-orm';
+import { saleItems, sales } from '~~/db/schema';
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -15,17 +14,7 @@ export default defineEventHandler(async (event) => {
   try {
     return await useAuthDB(user, async (tx) => {
       const saleData = await tx.select().from(sales);
-      const sale_items = await tx
-        .select()
-        .from(saleItems)
-        .leftJoin(
-          productVariants,
-          eq(productVariants.id, saleItems.product_variant_id)
-        )
-        .leftJoin(
-          productsTable,
-          sql`${productsTable.id} = COALESCE(${productVariants.productId}, ${saleItems.product_id})`
-        );
+      const sale_items = await tx.select().from(saleItems);
 
       return {
         sales: saleData,

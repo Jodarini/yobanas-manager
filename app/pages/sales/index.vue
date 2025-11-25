@@ -50,6 +50,11 @@
         </CardFooter>
       </Card>
     </div>
-    <SalesTable :data="salesData.sales" />
+    <template v-if="salesData">
+      <BestSellingProducts :data="salesData" class="my-2" />
+    </template>
+    <template v-if="salesData">
+      <SalesTable :data="salesData.sales" />
+    </template>
   </div>
 </template>

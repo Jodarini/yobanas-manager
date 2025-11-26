@@ -8,7 +8,7 @@ import {
   productsTable,
 } from '~~/db/schema';
 import { useAuthDB } from '~~/server/utils/db';
-import { eq, inArray, sql, or } from 'drizzle-orm';
+import { eq, inArray, sql } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -31,8 +31,6 @@ export default defineEventHandler(async (event) => {
     }
 
     return await useAuthDB(user, async (tx) => {
-      const now = new Date();
-
       // Separate items by type
       const variantItems = items.filter((i) => i.variantId);
       const productItems = items.filter((i) => i.productId);
@@ -157,7 +155,6 @@ export default defineEventHandler(async (event) => {
           user_id: user.id,
           status: 'paid',
           note: payload.note ?? null,
-          created_at: now,
         })
         .returning({ id: sales.id });
 
@@ -177,7 +174,6 @@ export default defineEventHandler(async (event) => {
         quantity: l.quantity,
         unit_price: l.unitPrice,
         line_total: l.lineTotal,
-        created_at: now,
       }));
 
       await tx.insert(saleItems).values(saleItemsToInsert);
@@ -191,7 +187,6 @@ export default defineEventHandler(async (event) => {
             .set({
               stock: sql`${productVariants.stock} - ${line.quantity}`,
               sold_count: sql`${productVariants.sold_count} + ${line.quantity}`,
-              last_sold_at: now,
             })
             .where(eq(productVariants.id, line.variantId));
         } else if (line.productId) {

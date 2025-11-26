@@ -15,10 +15,12 @@
 <template>
   <div>
     <div class="mb-6">
-      <h1 class="text-2xl">Resumen de ventas</h1>
-      <p class="text-muted-foreground">
-        Supervisa, gestiona y pronostica tus ventas.
-      </p>
+      <div>
+        <h1 class="text-2xl">Resumen de ventas</h1>
+        <p class="text-muted-foreground">
+          Supervisa, gestiona y pronostica tus ventas.
+        </p>
+      </div>
     </div>
     <div class="flex w-full flex-wrap gap-4">
       <Card class="flex w-sm flex-row items-center justify-between">

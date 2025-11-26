@@ -256,11 +256,42 @@
                 <!-- Variants panel -->
                 <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
                   <!-- Sticky product/context bar with quick filters -->
-                  <div v-if="selectedProduct" class="border-border border-b">
-                    <h3 class="mb-2 text-2xl font-bold">
-                      {{ selectedProduct.title }}
-                    </h3>
+                  <div
+                    v-if="selectedProduct"
+                    class="border-border flex flex-col gap-2 border-b md:flex-row md:items-center md:justify-between"
+                  >
+                    <div>
+                      <h3 class="mb-2 text-2xl font-bold">
+                        {{ selectedProduct.title }}
+                      </h3>
+
+                      <template v-if="selectedProduct.stock">
+                        <p class="text-muted-foreground text-xs">
+                          Stock: {{ selectedProduct.stock }} En carrito:
+                          {{
+                            cartStore.cart.find(
+                              (p) => p.id === selectedProduct?.id
+                            )?.stock || 0
+                          }}
+                        </p>
+                      </template>
+                    </div>
                     <template v-if="selectedProduct.stock">
+                      <!-- Quantity -->
+                      <NumberField
+                        v-model="variantStockToAdd[selectedProduct.id]"
+                        :default-value="1"
+                        :min="1"
+                        class="w-full md:w-28"
+                        :max="remainingStock(selectedProduct)"
+                      >
+                        <Label hidden>Cantidad</Label>
+                        <NumberFieldContent>
+                          <NumberFieldDecrement @pointerdown.stop />
+                          <NumberFieldInput />
+                          <NumberFieldIncrement @pointerdown.prevent />
+                        </NumberFieldContent>
+                      </NumberField>
                       <Button type="button" @click="quickAdd(selectedProduct)">
                         Agregar
                       </Button>
@@ -319,7 +350,11 @@
                     Cargando variantes…
                   </div>
                   <div
-                    v-else-if="selectedProduct && !filteredVariants?.length"
+                    v-else-if="
+                      selectedProduct &&
+                      !filteredVariants?.length &&
+                      !selectedProduct.stock
+                    "
                     class="text-muted-foreground p-3 text-sm"
                   >
                     No hay variantes que coincidan con los filtros.

@@ -3,7 +3,7 @@ export const productVariantsData = [
   // Product 1: Camiseta
   {
     product_id: 1,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'S',
     color: 'blanco',
     stock: 25,
@@ -11,7 +11,7 @@ export const productVariantsData = [
   },
   {
     product_id: 1,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'M',
     color: 'blanco',
     stock: 30,
@@ -19,7 +19,7 @@ export const productVariantsData = [
   },
   {
     product_id: 1,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'L',
     color: 'negro',
     stock: 20,
@@ -29,7 +29,7 @@ export const productVariantsData = [
   // Product 2: Jogger
   {
     product_id: 2,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'S',
     color: 'gris',
     stock: 15,
@@ -37,7 +37,7 @@ export const productVariantsData = [
   },
   {
     product_id: 2,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'M',
     color: 'negro',
     stock: 18,
@@ -47,7 +47,7 @@ export const productVariantsData = [
   // Product 3: Rompevientos
   {
     product_id: 3,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'M',
     color: 'azul',
     stock: 12,
@@ -55,7 +55,7 @@ export const productVariantsData = [
   },
   {
     product_id: 3,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'L',
     color: 'verde',
     stock: 10,
@@ -65,7 +65,7 @@ export const productVariantsData = [
   // Product 4: Zapatillas
   {
     product_id: 4,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: '39',
     color: 'blanco',
     stock: 8,
@@ -73,7 +73,7 @@ export const productVariantsData = [
   },
   {
     product_id: 4,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: '41',
     color: 'negro',
     stock: 9,
@@ -83,7 +83,7 @@ export const productVariantsData = [
   // Product 5: Gorra
   {
     product_id: 5,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'U',
     color: 'negro',
     stock: 40,
@@ -91,7 +91,7 @@ export const productVariantsData = [
   },
   {
     product_id: 5,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'U',
     color: 'rojo',
     stock: 25,
@@ -101,7 +101,7 @@ export const productVariantsData = [
   // Product 6: Sudadera
   {
     product_id: 6,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'M',
     color: 'gris',
     stock: 14,
@@ -109,7 +109,7 @@ export const productVariantsData = [
   },
   {
     product_id: 6,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'L',
     color: 'negro',
     stock: 16,
@@ -119,7 +119,7 @@ export const productVariantsData = [
   // Product 7: Camisa de lino
   {
     product_id: 7,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'M',
     color: 'beige',
     stock: 11,
@@ -127,7 +127,7 @@ export const productVariantsData = [
   },
   {
     product_id: 7,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'L',
     color: 'blanco',
     stock: 9,
@@ -137,7 +137,7 @@ export const productVariantsData = [
   // Product 8: Medias
   {
     product_id: 8,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'U',
     color: 'blanco',
     stock: 60,
@@ -145,7 +145,7 @@ export const productVariantsData = [
   },
   {
     product_id: 8,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'U',
     color: 'negro',
     stock: 55,
@@ -155,7 +155,7 @@ export const productVariantsData = [
   // Product 9: Cinturón
   {
     product_id: 9,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: '90',
     color: 'marrón',
     stock: 7,
@@ -163,7 +163,7 @@ export const productVariantsData = [
   },
   {
     product_id: 9,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: '95',
     color: 'negro',
     stock: 6,
@@ -173,7 +173,7 @@ export const productVariantsData = [
   // Product 10: Short
   {
     product_id: 10,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'S',
     color: 'azul',
     stock: 20,
@@ -181,7 +181,7 @@ export const productVariantsData = [
   },
   {
     product_id: 10,
-    user_id: 'e2527069-b454-4db6-b71a-e966548a0640',
+    user_id: 'c3f46731-cbaf-42e0-b623-d94e88e297fb',
     size: 'M',
     color: 'negro',
     stock: 22,

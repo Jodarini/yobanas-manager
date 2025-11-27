@@ -1,12 +1,19 @@
 <script setup lang="ts">
 const filter = ref('mes')
-const { data: salesData } = await useFetch(`/api/sales`, {
-  key: 'sales',
-  query: { filter }
-  // getCachedData(key) {
-  //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
-  // },
-});
+const salesCache = useState<Map<string, any>>('sales-cache', () => new Map())
+
+const { data: salesData } = await useFetch('/api/sales', {
+  key: computed(() => `sales-${filter.value}`),
+  query: { filter },
+  getCachedData(key) {
+    return salesCache.value.get(filter.value)
+  },
+  onResponse({ response }) {
+    if (response._data) {
+      salesCache.value.set(filter.value, response._data)
+    }
+  }
+})
 
 const numSales = computed(() => salesData.value?.sales.length);
 const totalRevenue = computed(() =>
@@ -17,12 +24,13 @@ const totalRevenue = computed(() =>
 <template>
   <div>
     <div class="mb-6">
-      <div>
-        <h1 class="text-2xl">Resumen de ventas</h1>
-        <p class="text-muted-foreground">
-          Supervisa, gestiona y pronostica tus ventas.
-          {{ filter }}
-        </p>
+      <div class="flex flex-row w-full justify-between items-center">
+        <div>
+          <h1 class="text-2xl">Resumen de ventas</h1>
+          <p class="text-muted-foreground">
+            Supervisa, gestiona y pronostica tus ventas.
+          </p>
+        </div>
         <Select :default-value="filter" class="w-full" v-model="filter">
           <SelectTrigger>
             <SelectValue placeholder="Filtra por fechas" />

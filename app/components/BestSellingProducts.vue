@@ -13,12 +13,15 @@ const props = defineProps<{
   };
 }>();
 
-const newArray = props.data.sale_items.toSorted(
-  (a, b) => b.sale_items.quantity - a.sale_items.quantity
+const newArray = computed(() =>
+  props.data.sale_items.toSorted(
+    (a, b) => b.sale_items.quantity - a.sale_items.quantity
+  )
 );
 </script>
 
 <template>
+  <!-- <pre>{{ props.data }}</pre> -->
   <Card>
     <CardHeader>
       <CardTitle>Más vendidos</CardTitle>

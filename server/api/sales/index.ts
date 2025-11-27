@@ -42,6 +42,7 @@ export default defineEventHandler(async (event) => {
           productsTable,
           sql`${productsTable.id} = COALESCE(${productVariants.productId}, ${saleItems.product_id})`
         )
+        .where(sql`${saleItems.created_at} > NOW() - INTERVAL '${sql.raw(interval)}'`);
 
       return {
         sales: saleData,

@@ -2,7 +2,7 @@ import { serverSupabaseClient } from '#supabase/server';
 import { productVariants, saleItems, sales, productsTable } from '~~/db/schema';
 import { eq, sql, gte } from 'drizzle-orm';
 
-type Filter = 'dia' | 'semana' | 'mes' | 'trimestre' | 'año'
+type Filter = 'dia' | 'semana' | 'mes' | 'trimestre' | 'año' | 'todo'
 
 const intervalByFilter: Record<Filter, string> = {
   dia: '1 day',
@@ -10,6 +10,7 @@ const intervalByFilter: Record<Filter, string> = {
   mes: '1 month',
   trimestre: '3 months',
   año: '1 year',
+  todo: ''
 }
 
 export default defineEventHandler(async (event) => {
@@ -21,14 +22,22 @@ export default defineEventHandler(async (event) => {
   if (!user) {
     throw createError({ statusCode: 401, message: 'Unauthorized' });
   }
+
   const period = getQuery(event).filter || '30 days';
   const interval = intervalByFilter[period]
+  const dateFilter = interval
+    ? sql`${sales.created_at} > NOW() - INTERVAL '${sql.raw(interval)}'`
+    : undefined;
+
+  const dateFilterItems = interval
+    ? sql`${saleItems.created_at} > NOW() - INTERVAL '${sql.raw(interval)}'`
+    : undefined;
   try {
     return await useAuthDB(user, async (tx) => {
       const saleData = await tx
         .select()
         .from(sales)
-        .where(sql`${sales.created_at} > NOW() - INTERVAL '${sql.raw(interval)}'`);
+        .where(dateFilter);
 
 
       const sale_items = await tx
@@ -42,7 +51,7 @@ export default defineEventHandler(async (event) => {
           productsTable,
           sql`${productsTable.id} = COALESCE(${productVariants.productId}, ${saleItems.product_id})`
         )
-        .where(sql`${saleItems.created_at} > NOW() - INTERVAL '${sql.raw(interval)}'`);
+        .where(dateFilterItems);
 
       return {
         sales: saleData,

@@ -52,7 +52,7 @@ const totalRevenue = computed(() =>
               Año
             </SelectItem>
             <SelectItem value="todo">
-              Todos
+              Historial completo
             </SelectItem>
           </SelectContent>
         </Select>

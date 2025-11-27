@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineNuxtConfig({
   app: {
     head: {
-      title: "Yobana's Manager", // default fallback
+      title: "StockIt", // default fallback
       htmlAttrs: { lang: 'es' },
       link: [
         {

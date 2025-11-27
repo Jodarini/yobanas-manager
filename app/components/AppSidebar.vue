@@ -1,54 +1,52 @@
 <script setup lang="ts">
-  import {
-    Package,
-    DatabaseIcon,
-    SunIcon,
-    MoonIcon,
-    ShoppingCartIcon,
-    Store,
-  } from 'lucide-vue-next';
+import {
+  Package,
+  DatabaseIcon,
+  SunIcon,
+  MoonIcon,
+  ShoppingCartIcon,
+  Store,
+} from 'lucide-vue-next';
 
-  const { user, signOut, isLoading } = useAuth();
+const { user, signOut, isLoading } = useAuth();
 
-  const route = useRoute();
+const route = useRoute();
 
-  const menuItems = [
-    {
-      title: 'Dashboard',
-      url: '/',
-      icon: DatabaseIcon,
-    },
-    {
-      title: 'Productos',
-      url: '/products',
-      icon: Package,
-    },
-    {
-      title: 'Carrito',
-      url: '/add-sale',
-      icon: ShoppingCartIcon,
-    },
-    {
-      title: 'Ventas',
-      url: '/sales',
-      icon: Store,
-    },
-  ];
+const menuItems = [
+  {
+    title: 'Dashboard',
+    url: '/',
+    icon: DatabaseIcon,
+  },
+  {
+    title: 'Productos',
+    url: '/products',
+    icon: Package,
+  },
+  {
+    title: 'Carrito',
+    url: '/add-sale',
+    icon: ShoppingCartIcon,
+  },
+  {
+    title: 'Ventas',
+    url: '/sales',
+    icon: Store,
+  },
+];
 
-  const isActive = (url: string) => {
-    return route.path === url || route.path.startsWith(url + '/');
-  };
+const isActive = (url: string) => {
+  return route.path === url || route.path.startsWith(url + '/');
+};
 
-  const colorMode = useColorMode();
+const colorMode = useColorMode();
 </script>
 
 <template>
   <Sidebar>
     <SidebarHeader>
       <div class="flex items-center justify-between gap-2 px-4 py-2">
-        <div
-          class="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg"
-        >
+        <div class="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg">
           <Package class="h-4 w-4" />
         </div>
         <div class="flex flex-col">
@@ -59,12 +57,9 @@
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
             <Button variant="outline">
-              <SunIcon
-                class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
-              />
+              <SunIcon class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
               <MoonIcon
-                class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
-              />
+                class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
               <span class="sr-only">Toggle theme</span>
             </Button>
           </DropdownMenuTrigger>
@@ -106,13 +101,7 @@
         <Button v-if="!user" class="min-w-full" as-child variant="outline">
           <NuxtLink to="/login">Iniciar sesión</NuxtLink>
         </Button>
-        <Button
-          v-else
-          :disabled="isLoading"
-          variant="outline"
-          class="flex min-w-full items-center"
-          @click="signOut"
-        >
+        <Button v-else :disabled="isLoading" variant="outline" class="flex min-w-full items-center" @click="signOut">
           <span v-if="isLoading" class="flex items-center">
             <Spinner class="mr-2" />
             Cerrando sesión...
@@ -126,13 +115,9 @@
         <!--   </NuxtLink> -->
         <!-- </Button> -->
         <p class="text-muted-foreground text-xs">
-          © 2025 Yobana's closet
+          © 2025 StockIt
           <br />
-          <NuxtLink
-            to="https://www.jodarini.dev"
-            target="_blank"
-            class="text-accent-foreground"
-          >
+          <NuxtLink to="https://www.jodarini.dev" target="_blank" class="text-accent-foreground">
             by Jodarini.dev
           </NuxtLink>
         </p>

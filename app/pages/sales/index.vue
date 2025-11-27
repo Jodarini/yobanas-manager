@@ -37,7 +37,7 @@ const totalRevenue = computed(() =>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="dia">
-              Hoy
+              Últimas 24 horas
             </SelectItem>
             <SelectItem value="semana">
               Esta semana

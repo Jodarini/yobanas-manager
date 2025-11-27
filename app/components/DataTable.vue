@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="TData, TValue">
+  import { cn, valueUpdater } from '@/lib/utils';
   import type {
     ColumnDef,
     ColumnFiltersState,
@@ -13,8 +14,7 @@
     getPaginationRowModel,
     useVueTable,
   } from '@tanstack/vue-table';
-
-  import { valueUpdater } from '@/lib/utils';
+  import { ArrowUpDown, ChevronDown, CheckIcon } from 'lucide-vue-next';
 
   import {
     TableBody,
@@ -30,6 +30,9 @@
     data: TData[];
   }>();
 
+  const brands = ref<string[]>([
+    ...new Set(props.data.map((product) => product.brand)),
+  ]);
   const sorting = ref<SortingState>([
     {
       id: 'created_at',
@@ -70,16 +73,72 @@
       },
     },
   });
+  const open = ref(false);
+  const value = ref('');
+
+  const selectedBrand = computed(() =>
+    brands.value.find((brand) => brand === value.value)
+  );
+
+  function selectBrand(selectedValue: string) {
+    const filterValue = selectedValue === value.value ? '' : selectedValue;
+    value.value = filterValue;
+
+    table.getColumn('brand')?.setFilterValue(filterValue);
+
+    open.value = false;
+  }
 </script>
 
 <template>
   <div class="p-2">
-    <Input
-      class="max-w-sm"
-      placeholder="Buscar..."
-      :model-value="table.getColumn('title')?.getFilterValue() as string"
-      @update:model-value="table.getColumn('title')?.setFilterValue($event)"
-    />
+    <div class="flex flex-row gap-2">
+      <Input
+        class="max-w-sm"
+        placeholder="Buscar..."
+        :model-value="table.getColumn('title')?.getFilterValue() as string"
+        @update:model-value="table.getColumn('title')?.setFilterValue($event)"
+      />
+      <Popover v-model:open="open">
+        <PopoverTrigger as-child>
+          <Button
+            variant="outline"
+            role="combobox"
+            :aria-expanded="open"
+            class="w-[200px] justify-between"
+          >
+            {{ selectedBrand || 'Selecciona una marca...' }}
+            <ChevronDown class="opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent class="w-[200px] p-0">
+          <Command>
+            <CommandInput class="h-9" placeholder="Busca una marca..." />
+            <CommandList>
+              <CommandEmpty>No se encontraron marcas</CommandEmpty>
+              <CommandGroup>
+                <CommandItem
+                  v-for="brand in brands"
+                  :key="brand"
+                  :value="brand"
+                  @select="(ev) => selectBrand(ev.detail.value as string)"
+                >
+                  {{ brand }}
+                  <CheckIcon
+                    :class="
+                      cn(
+                        'ml-auto',
+                        value === brand ? 'opacity-100' : 'opacity-0'
+                      )
+                    "
+                  />
+                </CommandItem>
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </div>
   </div>
   <Table class="border-0">
     <TableHeader>
@@ -128,7 +187,7 @@
       </template>
     </TableBody>
   </Table>
-  <div class="flex items-center justify-end space-x-2 py-4">
+  <div class="flex items-center justify-end space-x-2 px-2 py-4">
     <Button
       variant="outline"
       size="sm"

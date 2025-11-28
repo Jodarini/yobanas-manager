@@ -4,8 +4,15 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineNuxtConfig({
   app: {
     head: {
-      title: "StockIt", // default fallback
+      title: 'StockIt', // default fallback
       htmlAttrs: { lang: 'es' },
+      script: [
+        {
+          src: 'https://wompijs.wompi.com/libs/js/v1.js',
+          'data-public-key': process.env.NUXT_PUBLIC_WOMPI_PUBLIC,
+          defer: true,
+        },
+      ],
       link: [
         {
           rel: 'icon',
@@ -20,11 +27,13 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2024-04-03',
   runtimeConfig: {
-    databaseUrl: process.env.NUXT_DATABASE_URL,
+    databaseUrl: '', // Will be automatically populated from NUXT_DATABASE_URL
+    wompiPrivateKey: '',
     public: {
-      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
-      supabaseKey: process.env.NUXT_PUBLIC_SUPABASE_KEY,
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
+      supabaseUrl: '', // From NUXT_PUBLIC_SUPABASE_URL
+      supabaseKey: '', // From NUXT_PUBLIC_SUPABASE_KEY
+      siteUrl: '', // From NUXT_PUBLIC_SITE_URL
+      wompiPublic: '', // From NUXT_PUBLIC_WOMPI
     },
   },
   css: ['~/assets/css/tailwind.css'],
@@ -38,7 +47,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxt/eslint',
     '@nuxtjs/supabase',
-    'lucide-nuxt'
+    'lucide-nuxt',
   ],
   image: {
     dir: 'public', // or 'assets/images' if using assets

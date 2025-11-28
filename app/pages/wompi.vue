@@ -97,8 +97,24 @@
     }
 
     console.log('✅ Fuente de pago creada:', psData.value);
-    // Now save psData.value.data.id to your database for this user
     alert(`Payment source created! ID: ${psData.value.id}`);
+    if (psData.value.id) {
+      const { data: saved, error: dbError } = await useFetch(
+        '/api/wompi/payment-sources/save',
+        {
+          method: 'POST',
+          body: {
+            wompiPaymentSourceId: psData.value!.id,
+            type: psData.value!.type,
+            status: psData.value!.status,
+            cardBrand: psData.value!.public_data?.brand,
+            cardLastFour: psData.value!.public_data?.last_four,
+            phoneNumber: psData.value!.public_data?.phone_number,
+          },
+        }
+      );
+      console.log('✅ Saved to database:', saved);
+    }
   };
   const permalink1 =
     'https://wompi.com/assets/downloadble/reglamento-Usuarios-Colombia.pdf';

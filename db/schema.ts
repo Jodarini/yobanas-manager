@@ -238,6 +238,40 @@ export const saleItems = pgTable(
   ]
 );
 
+export const paymentSources = pgTable(
+  'payment_sources',
+  {
+    id: serial('id').primaryKey().notNull(),
+    user_id: uuid('user_id').notNull(),
+    wompi_payment_source_id: integer('wompi_payment_source_id').notNull(),
+    type: text('type').notNull(), // 'CARD', 'NEQUI', 'DAVIPLATA', 'BANCOLOMBIA_TRANSFER'
+    status: text('status').notNull().default('AVAILABLE'), // 'AVAILABLE', 'VOIDED'
+
+    // Optional display info from Wompi's public_data
+    card_brand: text('card_brand'),
+    card_last_four: text('card_last_four'),
+    phone_number: text('phone_number'),
+
+    created_at: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .notNull()
+      .defaultNow(),
+    updated_at: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => sql`now()`),
+  },
+  (table) => [
+    index('idx_payment_sources_user_id').on(table.user_id),
+    uniqueIndex('uq_payment_sources_user_wompi').on(
+      table.user_id,
+      table.wompi_payment_source_id
+    ),
+  ]
+);
+
+export const selectPaymentSourceSchema = createSelectSchema(paymentSources);
+export type PaymentSource = z.infer<typeof selectPaymentSourceSchema>;
+
 export const selectSale_items_Schema = createSelectSchema(saleItems);
 export type Sale_Item = z.infer<typeof selectSale_items_Schema>;
 

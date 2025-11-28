@@ -31,6 +31,8 @@ export const useAuthDB = async <T>(
   const db = useDB();
 
   return db.transaction(async (tx) => {
+    const [authTest] = await tx.execute(sql`SELECT auth.uid() as uid`);
+    console.log('auth.uid() in transaction:', authTest);
     const claims = {
       sub: user.id,
       role: user.role || 'authenticated',
@@ -40,6 +42,10 @@ export const useAuthDB = async <T>(
     const claimsJson = JSON.stringify(claims).replace(/'/g, "''");
     await tx.execute(
       sql.raw(`SET LOCAL "request.jwt.claims" = '${claimsJson}'`)
+    );
+
+    await tx.execute(
+      sql.raw(`SET LOCAL "request.jwt.claim.sub" = '${user.id}'`)
     );
 
     await tx.execute(sql`SET LOCAL ROLE authenticated`);

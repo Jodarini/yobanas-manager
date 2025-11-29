@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineNuxtConfig({
   app: {
     head: {
-      title: 'StockIt', // default fallback
+      title: 'StockIt',
       htmlAttrs: { lang: 'es' },
       script: [
         {
@@ -27,13 +27,14 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2024-04-03',
   runtimeConfig: {
-    databaseUrl: '', // Will be automatically populated from NUXT_DATABASE_URL
+    databaseUrl: '',
     wompiPrivateKey: '',
+    wompiIntegrityKey: '',
     public: {
-      supabaseUrl: '', // From NUXT_PUBLIC_SUPABASE_URL
-      supabaseKey: '', // From NUXT_PUBLIC_SUPABASE_KEY
-      siteUrl: '', // From NUXT_PUBLIC_SITE_URL
-      wompiPublic: '', // From NUXT_PUBLIC_WOMPI
+      supabaseUrl: '',
+      supabaseKey: '',
+      siteUrl: '',
+      wompiPublic: '',
     },
   },
   css: ['~/assets/css/tailwind.css'],
@@ -50,7 +51,7 @@ export default defineNuxtConfig({
     'lucide-nuxt',
   ],
   image: {
-    dir: 'public', // or 'assets/images' if using assets
+    dir: 'public',
   },
   eslint: {},
   colorMode: {

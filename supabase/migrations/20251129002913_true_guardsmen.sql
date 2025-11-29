@@ -1,0 +1,1 @@
+ALTER TABLE "payment_sources" ALTER COLUMN "wompi_payment_source_id" SET DATA TYPE text;

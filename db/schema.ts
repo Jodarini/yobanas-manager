@@ -179,9 +179,6 @@ export const sales = pgTable(
   ]
 );
 
-export const selectSaleSchema = createSelectSchema(sales);
-export type Sale = z.infer<typeof selectSaleSchema>;
-
 export const saleItems = pgTable(
   'sale_items',
   {
@@ -243,15 +240,12 @@ export const paymentSources = pgTable(
   {
     id: serial('id').primaryKey().notNull(),
     user_id: uuid('user_id').notNull(),
-    wompi_payment_source_id: integer('wompi_payment_source_id').notNull(),
-    type: text('type').notNull(), // 'CARD', 'NEQUI', 'DAVIPLATA', 'BANCOLOMBIA_TRANSFER'
-    status: text('status').notNull().default('AVAILABLE'), // 'AVAILABLE', 'VOIDED'
-
-    // Optional display info from Wompi's public_data
+    wompi_payment_source_id: text('wompi_payment_source_id').notNull(), // Changed from integer to text
+    type: text('type').notNull(),
+    status: text('status').notNull().default('AVAILABLE'),
     card_brand: text('card_brand'),
     card_last_four: text('card_last_four'),
     phone_number: text('phone_number'),
-
     created_at: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .notNull()
       .defaultNow(),
@@ -269,12 +263,87 @@ export const paymentSources = pgTable(
   ]
 );
 
-export const selectPaymentSourceSchema = createSelectSchema(paymentSources);
-export type PaymentSource = z.infer<typeof selectPaymentSourceSchema>;
+// NEW: Subscriptions table
+export const subscriptions = pgTable(
+  'subscriptions',
+  {
+    id: serial('id').primaryKey().notNull(),
+    user_id: uuid('user_id').notNull().unique(), // One subscription per user
+    plan: text('plan').notNull().default('gratis'), // 'gratis', 'emprendedor', 'negocio'
+    status: text('status').notNull().default('inactive'), // 'active', 'inactive', 'cancelled', 'past_due'
+    current_period_start: timestamp('current_period_start', {
+      withTimezone: true,
+      mode: 'string',
+    }),
+    current_period_end: timestamp('current_period_end', {
+      withTimezone: true,
+      mode: 'string',
+    }),
+    cancel_at_period_end: integer('cancel_at_period_end').default(0), // 0 = false, 1 = true
+    created_at: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .notNull()
+      .defaultNow(),
+    updated_at: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => sql`now()`),
+  },
+  (table) => [
+    index('idx_subscriptions_user_id').on(table.user_id),
+    index('idx_subscriptions_status').on(table.status),
+  ]
+);
 
+// NEW: Transactions table
+export const transactions = pgTable(
+  'transactions',
+  {
+    id: serial('id').primaryKey().notNull(),
+    user_id: uuid('user_id').notNull(),
+    subscription_id: integer('subscription_id').references(
+      () => subscriptions.id,
+      { onDelete: 'set null' }
+    ),
+    payment_source_id: integer('payment_source_id').references(
+      () => paymentSources.id,
+      { onDelete: 'set null' }
+    ),
+    wompi_transaction_id: text('wompi_transaction_id').notNull().unique(),
+    amount_in_cents: integer('amount_in_cents').notNull(),
+    currency: varchar('currency', { length: 3 }).notNull().default('COP'),
+    status: text('status').notNull(), // 'APPROVED', 'DECLINED', 'PENDING', 'VOIDED'
+    reference: text('reference').notNull().unique(),
+    created_at: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index('idx_transactions_user_id').on(table.user_id),
+    index('idx_transactions_subscription_id').on(table.subscription_id),
+    index('idx_transactions_status').on(table.status),
+    index('idx_transactions_created_at').on(table.created_at),
+  ]
+);
+
+// Schema exports
+export const selectSaleSchema = createSelectSchema(sales);
 export const selectSale_items_Schema = createSelectSchema(saleItems);
-export type Sale_Item = z.infer<typeof selectSale_items_Schema>;
+export const selectPaymentSourceSchema = createSelectSchema(paymentSources);
+export const selectSubscriptionSchema = createSelectSchema(subscriptions);
+export const selectTransactionSchema = createSelectSchema(transactions);
 
+// Type exports
+export type Sale = z.infer<typeof selectSaleSchema>;
+export type Sale_Item = z.infer<typeof selectSale_items_Schema>;
+export type PaymentSource = z.infer<typeof selectPaymentSourceSchema>;
+export type Subscription = z.infer<typeof selectSubscriptionSchema>;
+export type Transaction = z.infer<typeof selectTransactionSchema>;
+
+export type Product = typeof productsTable.$inferSelect;
+export type ProductVariant = typeof productVariants.$inferSelect;
+export type ProductWithVariants = Product & { variants: ProductVariant[] };
+
+// Validation schemas
 export const insertProductVariantSchema = z.object({
   size: z.string().min(1, 'es obligatoria').max(50),
   color: z.string().min(1, 'es obligatorio').max(50),
@@ -366,12 +435,7 @@ export const checkoutPayloadSchema = z.object({
 });
 
 export type checkoutItem = z.infer<typeof checkoutItemSchema>;
-
 export type UpdateProduct = z.infer<typeof updateProductSchema>;
 export type UpdateVariant = z.infer<typeof updateVariantSchema>;
 export type UpdateProduct2 = z.infer<typeof updateProductSchema2>;
 export type UpdateProductVariant = z.infer<typeof updateProductVariantSchema>;
-
-export type Product = typeof productsTable.$inferSelect;
-export type ProductVariant = typeof productVariants.$inferSelect;
-export type ProductWithVariants = Product & { variants: ProductVariant[] };

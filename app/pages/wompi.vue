@@ -120,6 +120,18 @@
     'https://wompi.com/assets/downloadble/reglamento-Usuarios-Colombia.pdf';
   const permalink2 =
     'https://wompi.com/assets/downloadble/autorizacion-tratamiento-datos-personales.pdf';
+
+  const testSub = async () => {
+    const { data, error } = await useFetch('/api/wompi/subscriptions/charge', {
+      method: 'POST',
+      body: {
+        amountInCents: 4990000,
+        reference: `SUB-${Date.now()}`,
+      },
+    });
+
+    console.log({ data, error });
+  };
 </script>
 
 <template>
@@ -261,5 +273,6 @@
         </FieldGroup>
       </form>
     </div>
+    <Button @click="testSub">Test Subscription</Button>
   </div>
 </template>

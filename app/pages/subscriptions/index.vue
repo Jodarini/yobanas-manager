@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  const user = useSupabaseUser();
+  const data = useUserSubscription();
   const loading = ref(false);
   const selectedPlan = ref<'emprendedor' | 'negocio'>('emprendedor');
 
@@ -93,7 +93,13 @@
           class="w-full"
           @click="subscribeToPlan(plan.id)"
         >
-          {{ loading ? 'Cargando...' : 'Suscribirse' }}
+          {{
+            loading
+              ? 'Cargando...'
+              : data.planName.value === plan.name
+                ? 'Renovar'
+                : 'Suscribirse'
+          }}
         </Button>
       </div>
     </div>

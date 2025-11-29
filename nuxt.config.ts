@@ -22,6 +22,20 @@ export default defineNuxtConfig({
       ],
     },
   },
+  nitro: {
+    routeRules: {
+      '/api/webhooks/wompi': {
+        cors: true,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST',
+        },
+      },
+    },
+  },
+  devServer: {
+    host: '0.0.0.0', // Listen on all network interfaces
+  },
   experimental: {
     typescriptPlugin: true,
   },
@@ -30,6 +44,7 @@ export default defineNuxtConfig({
     databaseUrl: '',
     wompiPrivateKey: '',
     wompiIntegrityKey: '',
+    supabaseServiceRoleKey: '',
     public: {
       supabaseUrl: '',
       supabaseKey: '',
@@ -39,6 +54,13 @@ export default defineNuxtConfig({
   },
   css: ['~/assets/css/tailwind.css'],
   vite: {
+    server: {
+      allowedHosts: [
+        'localhost',
+        '.ngrok-free.dev', // Allow all ngrok domains
+        '.ngrok.io', // Old ngrok domains
+      ],
+    },
     plugins: [tailwindcss()],
   },
   modules: [

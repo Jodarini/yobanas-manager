@@ -136,7 +136,7 @@ export function useProductWithVariants(
           toast({
             variant: 'destructive',
             title: 'Error al crear el producto',
-            description: nuxtError.statusMessage,
+            description: nuxtError.data.message,
             action: h(
               ToastAction,
               { altText: 'Ver carrito', asChild: true },
@@ -152,11 +152,31 @@ export function useProductWithVariants(
               }
             ),
           });
+        } else if (nuxtError.statusCode === 403) {
+          toast({
+            variant: 'destructive',
+            title: 'Error al crear el producto',
+            description: nuxtError.data.message || nuxtError.message,
+            action: h(
+              ToastAction,
+              { altText: 'Mejore su plan', asChild: true },
+              {
+                default: () =>
+                  h(
+                    NuxtLink,
+                    {
+                      to: '/subscriptions/',
+                    },
+                    { default: () => 'Mejore su plan' }
+                  ),
+              }
+            ),
+          });
         } else {
           toast({
             variant: 'destructive',
             title: 'Error al crear el producto',
-            description: nuxtError.message,
+            description: nuxtError.data.message || nuxtError.message,
           });
         }
       }

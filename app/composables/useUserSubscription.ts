@@ -6,7 +6,6 @@ export const useUserSubscription = () => {
     'user-subscription',
     () => null
   );
-  console.log('klajsdlkasjdl', subscription.value);
   const loading = useState('subscription-loading', () => true);
 
   // Plan limits configuration
@@ -143,7 +142,6 @@ export const useUserSubscription = () => {
 
   // Initialize on first use
   if (subscription.value === null) {
-    console.log('Fetching subscription');
     fetchSubscription();
   }
 

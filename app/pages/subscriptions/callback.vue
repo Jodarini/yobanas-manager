@@ -16,15 +16,11 @@
       return;
     }
 
-    console.log('Transaction ID:', transactionId);
-
     try {
       const response = await $fetch('/api/wompi/subscriptions/verify-payment', {
         method: 'POST',
         body: { transactionId },
       });
-
-      console.log('Response:', response);
 
       if (response?.status === 'APPROVED') {
         message.value = '¡Suscripción activada exitosamente!';

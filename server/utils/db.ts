@@ -31,8 +31,6 @@ export const useAuthDB = async <T>(
   const db = useDB();
 
   return db.transaction(async (tx) => {
-    const [authTest] = await tx.execute(sql`SELECT auth.uid() as uid`);
-    console.log('auth.uid() in transaction:', authTest);
     const claims = {
       sub: user.id,
       role: user.role || 'authenticated',

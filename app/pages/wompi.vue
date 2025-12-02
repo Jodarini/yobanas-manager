@@ -12,8 +12,6 @@
           if (!error) {
             sessionId.value = data.sessionId;
             deviceId.value = data.deviceData.deviceID;
-            console.log('Wompi sessionId', sessionId.value);
-            console.log('Wompi deviceId', deviceId.value);
           } else {
             console.error('Wompi init error', error);
           }
@@ -56,7 +54,6 @@
       return;
     }
     const tokenId = tokenData.value!.tokenId;
-    console.log('Card token:', tokenId);
 
     // 2) Obtener acceptance tokens
     const { data: accData, error: accErr } = await useFetch(
@@ -69,8 +66,6 @@
       console.error(accErr.value);
       return;
     }
-    console.log('Acceptance token:', accData.value.presigned.acceptance_token);
-    console.log('accept personal auth', accData.value.personalDataToken);
 
     // 3) Crear fuente de pago
     const { data: psData, error: psErr } = await useFetch(
@@ -96,8 +91,6 @@
       return;
     }
 
-    console.log('✅ Fuente de pago creada:', psData.value);
-    alert(`Payment source created! ID: ${psData.value.id}`);
     if (psData.value.id) {
       const { data: saved, error: dbError } = await useFetch(
         '/api/wompi/payment-sources/save',
@@ -113,7 +106,6 @@
           },
         }
       );
-      console.log('✅ Saved to database:', saved);
     }
   };
   const permalink1 =
@@ -129,8 +121,6 @@
         reference: `SUB-${Date.now()}`,
       },
     });
-
-    console.log({ data, error });
   };
 </script>
 

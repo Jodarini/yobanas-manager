@@ -1,7 +1,6 @@
 <script setup lang="ts">
   const data = useUserSubscription();
   const loading = ref(false);
-  const selectedPlan = ref<'emprendedor' | 'negocio'>('emprendedor');
 
   const plans = [
     {
@@ -12,7 +11,6 @@
         '500 productos',
         'Ventas ilimitadas',
         '90 días de historial',
-        '50 imágenes',
         'Analíticas básicas',
       ],
     },
@@ -24,7 +22,6 @@
         'Productos ilimitados',
         'Ventas ilimitadas',
         'Historial ilimitado',
-        '200 imágenes',
         'Analíticas avanzadas',
         'Alertas de stock',
         'Exportar a Excel',
@@ -68,8 +65,9 @@
       <div
         v-for="plan in plans"
         :key="plan.id"
+        Tu
+        plani
         class="rounded-lg border p-6"
-        :class="{ 'border-2 border-blue-500': selectedPlan === plan.id }"
       >
         <h2 class="mb-2 text-2xl font-bold">{{ plan.name }}</h2>
         <p class="mb-4 text-3xl font-bold">
@@ -88,19 +86,16 @@
           </li>
         </ul>
 
-        <Button
-          :disabled="loading"
-          class="w-full"
-          @click="subscribeToPlan(plan.id)"
-        >
-          {{
-            loading
-              ? 'Cargando...'
-              : data.planName.value === plan.name
-                ? 'Renovar'
-                : 'Suscribirse'
-          }}
-        </Button>
+        <template v-if="data.planName.value !== plan.name">
+          <Button
+            :disabled="loading"
+            class="w-full"
+            @click="subscribeToPlan(plan.id)"
+          >
+            {{ loading ? 'Cargando...' : 'Suscribirse' }}
+          </Button>
+        </template>
+        <template v-else>Subscrito</template>
       </div>
     </div>
   </div>

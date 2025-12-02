@@ -2,13 +2,15 @@ import {
   insertProductSchema,
   productsTable,
   productVariants,
+  subscriptions,
 } from '~~/db/schema';
 import { useAuthDB } from '~~/server/utils/db';
 import { serverSupabaseClient } from '#supabase/server';
 import { buildProductSku, buildVariantSku } from '~~/db/utils/sku';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull, sql } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
+  // TODO: add redirect when not signed in
   const supabase = await serverSupabaseClient(event);
   const {
     data: { user },
@@ -39,8 +41,30 @@ export default defineEventHandler(async (event) => {
     category: product.category[0] || 'misc',
     model: product.title,
   });
+
+  const limits = { negocio: 10, emprendedor: 500 };
   try {
     return await useAuthDB(user, async (tx) => {
+      const subscription = await tx
+        .select()
+        .from(subscriptions)
+        .where(eq(subscriptions.user_id, user.id));
+
+      const [products] = await tx
+        .select({ count: sql`count(*)` })
+        .from(productsTable)
+        .where(
+          and(
+            eq(productsTable.user_id, user.id),
+            isNull(productsTable.deleted_at)
+          )
+        );
+      if (products.count >= limits[subscription[0].plan]) {
+        throw new Error(
+          `LIMIT_REACHED:${subscription[0].plan}:${limits[subscription[0].plan]}`
+        );
+      }
+
       if (product.stock) {
         await tx.insert(productsTable).values({
           user_id: user.id,
@@ -91,6 +115,14 @@ export default defineEventHandler(async (event) => {
       return { product: queryResult[0] };
     });
   } catch (error) {
+    if (error.message?.startsWith('LIMIT_REACHED:')) {
+      const [, plan, limit] = error.message.split(':');
+      throw createError({
+        statusCode: 403,
+        message: `Has alcanzado el límite de ${limit} productos para tu plan ${plan}`,
+      });
+    }
+
     if (error.code === '23505') {
       const existingProduct = await useAuthDB(user, async (tx) => {
         const results = await tx

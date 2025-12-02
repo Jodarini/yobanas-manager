@@ -1,6 +1,6 @@
 // server/api/webhooks/wompi.post.ts
 import { subscriptions, transactions, paymentSources } from '~~/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
 
 export const config = {
@@ -12,19 +12,17 @@ export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig();
     const body = await readBody(event);
 
-    console.log('📥 Webhook body:', body);
     console.log('📥 Wompi webhook received:', JSON.stringify(body, null, 2));
 
     // 1. Verify webhook signature (Wompi sends this in headers)
     const signature = getHeader(event, 'x-event-checksum');
     const timestamp = body.timestamp;
-    const sentAt = body.sent_at;
 
     // Build the string Wompi uses for signature
     const signatureString = `${body.event}.${timestamp}.${JSON.stringify(body.data)}`;
     const expectedSignature = crypto
       .createHash('sha256')
-      .update(signatureString + config.wompiEventsSecret) // You'll need this key from Wompi
+      .update(signatureString + config.wompiEventsSecret)
       .digest('hex');
 
     // Verify signature (optional but recommended for production)
@@ -44,15 +42,14 @@ export default defineEventHandler(async (event) => {
         txData.status
       );
 
-      // Only process subscription transactions (reference starts with SUB-)
-      if (!txData.reference.startsWith('SUB-')) {
+      // Check if this is a subscription transaction
+      const isInitialSub = txData.reference.startsWith('SUB-');
+      const isRenewal = txData.reference.startsWith('RENEWAL-');
+
+      if (!isInitialSub && !isRenewal) {
         console.log('ℹ️  Not a subscription transaction, ignoring');
         return { received: true };
       }
-
-      // Extract user_id from reference: SUB-{user_id_prefix}-{timestamp}
-      const referenceParts = txData.reference.split('-');
-      const userIdPrefix = referenceParts[1]; // First 8 chars of user_id
 
       // Get full transaction details from Wompi API
       const res = await fetch(
@@ -90,38 +87,6 @@ export default defineEventHandler(async (event) => {
         return { received: true };
       }
 
-      // Find user by matching user_id prefix in subscriptions or auth.users
-      // We'll query Supabase auth to find the user
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabaseAdmin = createClient(
-        config.public.supabaseUrl, // ← Use config.public for public values
-        config.supabaseServiceRoleKey,
-        {
-          auth: {
-            autoRefreshToken: false,
-            persistSession: false,
-          },
-        }
-      );
-
-      // List users and find by ID prefix
-      const { data: users, error: usersError } =
-        await supabaseAdmin.auth.admin.listUsers();
-
-      if (usersError) {
-        console.error('❌ Error fetching users:', usersError);
-        throw createError({ statusCode: 500, message: 'Error finding user' });
-      }
-
-      const user = users.users.find((u) => u.id.startsWith(userIdPrefix));
-
-      if (!user) {
-        console.error('❌ User not found for prefix:', userIdPrefix);
-        throw createError({ statusCode: 404, message: 'User not found' });
-      }
-
-      console.log('👤 Found user:', user.email);
-
       // Determine plan from amount
       const planMap = {
         2500000: 'emprendedor',
@@ -129,78 +94,190 @@ export default defineEventHandler(async (event) => {
       };
       const plan = planMap[fullTxData.amount_in_cents] || 'emprendedor';
 
-      // Save to database
-      await db.transaction(async (tx) => {
-        // Save payment source if it exists
-        if (fullTxData.payment_method?.extra?.external_identifier) {
-          const paymentSourceId =
-            fullTxData.payment_method.extra.external_identifier;
+      // Handle based on transaction type
+      if (isRenewal) {
+        console.log('🔄 Processing renewal transaction');
 
-          const [existing] = await tx
-            .select()
-            .from(paymentSources)
-            .where(eq(paymentSources.wompi_payment_source_id, paymentSourceId))
-            .limit(1);
+        // Extract subscription_id from reference: RENEWAL-{sub_id}-{timestamp}
+        const referenceParts = fullTxData.reference.split('-');
+        const subId = parseInt(referenceParts[1]);
 
-          if (!existing) {
-            await tx.insert(paymentSources).values({
-              user_id: user.id,
-              wompi_payment_source_id: paymentSourceId,
-              type: fullTxData.payment_method.type,
-              status: 'AVAILABLE',
-              card_brand: fullTxData.payment_method.extra?.brand,
-              card_last_four: fullTxData.payment_method.extra?.last_four,
-            });
-            console.log('💾 Payment source saved');
-          }
+        // Get subscription and user info
+        const [existingSub] = await db
+          .select()
+          .from(subscriptions)
+          .where(eq(subscriptions.id, subId))
+          .limit(1);
+
+        if (!existingSub) {
+          console.error('❌ Subscription not found for renewal:', subId);
+          throw createError({
+            statusCode: 404,
+            message: 'Subscription not found',
+          });
         }
 
-        // Create or update subscription if payment approved
-        if (fullTxData.status === 'APPROVED') {
-          const [existingSub] = await tx
-            .select()
-            .from(subscriptions)
-            .where(eq(subscriptions.user_id, user.id))
-            .limit(1);
+        await db.transaction(async (tx) => {
+          // Save transaction
+          await tx.insert(transactions).values({
+            user_id: existingSub.user_id,
+            subscription_id: subId,
+            wompi_transaction_id: fullTxData.id,
+            amount_in_cents: fullTxData.amount_in_cents,
+            status: fullTxData.status,
+            reference: fullTxData.reference,
+            currency: 'COP',
+          });
+          console.log('💾 Renewal transaction saved');
 
-          const now = new Date();
-          const periodEnd = new Date(now);
-          periodEnd.setMonth(periodEnd.getMonth() + 1);
+          // Update subscription if payment approved
+          if (fullTxData.status === 'APPROVED') {
+            const now = new Date();
+            const periodEnd = new Date(now);
+            periodEnd.setMonth(periodEnd.getMonth() + 1);
 
-          if (existingSub) {
             await tx
               .update(subscriptions)
               .set({
-                plan,
                 status: 'active',
                 current_period_start: now.toISOString(),
                 current_period_end: periodEnd.toISOString(),
                 updated_at: now.toISOString(),
               })
-              .where(eq(subscriptions.id, existingSub.id));
-            console.log('🔄 Subscription updated');
-          } else {
-            await tx.insert(subscriptions).values({
-              user_id: user.id,
-              plan,
-              status: 'active',
-              current_period_start: now.toISOString(),
-              current_period_end: periodEnd.toISOString(),
-            });
-            console.log('✨ Subscription created');
+              .where(eq(subscriptions.id, subId));
+
+            console.log('🎉 Subscription renewed successfully');
+          } else if (
+            fullTxData.status === 'DECLINED' ||
+            fullTxData.status === 'ERROR'
+          ) {
+            // Mark subscription as past_due if payment failed
+            await tx
+              .update(subscriptions)
+              .set({
+                status: 'past_due',
+                updated_at: new Date().toISOString(),
+              })
+              .where(eq(subscriptions.id, subId));
+
+            console.log(
+              '❌ Renewal payment failed, subscription marked as past_due'
+            );
           }
+        });
+      } else if (isInitialSub) {
+        console.log('✨ Processing initial subscription');
+
+        // Extract user_id from reference: SUB-{user_id_prefix}-{timestamp}
+        const referenceParts = fullTxData.reference.split('-');
+        const userIdPrefix = referenceParts[1];
+
+        // Find user by matching user_id prefix
+        const { createClient } = await import('@supabase/supabase-js');
+        const supabaseAdmin = createClient(
+          config.public.supabaseUrl,
+          config.supabaseServiceRoleKey,
+          {
+            auth: {
+              autoRefreshToken: false,
+              persistSession: false,
+            },
+          }
+        );
+
+        const { data: users, error: usersError } =
+          await supabaseAdmin.auth.admin.listUsers();
+
+        if (usersError) {
+          console.error('❌ Error fetching users:', usersError);
+          throw createError({ statusCode: 500, message: 'Error finding user' });
         }
 
-        // Save transaction
-        await tx.insert(transactions).values({
-          user_id: user.id,
-          wompi_transaction_id: fullTxData.id,
-          amount_in_cents: fullTxData.amount_in_cents,
-          status: fullTxData.status,
-          reference: fullTxData.reference,
+        const user = users.users.find((u) => u.id.startsWith(userIdPrefix));
+
+        if (!user) {
+          console.error('❌ User not found for prefix:', userIdPrefix);
+          throw createError({ statusCode: 404, message: 'User not found' });
+        }
+
+        console.log('👤 Found user:', user.email);
+
+        // Save to database
+        await db.transaction(async (tx) => {
+          // Save payment source if it exists
+          if (fullTxData.payment_method?.extra?.external_identifier) {
+            const paymentSourceId =
+              fullTxData.payment_method.extra.external_identifier;
+
+            const [existing] = await tx
+              .select()
+              .from(paymentSources)
+              .where(
+                eq(paymentSources.wompi_payment_source_id, paymentSourceId)
+              )
+              .limit(1);
+
+            if (!existing) {
+              await tx.insert(paymentSources).values({
+                user_id: user.id,
+                wompi_payment_source_id: paymentSourceId,
+                type: fullTxData.payment_method.type,
+                status: 'AVAILABLE',
+                card_brand: fullTxData.payment_method.extra?.brand,
+                card_last_four: fullTxData.payment_method.extra?.last_four,
+              });
+              console.log('💾 Payment source saved');
+            }
+          }
+
+          // Create or update subscription if payment approved
+          if (fullTxData.status === 'APPROVED') {
+            const [existingSub] = await tx
+              .select()
+              .from(subscriptions)
+              .where(eq(subscriptions.user_id, user.id))
+              .limit(1);
+
+            const now = new Date();
+            const periodEnd = new Date(now);
+            periodEnd.setMonth(periodEnd.getMonth() + 1);
+
+            if (existingSub) {
+              await tx
+                .update(subscriptions)
+                .set({
+                  plan,
+                  status: 'active',
+                  current_period_start: now.toISOString(),
+                  current_period_end: periodEnd.toISOString(),
+                  updated_at: now.toISOString(),
+                })
+                .where(eq(subscriptions.id, existingSub.id));
+              console.log('🔄 Subscription updated');
+            } else {
+              await tx.insert(subscriptions).values({
+                user_id: user.id,
+                plan,
+                status: 'active',
+                current_period_start: now.toISOString(),
+                current_period_end: periodEnd.toISOString(),
+              });
+              console.log('✨ Subscription created');
+            }
+          }
+
+          // Save transaction
+          await tx.insert(transactions).values({
+            user_id: user.id,
+            wompi_transaction_id: fullTxData.id,
+            amount_in_cents: fullTxData.amount_in_cents,
+            status: fullTxData.status,
+            reference: fullTxData.reference,
+            currency: 'COP',
+          });
+          console.log('💾 Transaction saved');
         });
-        console.log('💾 Transaction saved');
-      });
+      }
 
       console.log('✅ Webhook processed successfully');
     }

@@ -108,8 +108,8 @@
 
 <template>
   <div class="container mx-auto py-8">
-    <pre>{{ user }}</pre>
-    <pre>{{ subscription }}</pre>
+    <!-- <pre>{{ user }}</pre> -->
+    <!-- <pre>{{ subscription }}</pre> -->
     <div v-if="user.is_anonymous">
       <p>
         ¡Hola! En estos momentos no tienes una cuenta. Para crear una, haz click
@@ -133,11 +133,15 @@
           <Separator />
           <div class="flex flex-col gap-4 py-2 md:flex-row md:justify-between">
             <div>
-              <p>
+              <p v-if="subscription.plan !== 'gratis'">
                 Gracias por suscribirte a
                 <span class="font-bold">Plan {{ subscription.plan }}!</span>
               </p>
-              <div class="flex flex-row items-center gap-1">
+              <p v-else>Sin subscripción.</p>
+              <div
+                v-if="subscription.plan !== 'gratis'"
+                class="flex flex-row items-center gap-1"
+              >
                 <CalendarDays size="1rem" />
                 <p>
                   Tu servicio terminará el
@@ -149,7 +153,7 @@
                 </p>
               </div>
 
-              <p class="text-destructive-foreground">
+              <p v-if="subscription.plan !== 'gratis'" visible>
                 Tu suscripción se cancelará el
                 {{
                   formateador.format(new Date(subscription.current_period_end))
@@ -157,8 +161,10 @@
               </p>
             </div>
 
+            <div v-if="subscription.plan === 'gratis'" />
+
             <div
-              v-if="subscription.cancel_at_period_end"
+              v-else-if="subscription.cancel_at_period_end"
               class="flex flex-col gap-2"
             >
               <Button variant="outline" @click="cancelSubscription(true)">

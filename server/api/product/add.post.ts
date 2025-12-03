@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
     model: product.title,
   });
 
-  const limits = { negocio: 10, emprendedor: 500 };
+  const limits = { gratis: 5, negocio: 500, emprendedor: 9999999 };
   try {
     return await useAuthDB(user, async (tx) => {
       const subscription = await tx

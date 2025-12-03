@@ -7,7 +7,36 @@
   const { toast } = useToast();
   const user = useSupabaseUser();
 
-  const { data: subscription } = await useFetch('/api/subscriptions/current');
+  const { data: subscription } = await useFetch('/api/subscriptions/current', {
+    key: 'subscription',
+  });
+
+  const plans = [
+    {
+      id: 'emprendedor',
+      name: 'Plan Emprendedor',
+      price: 25000,
+      features: [
+        '500 productos',
+        'Ventas ilimitadas',
+        '90 días de historial',
+        'Analíticas básicas',
+      ],
+    },
+    {
+      id: 'negocio',
+      name: 'Plan Negocio',
+      price: 50000,
+      features: [
+        'Productos ilimitados',
+        'Ventas ilimitadas',
+        'Historial ilimitado',
+        'Analíticas avanzadas',
+        'Alertas de stock',
+        'Exportar a Excel',
+      ],
+    },
+  ];
 
   const cancelSubscription = async (immediately = false) => {
     const confirmed = confirm(
@@ -46,33 +75,6 @@
     }
   };
 
-  const plans = [
-    {
-      id: 'emprendedor',
-      name: 'Plan Emprendedor',
-      price: 25000,
-      features: [
-        '500 productos',
-        'Ventas ilimitadas',
-        '90 días de historial',
-        'Analíticas básicas',
-      ],
-    },
-    {
-      id: 'negocio',
-      name: 'Plan Negocio',
-      price: 50000,
-      features: [
-        'Productos ilimitados',
-        'Ventas ilimitadas',
-        'Historial ilimitado',
-        'Analíticas avanzadas',
-        'Alertas de stock',
-        'Exportar a Excel',
-      ],
-    },
-  ];
-
   const subscribeToPlan = async (planId: string) => {
     loading.value = true;
 
@@ -99,6 +101,31 @@
       loading.value = false;
     }
   };
+
+  const reactivateSubscription = async () => {
+    loading.value = true;
+
+    try {
+      const { data, error } = await useFetch(
+        '/api/auth/reactivate-subscription',
+        {
+          method: 'PUT',
+        }
+      );
+
+      refreshNuxtData('subscription');
+
+      if (error.value) {
+        alert('Error al crear checkout: ' + error.value.message);
+        return;
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const formateador = new Intl.DateTimeFormat('es-ES', {
     year: 'numeric',
     month: 'long',
@@ -171,7 +198,7 @@
                 Cancelar inmediatamente
               </Button>
               <!-- Option to undo cancellation -->
-              <Button variant="outline" @click="undoCancel">
+              <Button variant="outline" @click="reactivateSubscription">
                 Reactivar suscripción
               </Button>
             </div>

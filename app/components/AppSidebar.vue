@@ -7,6 +7,7 @@
     ShoppingCartIcon,
     Store,
     MonitorIcon,
+    Settings2Icon,
   } from 'lucide-vue-next';
 
   const { user, signOut, isLoading } = useAuth();
@@ -60,12 +61,7 @@
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
             <Button variant="outline">
-              <SunIcon
-                class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"
-              />
-              <MoonIcon
-                class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"
-              />
+              <Settings2Icon />
               <span class="sr-only">Toggle theme</span>
             </Button>
           </DropdownMenuTrigger>
@@ -163,17 +159,14 @@
         <!--     Nuevo producto -->
         <!--   </NuxtLink> -->
         <!-- </Button> -->
-        <p class="text-muted-foreground text-xs">
-          © 2025 StockIt
-          <br />
-          <NuxtLink
-            to="https://www.jodarini.dev"
-            target="_blank"
-            class="text-accent-foreground"
-          >
-            by Jodarini.dev
-          </NuxtLink>
-        </p>
+        <p class="text-muted-foreground mb-0 text-xs">© 2025 StockIt</p>
+        <NuxtLink
+          to="https://www.jodarini.dev"
+          target="_blank"
+          class="text-accent-foreground text-xs"
+        >
+          by Jodarini.dev
+        </NuxtLink>
       </div>
     </SidebarFooter>
   </Sidebar>

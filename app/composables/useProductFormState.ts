@@ -41,7 +41,6 @@ export function useProductFormState(
   });
 
   // const variantForm = useVariantsFormState();
-  // // console.log(variantForm.values.variants);
   // if (variantForm.values.variants) {
   //   productState.setHasVariants(true);
   // }

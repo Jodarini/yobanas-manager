@@ -4,7 +4,6 @@
   });
 
   const user = useSupabaseUser();
-  console.log(user);
 
   // Redirect if already logged in
   if (user.value) {

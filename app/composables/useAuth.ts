@@ -18,7 +18,6 @@ export const useAuth = () => {
       if (error) {
         errorMessage.value = translateErrorCode(error?.code || null, 'auth');
       }
-      console.log(data.user.id);
       const res = await useFetch('/api/auth/signup', {
         method: 'POST',
         body: {
@@ -30,7 +29,6 @@ export const useAuth = () => {
           cancel_at_period_end: 0,
         },
       });
-      console.log(res);
       return data;
     } catch (err) {
       errorMessage.value = err;
@@ -66,7 +64,7 @@ export const useAuth = () => {
         return false;
       }
 
-      await navigateTo('/');
+      await navigateTo('/dashboard');
       return true;
     } catch (err) {
       errorMessage.value = 'Ocurrió un error inesperado';
@@ -89,7 +87,7 @@ export const useAuth = () => {
         return false;
       }
 
-      await navigateTo('/');
+      await navigateTo('/dashboard');
       return true;
     } catch (err) {
       errorMessage.value = 'An unexpected error occurred';

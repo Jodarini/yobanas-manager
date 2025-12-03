@@ -14,7 +14,6 @@
   const isOpen = ref(true);
 
   // onMounted(() => {
-  //   console.log('disclaimer mounted');
   //   // Check if user has already seen the disclaimer to avoid annoying them
   //   const hasSeenDisclaimer = localStorage.getItem('demo-disclaimer-seen');
   //

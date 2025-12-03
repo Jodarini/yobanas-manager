@@ -43,6 +43,9 @@
 </script>
 
 <template>
+  <pre
+    >{{ subscription }}
+  </pre>
   <div v-if="subscription">
     <h2>Plan actual: {{ subscription.plan }}</h2>
     <p>
@@ -55,17 +58,17 @@
         Tu suscripción se cancelará el
         {{ new Date(subscription.current_period_end).toLocaleDateString() }}
       </p>
+
+      <Button @click="cancelSubscription(true)">Cancelar inmediatamente</Button>
       <!-- Option to undo cancellation -->
-      <button @click="undoCancel">Reactivar suscripción</button>
+      <Button @click="undoCancel">Reactivar suscripción</Button>
     </div>
 
     <div v-else>
-      <button @click="cancelSubscription(false)">
+      <Button @click="cancelSubscription(false)">
         Cancelar al final del período
-      </button>
-      <button class="text-red-600" @click="cancelSubscription(true)">
-        Cancelar inmediatamente
-      </button>
+      </Button>
+      <Button @click="cancelSubscription(true)">Cancelar inmediatamente</Button>
     </div>
   </div>
 </template>

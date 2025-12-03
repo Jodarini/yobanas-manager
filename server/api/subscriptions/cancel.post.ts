@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody<{
-    immediately?: boolean; // Cancel now vs at period end
+    immediately?: boolean;
   }>(event);
 
   return await useAuthDB(user, async (tx) => {
@@ -26,7 +26,32 @@ export default defineEventHandler(async (event) => {
     if (!subscription) {
       throw createError({
         statusCode: 404,
-        message: 'No active subscription found',
+        message: 'No subscription found',
+      });
+    }
+
+    // Check if already cancelled
+    if (subscription.status === 'cancelled') {
+      throw createError({
+        statusCode: 400,
+        message: 'Esta suscripción ya está cancelada',
+      });
+    }
+
+    // Check if not on a paid plan
+    if (subscription.plan === 'gratis') {
+      throw createError({
+        statusCode: 400,
+        message: 'Ya estás en el plan gratuito',
+      });
+    }
+
+    // Check if already scheduled for cancellation
+    if (subscription.cancel_at_period_end === 1 && !body.immediately) {
+      throw createError({
+        statusCode: 400,
+        message:
+          'Esta suscripción ya está programada para cancelarse al final del período',
       });
     }
 

@@ -1,4 +1,3 @@
-// server/api/webhooks/wompi.post.ts
 import { subscriptions, transactions, paymentSources } from '~~/db/schema';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
@@ -133,15 +132,39 @@ export default defineEventHandler(async (event) => {
           // Update subscription if payment approved
           if (fullTxData.status === 'APPROVED') {
             const now = new Date();
-            const periodEnd = new Date(now);
-            periodEnd.setMonth(periodEnd.getMonth() + 1);
+            const currentPeriodEnd = new Date(existingSub.current_period_end);
+            const isStillActive = currentPeriodEnd > now;
+
+            let newPeriodStart: Date;
+            let newPeriodEnd: Date;
+
+            if (isStillActive) {
+              // Extend from current period end (respeta tiempo pagado)
+              newPeriodStart = currentPeriodEnd;
+              newPeriodEnd = new Date(currentPeriodEnd);
+              newPeriodEnd.setMonth(newPeriodEnd.getMonth() + 1);
+
+              console.log(
+                `📅 Extending renewal from ${currentPeriodEnd.toISOString()} to ${newPeriodEnd.toISOString()}`
+              );
+            } else {
+              // Already expired, start from now
+              newPeriodStart = now;
+              newPeriodEnd = new Date(now);
+              newPeriodEnd.setMonth(newPeriodEnd.getMonth() + 1);
+
+              console.log(
+                `📅 Starting new period from ${now.toISOString()} to ${newPeriodEnd.toISOString()}`
+              );
+            }
 
             await tx
               .update(subscriptions)
               .set({
                 status: 'active',
-                current_period_start: now.toISOString(),
-                current_period_end: periodEnd.toISOString(),
+                current_period_start: newPeriodStart.toISOString(),
+                current_period_end: newPeriodEnd.toISOString(),
+                cancel_at_period_end: 0, // Reset cancellation flag
                 updated_at: now.toISOString(),
               })
               .where(eq(subscriptions.id, subId));
@@ -239,22 +262,52 @@ export default defineEventHandler(async (event) => {
               .limit(1);
 
             const now = new Date();
-            const periodEnd = new Date(now);
-            periodEnd.setMonth(periodEnd.getMonth() + 1);
 
             if (existingSub) {
+              // Check if existing subscription is still active
+              const currentPeriodEnd = new Date(existingSub.current_period_end);
+              const isStillActive = currentPeriodEnd > now;
+
+              let newPeriodStart: Date;
+              let newPeriodEnd: Date;
+
+              if (isStillActive) {
+                // Extend from current period end (usuario ya pagó hasta esa fecha)
+                newPeriodStart = currentPeriodEnd;
+                newPeriodEnd = new Date(currentPeriodEnd);
+                newPeriodEnd.setMonth(newPeriodEnd.getMonth() + 1);
+
+                console.log(
+                  `📅 Extending subscription from ${currentPeriodEnd.toISOString()} to ${newPeriodEnd.toISOString()}`
+                );
+              } else {
+                // Already expired, start from now
+                newPeriodStart = now;
+                newPeriodEnd = new Date(now);
+                newPeriodEnd.setMonth(newPeriodEnd.getMonth() + 1);
+
+                console.log(
+                  `📅 Starting new period from ${now.toISOString()} to ${newPeriodEnd.toISOString()}`
+                );
+              }
+
               await tx
                 .update(subscriptions)
                 .set({
                   plan,
                   status: 'active',
-                  current_period_start: now.toISOString(),
-                  current_period_end: periodEnd.toISOString(),
+                  current_period_start: newPeriodStart.toISOString(),
+                  current_period_end: newPeriodEnd.toISOString(),
+                  cancel_at_period_end: 0, // Reset cancellation flag
                   updated_at: now.toISOString(),
                 })
                 .where(eq(subscriptions.id, existingSub.id));
-              console.log('🔄 Subscription updated');
+              console.log('🔄 Subscription extended and cancellation cleared');
             } else {
+              // New subscription
+              const periodEnd = new Date(now);
+              periodEnd.setMonth(periodEnd.getMonth() + 1);
+
               await tx.insert(subscriptions).values({
                 user_id: user.id,
                 plan,

@@ -39,6 +39,15 @@
       >
         {{ auth.errorMessage }}
       </p>
+
+      <Button
+        variant="link"
+        class="text-muted-foreground w-full text-xs hover:cursor-pointer"
+        :disabled="auth.isLoading"
+        @click="auth.signInAnonymous"
+      >
+        Ingresa como invitado
+      </Button>
     </CardContent>
   </Card>
 </template>

@@ -1,8 +1,43 @@
+import { translateErrorCode, setLanguage } from 'supabase-error-translator-js';
 export const useAuth = () => {
   const supabase = useSupabaseClient();
   const user = useSupabaseUser();
   const errorMessage = ref<string | null>(null);
   const isLoading = ref(false);
+  setLanguage('es');
+
+  const signUp = async (email: string, password: string) => {
+    isLoading.value = true;
+    errorMessage.value = null;
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) {
+        errorMessage.value = translateErrorCode(error?.code || null, 'auth');
+      }
+      console.log(data.user.id);
+      const res = await useFetch('/api/auth/signup', {
+        method: 'POST',
+        body: {
+          user_id: data.user?.id,
+          plan: 'gratis',
+          status: 'active',
+          current_period_start: null,
+          current_period_end: null,
+          cancel_at_period_end: 0,
+        },
+      });
+      console.log(res);
+      return data;
+    } catch (err) {
+      errorMessage.value = err;
+    } finally {
+      isLoading.value = false;
+    }
+  };
 
   const signInWithPassword = async (email: string, password: string) => {
     isLoading.value = true;
@@ -21,8 +56,10 @@ export const useAuth = () => {
             break;
           case 'user_banned':
             errorMessage.value = 'Usuario baneado';
+            break;
           case 'email_not_confirmed':
             errorMessage.value = 'Email no confirmado';
+            break;
           default:
             errorMessage.value = error.message;
         }
@@ -91,6 +128,7 @@ export const useAuth = () => {
     signInWithPassword,
     signInAnonymous,
     signOut,
+    signUp,
     isLoading,
   };
 };

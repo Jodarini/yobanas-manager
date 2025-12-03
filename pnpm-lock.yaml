@@ -56,6 +56,9 @@ importers:
       reka-ui:
         specifier: ^2.3.0
         version: 2.6.0(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+      supabase-error-translator-js:
+        specifier: ^3.0.1
+        version: 3.0.1
       tailwind-merge:
         specifier: ^3.3.0
         version: 3.3.1
@@ -4568,6 +4571,9 @@ packages:
     engines: {node: ^18.12.0 || ^20.9.0 || >=22.0}
     peerDependencies:
       postcss: ^8.4.32
+
+  supabase-error-translator-js@3.0.1:
+    resolution: {integrity: sha512-VTkHckk2bvbS0yusm+yXPLAf/dsCYEQ2s4gcehFxOSKM1AA95zbkEi1rXAINPI1Ki/JZVcdKwzFJ8Q7buV1ROg==}
 
   superjson@2.2.5:
     resolution: {integrity: sha512-zWPTX96LVsA/eVYnqOM2+ofcdPqdS1dAF1LN4TS2/MWuUpfitd9ctTa87wt4xrYnZnkLtS69xpBdSxVBP5Rm6w==}
@@ -10005,6 +10011,8 @@ snapshots:
       browserslist: 4.27.0
       postcss: 8.5.6
       postcss-selector-parser: 7.1.0
+
+  supabase-error-translator-js@3.0.1: {}
 
   superjson@2.2.5:
     dependencies:

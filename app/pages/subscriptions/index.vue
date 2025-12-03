@@ -108,8 +108,17 @@
 
 <template>
   <div class="container mx-auto py-8">
-    <!-- <pre>{{ user }}</pre> -->
-    <!-- <pre>{{ subscription }}</pre> -->
+    <pre>{{ user }}</pre>
+    <pre>{{ subscription }}</pre>
+    <div v-if="user.is_anonymous">
+      <p>
+        ¡Hola! En estos momentos no tienes una cuenta. Para crear una, haz click
+        en el botón de abajo.
+      </p>
+      <NuxtLink to="sign-up" as-child>
+        <Button variant="outline">Crear cuenta</Button>
+      </NuxtLink>
+    </div>
     <div v-if="subscription">
       <template v-if="user">
         <p class="text-xl font-bold">

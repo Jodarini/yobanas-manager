@@ -240,7 +240,7 @@ export const paymentSources = pgTable(
   {
     id: serial('id').primaryKey().notNull(),
     user_id: uuid('user_id').notNull(),
-    wompi_payment_source_id: text('wompi_payment_source_id').notNull(), // Changed from integer to text
+    wompi_payment_source_id: text('wompi_payment_source_id').notNull(), // Changed from integer
     type: text('type').notNull(),
     status: text('status').notNull().default('AVAILABLE'),
     card_brand: text('card_brand'),

@@ -1,48 +1,48 @@
 <script setup lang="ts">
-  const route = useRoute();
-  const router = useRouter();
-  const loading = ref(true);
-  const success = ref(false);
-  const message = ref('');
-  const errorDetails = ref('');
+const route = useRoute();
+const router = useRouter();
+const loading = ref(true);
+const success = ref(false);
+const message = ref('');
+const errorDetails = ref('');
 
-  onMounted(async () => {
-    const transactionId = route.query.id as string;
+onMounted(async () => {
+  const transactionId = route.query.id as string;
 
-    if (!transactionId) {
-      message.value = 'No se encontró información de la transacción';
-      loading.value = false;
-      return;
-    }
+  if (!transactionId) {
+    message.value = 'No se encontró información de la transacción';
+    loading.value = false;
+    return;
+  }
 
-    try {
-      const response = await $fetch('/api/wompi/subscriptions/verify-payment', {
-        method: 'POST',
-        body: { transactionId },
-      });
+  try {
+    const response = await $fetch('/api/wompi/subscriptions/verify-payment', {
+      method: 'POST',
+      body: { transactionId },
+    });
 
-      if (response?.status === 'APPROVED') {
-        message.value = '¡Suscripción activada exitosamente!';
-        success.value = true;
+    if (response?.status === 'APPROVED') {
+      message.value = '¡Suscripción activada exitosamente!';
+      success.value = true;
 
-        setTimeout(() => {
-          router.push('/');
-        }, 3000);
-      } else {
-        message.value = 'El pago no fue aprobado.';
-        errorDetails.value = `Status: ${response?.status || 'unknown'}`;
-        success.value = false;
-      }
-    } catch (err: any) {
-      console.error('Fetch error:', err);
-      message.value = 'Error al verificar el pago';
-      errorDetails.value =
-        err.data?.message || err.message || JSON.stringify(err);
+      setTimeout(() => {
+        router.push('/');
+      }, 3000);
+    } else {
+      message.value = 'El pago no fue aprobado.';
+      errorDetails.value = `Status: ${response?.status || 'unknown'}`;
       success.value = false;
-    } finally {
-      loading.value = false;
     }
-  });
+  } catch (err: any) {
+    console.error('Fetch error:', err);
+    message.value = 'Error al verificar el pago';
+    errorDetails.value =
+      err.data?.message || err.message || JSON.stringify(err);
+    success.value = false;
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
 
 <template>
@@ -63,9 +63,9 @@
         <summary class="cursor-pointer">Ver detalles del error</summary>
         <pre class="mt-2 overflow-auto rounded bg-gray-100 p-4 text-sm">{{
           errorDetails
-        }}</pre>
+          }}</pre>
       </details>
-      <Button class="mt-4" @click="router.push('/subscription')">
+      <Button class="mt-4" @click="router.push('/subscriptions')">
         Intentar de nuevo
       </Button>
     </div>

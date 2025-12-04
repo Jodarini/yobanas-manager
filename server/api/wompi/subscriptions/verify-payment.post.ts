@@ -40,18 +40,31 @@ export default defineEventHandler(async (event) => {
 
   // Determine plan from amount
   const planMap = {
-    2500000: 'emprendedor', // 25,000 COP
-    5000000: 'negocio', // 50,000 COP
+    2500000: 'emprendedor',
+    5000000: 'negocio',
   };
   const plan = planMap[txData.amount_in_cents] || 'emprendedor';
 
   // Save to your DB
   await useAuthDB(user, async (tx) => {
+    // Check if transaction already processed by webhook
+    const [existingTx] = await tx
+      .select()
+      .from(transactions)
+      .where(eq(transactions.wompi_transaction_id, txData.id))
+      .limit(1);
+
+    if (existingTx) {
+      console.log('✅ Transaction already processed by webhook');
+      return; // Webhook already handled everything
+    }
+
+    console.log('⚠️ Transaction not found, processing now (webhook may have failed)');
+
     // Save payment source if it exists
     if (txData.payment_method?.extra?.external_identifier) {
       const paymentSourceId = txData.payment_method.extra.external_identifier;
 
-      // Check if already exists
       const [existing] = await tx
         .select()
         .from(paymentSources)
@@ -67,6 +80,7 @@ export default defineEventHandler(async (event) => {
           card_brand: txData.payment_method.extra?.brand,
           card_last_four: txData.payment_method.extra?.last_four,
         });
+        console.log('💾 Payment source saved');
       }
     }
 
@@ -86,21 +100,23 @@ export default defineEventHandler(async (event) => {
         await tx
           .update(subscriptions)
           .set({
-            plan, // ADD THIS
+            plan,
             status: 'active',
             current_period_start: now.toISOString(),
             current_period_end: periodEnd.toISOString(),
             updated_at: now.toISOString(),
           })
           .where(eq(subscriptions.id, existingSub.id));
+        console.log('🔄 Subscription updated');
       } else {
         await tx.insert(subscriptions).values({
           user_id: user.id,
-          plan, // ADD THIS
+          plan,
           status: 'active',
           current_period_start: now.toISOString(),
           current_period_end: periodEnd.toISOString(),
         });
+        console.log('✨ Subscription created');
       }
     }
 
@@ -112,6 +128,7 @@ export default defineEventHandler(async (event) => {
       status: txData.status,
       reference: txData.reference,
     });
+    console.log('💾 Transaction saved');
   });
 
   return {
@@ -119,3 +136,4 @@ export default defineEventHandler(async (event) => {
     reference: txData.reference,
   };
 });
+

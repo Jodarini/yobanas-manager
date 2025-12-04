@@ -45,6 +45,7 @@ export default defineNuxtConfig({
     wompiPrivateKey: '',
     wompiIntegrityKey: '',
     supabaseServiceRoleKey: '',
+    cronSecret: '',
     public: {
       supabaseUrl: '',
       supabaseKey: '',

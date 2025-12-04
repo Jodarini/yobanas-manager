@@ -8,6 +8,12 @@ export default defineEventHandler(async (event) => {
   // 1. Verify cron secret (Vercel automatically sends this)
   const authHeader = getHeader(event, 'authorization');
   const expectedAuth = `Bearer ${config.cronSecret}`;
+  console.log('Received auth:', authHeader);
+  console.log('Expected auth:', expectedAuth);
+  console.log('cronSecret from config:', config.cronSecret);
+  console.log('Supabase URL:', config.public.supabaseUrl);
+  console.log('Service Role Key exists:', !!config.supabaseServiceRoleKey);
+  console.log('Service Role Key length:', config.supabaseServiceRoleKey?.length);
 
   if (authHeader !== expectedAuth) {
     throw createError({
@@ -22,8 +28,7 @@ export default defineEventHandler(async (event) => {
   const db = useDB();
 
   // 3. Find subscriptions expiring today or past due
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Start of day
+  const now = new Date();
 
   const expiringSubscriptions = await db
     .select({
@@ -37,11 +42,10 @@ export default defineEventHandler(async (event) => {
     .where(
       and(
         eq(subscriptions.status, 'active'),
-        lt(subscriptions.current_period_end, today.toISOString()),
-        eq(subscriptions.cancel_at_period_end, 0) // Only renew if not scheduled for cancellation
+        lt(subscriptions.current_period_end, now.toISOString()), // Compare to NOW
+        eq(subscriptions.cancel_at_period_end, 0)
       )
     );
-
   console.log(
     `📋 Found ${expiringSubscriptions.length} subscriptions to renew`
   );
@@ -59,7 +63,7 @@ export default defineEventHandler(async (event) => {
       and(
         eq(subscriptions.status, 'active'),
         eq(subscriptions.cancel_at_period_end, 1),
-        lt(subscriptions.current_period_end, today.toISOString())
+        lt(subscriptions.current_period_end, now.toISOString())
       )
     );
 
@@ -194,6 +198,11 @@ export default defineEventHandler(async (event) => {
         });
         continue;
       }
+      console.log('🔍 Payment Source Debug:');
+      console.log('Raw wompi_payment_source_id:', paymentSource.wompi_payment_source_id);
+      console.log('Type:', typeof paymentSource.wompi_payment_source_id);
+      console.log('Parsed:', parseInt(paymentSource.wompi_payment_source_id));
+      console.log('Is NaN?:', isNaN(parseInt(paymentSource.wompi_payment_source_id)));
 
       // Charge via Wompi
       const wompiPayload = {
@@ -201,12 +210,14 @@ export default defineEventHandler(async (event) => {
         currency: 'COP',
         customer_email: userData.user.email,
         reference,
-        payment_source_id: paymentSource.wompi_payment_source_id,
+        payment_source_id: parseInt(paymentSource.wompi_payment_source_id),
         payment_method: {
           installments: 1,
         },
         signature,
       };
+
+      console.log('📤 Wompi Payload:', JSON.stringify(wompiPayload, null, 2));
 
       console.log(
         `💳 Charging ${amountInCents} COP for subscription ${sub.id}`

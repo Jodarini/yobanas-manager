@@ -229,7 +229,7 @@ const formateador = new Intl.DateTimeFormat('es-ES', {
           </li>
         </ul>
 
-        <Button disabled class="w-full" @click="subscribeToPlan(plan.id)">
+        <Button class="w-full" @click="subscribeToPlan(plan.id)">
           {{ loading ? 'Cargando...' : 'Suscribirse' }}
         </Button>
       </div>

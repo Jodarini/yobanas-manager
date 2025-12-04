@@ -228,9 +228,8 @@ export default defineEventHandler(async (event) => {
         // Save to database
         await db.transaction(async (tx) => {
           // Save payment source if it exists
-          if (fullTxData.payment_method?.extra?.external_identifier) {
-            const paymentSourceId =
-              fullTxData.payment_method.extra.external_identifier;
+          if (fullTxData.payment_method?.extra?.external_identifier) {  // ✅ CORRECT
+            const paymentSourceId = fullTxData.payment_method.extra.external_identifier;
 
             const [existing] = await tx
               .select()

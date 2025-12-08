@@ -29,6 +29,7 @@ export const useAuth = () => {
           cancel_at_period_end: 0,
         },
       });
+      await navigateTo('/dashboard?welcome=true');
       return data;
     } catch (err) {
       errorMessage.value = err;

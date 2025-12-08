@@ -1,5 +1,5 @@
 import { serverSupabaseClient } from '#supabase/server';
-import { count, eq, sql, sum } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { productsTable, productVariants } from '~~/db/schema';
 
 export default defineEventHandler(async (event) => {
@@ -19,25 +19,42 @@ export default defineEventHandler(async (event) => {
     const data = await useAuthDB(user, (tx) =>
       tx
         .select({
-          value:
-            sql<number>`sum(${productsTable.price} * ${productVariants.stock})`.mapWith(
-              Number
-            ),
-          stock: sum(productVariants.stock).mapWith(Number),
+          value: sql<number>`
+            COALESCE(
+              SUM(
+                CASE 
+                  WHEN ${productVariants.id} IS NOT NULL 
+                  THEN ${productsTable.price} * ${productVariants.stock}
+                  ELSE ${productsTable.price} * COALESCE(${productsTable.stock}, 0)
+                END
+              ),
+              0
+            )
+          `.mapWith(Number),
+          stock: sql<number>`
+            COALESCE(
+              SUM(
+                CASE 
+                  WHEN ${productVariants.id} IS NOT NULL 
+                  THEN ${productVariants.stock}
+                  ELSE COALESCE(${productsTable.stock}, 0)
+                END
+              ),
+              0
+            )
+          `.mapWith(Number),
         })
-        .from(productVariants)
+        .from(productsTable)
         .leftJoin(
-          productsTable,
-          eq(productVariants.productId, productsTable.id)
+          productVariants,
+          eq(productsTable.id, productVariants.productId)
         )
     );
-    if (!data) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: 'Productos no encontrados',
-      });
-    }
-    return { stock: data[0].stock, value: data[0].value };
+
+    return {
+      stock: data[0].stock ?? 0,
+      value: data[0].value ?? 0
+    };
   } catch (error) {
     console.error(error);
     throw createError({
@@ -46,3 +63,4 @@ export default defineEventHandler(async (event) => {
     });
   }
 });
+

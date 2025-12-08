@@ -1,29 +1,29 @@
 <script setup lang="ts">
-  const user = useSupabaseUser();
+const user = useSupabaseUser();
 
-  const { data, pending, error, refresh } = await useFetch('/api/products', {
-    key: 'products',
-    immediate: !!user.value,
-    watch: [user],
-    // getCachedData(key) {
-    //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
-    // },
-  });
+const { data, pending, error, refresh } = await useFetch('/api/products', {
+  key: 'products',
+  immediate: !!user.value,
+  watch: [user],
+  // getCachedData(key) {
+  //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
+  // },
+});
 
-  const { data: dashboardData } = await useFetch('/api/dashboard/stats', {
-    key: 'stats',
-    immediate: !!user.value,
-    watch: [user],
-    // getCachedData(key) {
-    //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
-    // },
-  });
+const { data: dashboardData } = await useFetch('/api/dashboard/stats', {
+  key: 'stats',
+  immediate: !!user.value,
+  watch: [user],
+  // getCachedData(key) {
+  //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
+  // },
+});
 
-  const numProducts = computed(() => data.value?.length);
+const numProducts = computed(() => data.value?.length);
 
-  const numBrands = computed(
-    () => new Set(data.value?.map((product) => product.brand)).size
-  );
+const numBrands = computed(
+  () => new Set(data.value?.map((product) => product.brand)).size
+);
 </script>
 
 <template>
@@ -69,6 +69,7 @@
         <Card class="flex w-sm flex-row items-center justify-between">
           <div class="w-full">
             <CardContent class="text-2xl font-bold">
+              <template v-if="!dashboardData?.stock">0</template>
               {{ dashboardData?.stock }}
             </CardContent>
             <CardHeader>
@@ -82,6 +83,9 @@
         <Card class="flex w-sm flex-row items-center justify-between">
           <div class="w-full">
             <CardContent class="text-2xl font-bold">
+              <template v-if="!dashboardData?.value">
+                0
+              </template>
               {{
                 dashboardData?.value?.toLocaleString('es-CO', {
                   style: 'currency',

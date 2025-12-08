@@ -90,7 +90,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/',
-      exclude: ['/', '/login', '/sign-up', '/password/*', 'index2'],
+      exclude: ['/', '/login', '/sign-up', '/password/*'],
       saveRedirectToCookie: true,
     },
   },

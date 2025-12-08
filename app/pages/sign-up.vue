@@ -2,6 +2,9 @@
 import { z } from 'zod';
 import { toTypedSchema } from '@vee-validate/zod';
 import { useForm } from 'vee-validate';
+definePageMeta({
+  middleware: 'guest'
+});
 
 const auth = useAuth();
 

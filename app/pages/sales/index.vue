@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { RefreshCw } from 'lucide-vue-next';
+
 const filter = ref('mes');
 const salesCache = useState<Map<string, any>>('sales-cache', () => new Map());
 
-const { data: salesData } = await useFetch('/api/sales', {
+const { data: salesData, refresh, status } = await useFetch('/api/sales', {
   key: computed(() => `sales-${filter.value}`),
   query: { filter },
   getCachedData(key) {
@@ -19,31 +21,44 @@ const numSales = computed(() => salesData.value?.sales.length);
 const totalRevenue = computed(() =>
   salesData.value?.sales.reduce((acc, s) => acc + Number(s.total_amount), 0)
 );
+
+const isRefreshing = computed(() => status.value === 'pending');
+
+const handleRefresh = async () => {
+  // Clear cache for current filter to force fresh data
+  salesCache.value.delete(filter.value);
+  await refresh();
+};
 </script>
 
 <template>
   <div>
     <div class="mb-6">
-      <div class="flex w-full flex-row items-center justify-between">
+      <div class="flex w-full flex-row items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl">Resumen de ventas</h1>
           <p class="text-muted-foreground">
             Supervisa, gestiona y pronostica tus ventas.
           </p>
         </div>
-        <Select v-model="filter" :default-value="filter" class="w-full">
-          <SelectTrigger>
-            <SelectValue placeholder="Filtra por fechas" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="dia">Últimas 24 horas</SelectItem>
-            <SelectItem value="semana">Esta semana</SelectItem>
-            <SelectItem value="mes">Últimos 30 días</SelectItem>
-            <SelectItem value="trimestre">Trimestre</SelectItem>
-            <SelectItem value="año">Año</SelectItem>
-            <SelectItem value="todo">Historial completo</SelectItem>
-          </SelectContent>
-        </Select>
+        <div class="flex items-center gap-2">
+          <Button variant="outline" size="icon" :disabled="isRefreshing" @click="handleRefresh">
+            <RefreshCw :class="{ 'animate-spin': isRefreshing }" />
+          </Button>
+          <Select v-model="filter" :default-value="filter" class="w-full">
+            <SelectTrigger>
+              <SelectValue placeholder="Filtra por fechas" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="dia">Últimas 24 horas</SelectItem>
+              <SelectItem value="semana">Esta semana</SelectItem>
+              <SelectItem value="mes">Últimos 30 días</SelectItem>
+              <SelectItem value="trimestre">Trimestre</SelectItem>
+              <SelectItem value="año">Año</SelectItem>
+              <SelectItem value="todo">Historial completo</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
     <div class="flex w-full flex-wrap gap-4">
@@ -78,7 +93,6 @@ const totalRevenue = computed(() =>
           </div>
           <CardFooter class="h-fit">
             <DollarSign />
-            <!-- <Tags /> -->
           </CardFooter>
         </Card>
       </template>

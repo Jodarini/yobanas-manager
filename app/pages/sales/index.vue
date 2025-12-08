@@ -1,24 +1,24 @@
 <script setup lang="ts">
-  const filter = ref('mes');
-  const salesCache = useState<Map<string, any>>('sales-cache', () => new Map());
+const filter = ref('mes');
+const salesCache = useState<Map<string, any>>('sales-cache', () => new Map());
 
-  const { data: salesData } = await useFetch('/api/sales', {
-    key: computed(() => `sales-${filter.value}`),
-    query: { filter },
-    getCachedData(key) {
-      return salesCache.value.get(filter.value);
-    },
-    onResponse({ response }) {
-      if (response._data) {
-        salesCache.value.set(filter.value, response._data);
-      }
-    },
-  });
+const { data: salesData } = await useFetch('/api/sales', {
+  key: computed(() => `sales-${filter.value}`),
+  query: { filter },
+  getCachedData(key) {
+    return salesCache.value.get(filter.value);
+  },
+  onResponse({ response }) {
+    if (response._data) {
+      salesCache.value.set(filter.value, response._data);
+    }
+  },
+});
 
-  const numSales = computed(() => salesData.value?.sales.length);
-  const totalRevenue = computed(() =>
-    salesData.value?.sales.reduce((acc, s) => acc + Number(s.total_amount), 0)
-  );
+const numSales = computed(() => salesData.value?.sales.length);
+const totalRevenue = computed(() =>
+  salesData.value?.sales.reduce((acc, s) => acc + Number(s.total_amount), 0)
+);
 </script>
 
 <template>
@@ -83,10 +83,8 @@
         </Card>
       </template>
     </div>
-    <template v-if="salesData">
+    <template v-if="salesData && numSales">
       <BestSellingProducts :data="salesData" class="my-2" />
-    </template>
-    <template v-if="salesData">
       <SalesTable :data="salesData.sales" />
     </template>
   </div>

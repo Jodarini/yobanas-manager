@@ -28,7 +28,10 @@ const newArray = computed(() =>
     </CardHeader>
     <CardContent>
       <div class="flex flex-col gap-2">
-        <div v-for="(item, index) in newArray.slice(0, 5)" :key="index" class="flex flex-row justify-between">
+        <template v-if="newArray.length === 0">
+          <div class="text-muted-foreground">No hay productos más vendidos</div>
+        </template>
+        <div v-else v-for="(item, index) in newArray.slice(0, 5)" :key="index" class="flex flex-row justify-between">
           <div class="flex flex-col">
             <div class="font-bold">{{ item.products?.title }}</div>
             <div class="text-muted-foreground">

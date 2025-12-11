@@ -25,6 +25,8 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const validationResult = insertProductSchema.safeParse(body);
 
+  console.log('validationResult', validationResult.data);
+
   if (!validationResult.success) {
     throw createError({
       statusCode: 400,
@@ -93,6 +95,7 @@ export default defineEventHandler(async (event) => {
             product.thumbnail ||
             'https://cdn.dummyjson.com/products/VERYPOGGERSs/mens-shoes/Nike%20Air%20Jordan%201%20Red%20And%20Black/1.png',
           category: product.category || 'NONE',
+          stock: null,
         })
         .returning();
 

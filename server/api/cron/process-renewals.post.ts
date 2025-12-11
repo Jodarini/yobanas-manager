@@ -13,7 +13,10 @@ export default defineEventHandler(async (event) => {
   console.log('cronSecret from config:', config.cronSecret);
   console.log('Supabase URL:', config.public.supabaseUrl);
   console.log('Service Role Key exists:', !!config.supabaseServiceRoleKey);
-  console.log('Service Role Key length:', config.supabaseServiceRoleKey?.length);
+  console.log(
+    'Service Role Key length:',
+    config.supabaseServiceRoleKey?.length
+  );
 
   if (authHeader !== expectedAuth) {
     throw createError({
@@ -74,13 +77,13 @@ export default defineEventHandler(async (event) => {
   type RenewalResult = {
     subId: number;
     status:
-    | 'cancelled_at_period_end'
-    | 'cancel_error'
-    | 'failed'
-    | 'error'
-    | 'renewed'
-    | 'pending'
-    | 'declined';
+      | 'cancelled_at_period_end'
+      | 'cancel_error'
+      | 'failed'
+      | 'error'
+      | 'renewed'
+      | 'pending'
+      | 'declined';
     previousPlan?: string | null;
     error?: string;
     reason?: string;
@@ -232,10 +235,16 @@ export default defineEventHandler(async (event) => {
         continue;
       }
       console.log('🔍 Payment Source Debug:');
-      console.log('Raw wompi_payment_source_id:', paymentSource.wompi_payment_source_id);
+      console.log(
+        'Raw wompi_payment_source_id:',
+        paymentSource.wompi_payment_source_id
+      );
       console.log('Type:', typeof paymentSource.wompi_payment_source_id);
       console.log('Parsed:', parseInt(paymentSource.wompi_payment_source_id));
-      console.log('Is NaN?:', isNaN(parseInt(paymentSource.wompi_payment_source_id)));
+      console.log(
+        'Is NaN?:',
+        isNaN(parseInt(paymentSource.wompi_payment_source_id))
+      );
 
       // Charge via Wompi
       const wompiPayload = {
@@ -243,7 +252,7 @@ export default defineEventHandler(async (event) => {
         currency: 'COP',
         customer_email: userData.user.email,
         reference,
-        payment_source_id: parseInt(paymentSource.wompi_payment_source_id),
+        payment_source_id: paymentSource.wompi_payment_source_id,
         payment_method: {
           installments: 1,
         },

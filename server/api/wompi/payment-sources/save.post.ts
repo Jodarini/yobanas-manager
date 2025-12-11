@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
       .insert(paymentSources)
       .values({
         user_id: user.id,
-        wompi_payment_source_id: body.wompiPaymentSourceId,
+        wompi_payment_source_id: body.wompiPaymentSourceId, // ✅ Remove String() wrapper
         type: body.type,
         status: body.status,
         card_brand: body.cardBrand,

@@ -14,6 +14,7 @@ const wompiTransactionSchema = z.object({
   reference: z.string(),
   amount_in_cents: z.number(),
   currency: z.string(),
+  payment_source_id: z.number().nullable().optional(),
   payment_method: z
     .object({
       type: z.string(),
@@ -131,7 +132,10 @@ export default defineEventHandler(async (event) => {
 
       const fullTxData = wompiDataResult.data.data;
 
-      console.log('📄 Full transaction data:', fullTxData);
+      console.log(
+        '📄 Full transaction data:',
+        JSON.stringify(fullTxData, null, 2)
+      );
 
       // Check if transaction already processed
       const db = useDB();
@@ -289,30 +293,41 @@ export default defineEventHandler(async (event) => {
 
         // Save to database
         await db.transaction(async (tx) => {
-          // Save payment source if it exists
-          if (fullTxData.payment_method?.extra?.external_identifier) {
-            const paymentSourceId =
-              fullTxData.payment_method.extra.external_identifier;
+          // Save payment source if transaction has one
+          if (fullTxData.payment_source_id) {
+            console.log(
+              '💳 Payment source ID from transaction:',
+              fullTxData.payment_source_id
+            );
 
             const [existing] = await tx
               .select()
               .from(paymentSources)
               .where(
-                eq(paymentSources.wompi_payment_source_id, paymentSourceId)
+                eq(
+                  paymentSources.wompi_payment_source_id,
+                  fullTxData.payment_source_id
+                )
               )
               .limit(1);
 
             if (!existing) {
               await tx.insert(paymentSources).values({
                 user_id: user.id,
-                wompi_payment_source_id: paymentSourceId,
-                type: fullTxData.payment_method.type,
+                wompi_payment_source_id: fullTxData.payment_source_id,
+                type: fullTxData.payment_method?.type || 'CARD',
                 status: 'AVAILABLE',
-                card_brand: fullTxData.payment_method.extra?.brand,
-                card_last_four: fullTxData.payment_method.extra?.last_four,
+                card_brand: fullTxData.payment_method?.extra?.brand,
+                card_last_four: fullTxData.payment_method?.extra?.last_four,
               });
-              console.log('💾 Payment source saved');
+              console.log('💾 Payment source saved from webhook');
+            } else {
+              console.log('ℹ️ Payment source already exists');
             }
+          } else {
+            console.warn(
+              '⚠️ No payment source ID in transaction - user will need to add payment method manually'
+            );
           }
 
           // Create or update subscription if payment approved

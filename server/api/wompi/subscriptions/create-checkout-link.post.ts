@@ -1,4 +1,3 @@
-// server/api/wompi/subscriptions/create-checkout-link.post.ts
 import { serverSupabaseClient } from '#supabase/server';
 import crypto from 'crypto';
 
@@ -34,7 +33,6 @@ export default defineEventHandler(async (event) => {
     .update(signatureString)
     .digest('hex');
 
-  // Get base URL from env or default to localhost
   const appUrl = process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   const baseUrl = 'https://checkout.wompi.co/p/';
@@ -44,7 +42,8 @@ export default defineEventHandler(async (event) => {
     `amount-in-cents=${selectedPlan.amount}`,
     `reference=${reference}`,
     `signature:integrity=${signature}`,
-    `redirect-url=${encodeURIComponent(`${appUrl}/subscriptions/callback`)}`, // ADD THIS
+    `redirect-url=${encodeURIComponent(`${appUrl}/subscriptions/callback`)}`,
+    `customer-data:email=${encodeURIComponent(user.email!)}`,
   ].join('&');
 
   const checkoutUrl = `${baseUrl}?${params}`;

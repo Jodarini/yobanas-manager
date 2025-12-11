@@ -81,7 +81,20 @@ export const useAuth = () => {
     errorMessage.value = null;
 
     try {
-      const { error } = await supabase.auth.signInAnonymously();
+      const { data, error } = await supabase.auth.signInAnonymously();
+      console.log('data', data.user?.id);
+
+      const res = await useFetch('/api/auth/signup', {
+        method: 'POST',
+        body: {
+          user_id: data.user?.id,
+          plan: 'gratis',
+          status: 'active',
+          current_period_start: null,
+          current_period_end: null,
+          cancel_at_period_end: 0,
+        },
+      });
 
       if (error) {
         errorMessage.value = error.message;

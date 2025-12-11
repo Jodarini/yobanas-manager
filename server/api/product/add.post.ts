@@ -10,7 +10,6 @@ import { buildProductSku, buildVariantSku } from '~~/db/utils/sku';
 import { and, eq, isNull, sql } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
-  // TODO: add redirect when not signed in
   const supabase = await serverSupabaseClient(event);
   const {
     data: { user },

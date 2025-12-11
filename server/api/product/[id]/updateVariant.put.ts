@@ -18,7 +18,29 @@ export default defineEventHandler(async (event) => {
   const productId = getRouterParam(event, 'id');
 
   return await useAuthDB(user, async (tx) => {
-    const results = {
+    const results: {
+      succeeded: {
+        index: number;
+        variantId: number | undefined;
+        variant: { color: string; size: string };
+      }[];
+      created: {
+        index: number;
+        variantId: number;
+        variant: { color: string; size: string };
+      }[];
+      failed: {
+        index: number;
+        variantId: number | undefined;
+        variant: { color: string; size: string };
+        error: string;
+      }[];
+      summary: {
+        total: number;
+        successCount: number;
+        failureCount: number;
+      };
+    } = {
       succeeded: [],
       created: [],
       failed: [],
@@ -50,6 +72,12 @@ export default defineEventHandler(async (event) => {
             throw new Error('Variant not found or access denied');
           }
         } else {
+          if (!payload.productSKU) {
+            throw createError({
+              statusCode: 400,
+              message: 'Product SKU is required to create new variants',
+            });
+          }
           console.log('no id found');
           const [created] = await tx
             .insert(productVariants)

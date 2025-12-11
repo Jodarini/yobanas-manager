@@ -43,7 +43,11 @@ export default defineEventHandler(async (event) => {
     model: product.title,
   });
 
-  const limits = { gratis: 5, negocio: 500, emprendedor: 9999999 };
+  const limits: Record<string, number> = {
+    gratis: 5,
+    negocio: 500,
+    emprendedor: 9999999,
+  };
   try {
     return await useAuthDB(user, async (tx) => {
       const subscription = await tx
@@ -52,7 +56,7 @@ export default defineEventHandler(async (event) => {
         .where(eq(subscriptions.user_id, user.id));
 
       const [products] = await tx
-        .select({ count: sql`count(*)` })
+        .select({ count: sql<number>`count(*)`.mapWith(Number) })
         .from(productsTable)
         .where(
           and(
@@ -60,10 +64,16 @@ export default defineEventHandler(async (event) => {
             isNull(productsTable.deleted_at)
           )
         );
-      if (products.count >= limits[subscription[0].plan]) {
-        throw new Error(
-          `LIMIT_REACHED:${subscription[0].plan}:${limits[subscription[0].plan]}`
-        );
+      if (!subscription[0]) {
+        throw createError({
+          statusCode: 400,
+          message: 'No active subscription found',
+        });
+      }
+
+      const limit = limits[subscription[0].plan] ?? 5;
+      if (products.count >= limit) {
+        throw new Error(`LIMIT_REACHED:${subscription[0].plan}:${limit}`);
       }
 
       if (product.stock) {
@@ -77,7 +87,7 @@ export default defineEventHandler(async (event) => {
           thumbnail:
             product.thumbnail ||
             'https://cdn.dummyjson.com/products/VERYPOGGERSs/mens-shoes/Nike%20Air%20Jordan%201%20Red%20And%20Black/1.png',
-          category: product.category || 'NONE',
+          category: product.category,
           stock: product.stock,
         });
         return;
@@ -89,17 +99,17 @@ export default defineEventHandler(async (event) => {
           sku: productSku,
           title: product.title,
           description: product.description,
-          price: product.price,
+          price: String(product.price),
           brand: product.brand,
           thumbnail:
             product.thumbnail ||
             'https://cdn.dummyjson.com/products/VERYPOGGERSs/mens-shoes/Nike%20Air%20Jordan%201%20Red%20And%20Black/1.png',
-          category: product.category || 'NONE',
+          category: product.category,
           stock: null,
         })
         .returning();
 
-      for (const variant of product.variants) {
+      for (const variant of product.variants || []) {
         const variantSku = buildVariantSku({
           productSku,
           color: variant.color,
@@ -117,15 +127,16 @@ export default defineEventHandler(async (event) => {
       return { product: queryResult[0] };
     });
   } catch (error) {
-    if (error.message?.startsWith('LIMIT_REACHED:')) {
-      const [, plan, limit] = error.message.split(':');
+    const err = error as any;
+    if (err.message?.startsWith('LIMIT_REACHED:')) {
+      const [, plan, limit] = err.message.split(':');
       throw createError({
         statusCode: 403,
         message: `Has alcanzado el límite de ${limit} productos para tu plan ${plan}`,
       });
     }
 
-    if (error.code === '23505') {
+    if (err.code === '23505') {
       const existingProduct = await useAuthDB(user, async (tx) => {
         const results = await tx
           .select({

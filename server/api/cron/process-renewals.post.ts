@@ -71,8 +71,24 @@ export default defineEventHandler(async (event) => {
     `🛑 Found ${cancellingSubscriptions.length} subscriptions to cancel`
   );
 
-  const results = [];
-  const plans = {
+  type RenewalResult = {
+    subId: number;
+    status:
+    | 'cancelled_at_period_end'
+    | 'cancel_error'
+    | 'failed'
+    | 'error'
+    | 'renewed'
+    | 'pending'
+    | 'declined';
+    previousPlan?: string | null;
+    error?: string;
+    reason?: string;
+    txId?: string;
+  };
+
+  const results: RenewalResult[] = [];
+  const plans: Record<string, number> = {
     emprendedor: 2500000,
     negocio: 5000000,
   };
@@ -122,11 +138,12 @@ export default defineEventHandler(async (event) => {
         );
       }
     } catch (error) {
+      const err = error as Error;
       console.error(`❌ Error cancelling subscription ${sub.id}:`, error);
       results.push({
         subId: sub.id,
         status: 'cancel_error',
-        error: error.message,
+        error: err.message,
       });
     }
   }
@@ -175,7 +192,13 @@ export default defineEventHandler(async (event) => {
         continue;
       }
 
-      const amountInCents = plans[sub.plan];
+      const planCost = plans[sub.plan];
+      if (!planCost) {
+        console.error(`❌ Unknown plan ${sub.plan} for subscription ${sub.id}`);
+        continue;
+      }
+
+      const amountInCents = planCost;
       const reference = `RENEWAL-${sub.id}-${Date.now()}`;
 
       // Build signature for Wompi
@@ -195,6 +218,16 @@ export default defineEventHandler(async (event) => {
           subId: sub.id,
           status: 'error',
           reason: 'user_not_found',
+        });
+        continue;
+      }
+
+      if (!userData.user) {
+        console.error(`❌ User data missing for ${sub.user_id}`);
+        results.push({
+          subId: sub.id,
+          status: 'error',
+          reason: 'user_data_missing',
         });
         continue;
       }
@@ -316,11 +349,12 @@ export default defineEventHandler(async (event) => {
         );
       }
     } catch (error) {
+      const err = error as Error;
       console.error(`❌ Error processing subscription ${sub.id}:`, error);
       results.push({
         subId: sub.id,
         status: 'error',
-        error: error.message,
+        error: err.message,
       });
     }
   }

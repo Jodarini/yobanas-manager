@@ -1,28 +1,75 @@
 import { subscriptions, transactions, paymentSources } from '~~/db/schema';
 import { eq } from 'drizzle-orm';
-import crypto from 'crypto';
+// import crypto from 'crypto';
+import { z } from 'zod';
 
 export const config = {
   csrf: false,
 };
 
+// Zod schemas for validation
+const wompiTransactionSchema = z.object({
+  id: z.string(),
+  status: z.string(),
+  reference: z.string(),
+  amount_in_cents: z.number(),
+  currency: z.string(),
+  payment_method: z
+    .object({
+      type: z.string(),
+      extra: z
+        .object({
+          external_identifier: z.string().optional(),
+          brand: z.string().optional(),
+          last_four: z.string().optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+});
+
+const wompiWebhookSchema = z.object({
+  event: z.string(),
+  timestamp: z.number(),
+  data: z.object({
+    transaction: wompiTransactionSchema,
+  }),
+});
+
+const wompiApiResponseSchema = z.object({
+  data: wompiTransactionSchema,
+});
+
 export default defineEventHandler(async (event) => {
   try {
     const config = useRuntimeConfig();
-    const body = await readBody(event);
+
+    // Validate webhook body with Zod
+    const bodyResult = wompiWebhookSchema.safeParse(await readBody(event));
+
+    if (!bodyResult.success) {
+      console.error('❌ Invalid webhook body:', bodyResult.error);
+      throw createError({
+        statusCode: 400,
+        message: 'Invalid webhook payload',
+        data: bodyResult.error,
+      });
+    }
+
+    const body = bodyResult.data;
 
     console.log('📥 Wompi webhook received:', JSON.stringify(body, null, 2));
 
     // 1. Verify webhook signature (Wompi sends this in headers)
-    const signature = getHeader(event, 'x-event-checksum');
-    const timestamp = body.timestamp;
+    // const signature = getHeader(event, 'x-event-checksum');
+    // const timestamp = body.timestamp;
 
     // Build the string Wompi uses for signature
-    const signatureString = `${body.event}.${timestamp}.${JSON.stringify(body.data)}`;
-    const expectedSignature = crypto
-      .createHash('sha256')
-      .update(signatureString + config.wompiEventsSecret)
-      .digest('hex');
+    // const signatureString = `${body.event}.${timestamp}.${JSON.stringify(body.data)}`;
+    // const expectedSignature = crypto
+    //   .createHash('sha256')
+    //   .update(signatureString + config.wompiEventsSecret)
+    //   .digest('hex');
 
     // Verify signature (optional but recommended for production)
     // if (signature !== expectedSignature) {
@@ -68,8 +115,21 @@ export default defineEventHandler(async (event) => {
         });
       }
 
-      const wompiData = await res.json();
-      const fullTxData = wompiData.data;
+      const wompiJson = await res.json();
+
+      // Validate API response with Zod
+      const wompiDataResult = wompiApiResponseSchema.safeParse(wompiJson);
+
+      if (!wompiDataResult.success) {
+        console.error('❌ Invalid Wompi API response:', wompiDataResult.error);
+        throw createError({
+          statusCode: 500,
+          message: 'Invalid transaction data from Wompi',
+          data: wompiDataResult.error,
+        });
+      }
+
+      const fullTxData = wompiDataResult.data.data;
 
       console.log('📄 Full transaction data:', fullTxData);
 
@@ -87,7 +147,7 @@ export default defineEventHandler(async (event) => {
       }
 
       // Determine plan from amount
-      const planMap = {
+      const planMap: Record<number, string> = {
         2500000: 'emprendedor',
         5000000: 'negocio',
       };
@@ -132,7 +192,9 @@ export default defineEventHandler(async (event) => {
           // Update subscription if payment approved
           if (fullTxData.status === 'APPROVED') {
             const now = new Date();
-            const currentPeriodEnd = new Date(existingSub.current_period_end);
+            const currentPeriodEnd = existingSub.current_period_end
+              ? new Date(existingSub.current_period_end)
+              : new Date(0);
             const isStillActive = currentPeriodEnd > now;
 
             let newPeriodStart: Date;
@@ -211,7 +273,7 @@ export default defineEventHandler(async (event) => {
         const { data: users, error: usersError } =
           await supabaseAdmin.auth.admin.listUsers();
 
-        if (usersError) {
+        if (usersError || !users) {
           console.error('❌ Error fetching users:', usersError);
           throw createError({ statusCode: 500, message: 'Error finding user' });
         }
@@ -228,8 +290,9 @@ export default defineEventHandler(async (event) => {
         // Save to database
         await db.transaction(async (tx) => {
           // Save payment source if it exists
-          if (fullTxData.payment_method?.extra?.external_identifier) {  // ✅ CORRECT
-            const paymentSourceId = fullTxData.payment_method.extra.external_identifier;
+          if (fullTxData.payment_method?.extra?.external_identifier) {
+            const paymentSourceId =
+              fullTxData.payment_method.extra.external_identifier;
 
             const [existing] = await tx
               .select()
@@ -264,7 +327,9 @@ export default defineEventHandler(async (event) => {
 
             if (existingSub) {
               // Check if existing subscription is still active
-              const currentPeriodEnd = new Date(existingSub.current_period_end);
+              const currentPeriodEnd = existingSub.current_period_end
+                ? new Date(existingSub.current_period_end)
+                : new Date(0);
               const isStillActive = currentPeriodEnd > now;
 
               let newPeriodStart: Date;

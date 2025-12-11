@@ -2,7 +2,7 @@ import { subscriptions } from '~~/db/schema';
 import { z } from 'zod';
 
 const createSubscriptionSchema = z.object({
-  user_id: z.string().uuid(),
+  user_id: z.uuid(),
   plan: z.enum(['gratis', 'emprendedor', 'negocio']).default('gratis'),
   status: z
     .enum(['active', 'inactive', 'cancelled', 'past_due'])

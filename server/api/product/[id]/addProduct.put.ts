@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
         .set({
           title: product.title,
           description: product.description,
-          price: product.price,
+          price: String(product.price),
           category: product.category,
           brand: product.brand,
           sku: productSku,

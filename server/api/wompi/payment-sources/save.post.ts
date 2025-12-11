@@ -1,4 +1,3 @@
-// server/api/payment-sources/save.post.ts
 import { serverSupabaseClient } from '#supabase/server';
 import { paymentSources } from '~~/db/schema';
 

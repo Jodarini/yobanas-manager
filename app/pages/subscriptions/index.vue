@@ -212,27 +212,34 @@ const formateador = new Intl.DateTimeFormat('es-ES', {
     <h1 class="mb-2 text-3xl font-bold">Planes</h1>
 
     <div class="grid gap-6 md:grid-cols-2">
-      <div v-for="plan in plans" :key="plan.id" Tu plani class="rounded-lg border p-6">
-        <Badge v-if="data.planName.value === plan.name" class="bg-foreground/20 mb-2">
-          Tu plan actual
-        </Badge>
-        <h2 class="mb-2 text-2xl font-bold">{{ plan.name }}</h2>
-        <p class="mb-4 text-3xl font-bold">
-          ${{ plan.price.toLocaleString('es-CO') }} COP
-          <span class="text-sm font-normal text-gray-600">/mes</span>
-        </p>
+      <Card v-for="plan in plans" :key="plan.id">
+        <CardHeader>
+          <Badge v-if="data.planName.value === plan.name" class="bg-foreground/20 mb-2">
+            Tu plan actual
+          </Badge>
+          <CardTitle>
+            <h2 class="mb-2 text-2xl font-bold">{{ plan.name }}</h2>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p class="mb-4 text-3xl font-bold">
+            ${{ plan.price.toLocaleString('es-CO') }} COP
+            <span class="text-sm font-normal text-gray-600">/mes</span>
+          </p>
 
-        <ul class="mb-6 space-y-2">
-          <li v-for="feature in plan.features" :key="feature" class="flex items-center">
-            <span class="mr-2">✓</span>
-            {{ feature }}
-          </li>
-        </ul>
-
-        <Button class="w-full" disabled @click="subscribeToPlan(plan.id)">
-          {{ loading ? 'Cargando...' : 'Suscribirse' }}
-        </Button>
-      </div>
+          <ul>
+            <li v-for="feature in plan.features" :key="feature" class="flex items-center">
+              <span class="mr-2">✓</span>
+              {{ feature }}
+            </li>
+          </ul>
+        </CardContent>
+        <CardFooter class="mt-auto">
+          <Button class="w-full" disabled @click="subscribeToPlan(plan.id)">
+            {{ loading ? 'Cargando...' : 'Suscribirse' }}
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   </div>
 </template>

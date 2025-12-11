@@ -1,23 +1,17 @@
 <script setup lang="ts">
   const user = useSupabaseUser();
 
-  const { data, pending, error, refresh } = await useFetch('/api/products', {
-    key: 'products',
-    immediate: !!user.value,
-    watch: [user],
-    // getCachedData(key) {
-    //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
-    // },
-  });
+const { data, pending, error, refresh } = await useFetch('/api/products', {
+  key: 'products',
+  immediate: !!user.value,
+  watch: [user],
+});
 
-  const { data: dashboardData } = await useFetch('/api/dashboard/stats', {
-    key: 'stats',
-    immediate: !!user.value,
-    watch: [user],
-    // getCachedData(key) {
-    //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
-    // },
-  });
+const { data: dashboardData, pending: dashboardPending } = await useFetch('/api/dashboard/stats', {
+  key: 'stats',
+  immediate: !!user.value,
+  watch: [user],
+});
 
   const numProducts = computed(() => data.value?.length);
 
@@ -38,10 +32,12 @@
     <template v-else-if="user">
       <h1 class="mb-6 text-2xl">Dashboard</h1>
       <div class="flex w-full flex-wrap gap-4">
+        <!-- Referencias Card -->
         <Card class="flex w-sm flex-row items-center justify-between">
           <div class="w-full">
             <CardContent class="text-2xl font-bold">
-              {{ numProducts }}
+              <Skeleton v-if="pending" class="h-8 w-16" />
+              <template v-else>{{ numProducts }}</template>
             </CardContent>
             <CardHeader>
               <CardTitle class="font-medium">Referencias</CardTitle>
@@ -52,10 +48,12 @@
           </CardFooter>
         </Card>
 
+        <!-- Marcas Card -->
         <Card class="flex w-sm flex-row items-center justify-between">
           <div class="w-full">
             <CardContent class="text-2xl font-bold">
-              {{ numBrands }}
+              <Skeleton v-if="pending" class="h-8 w-16" />
+              <template v-else>{{ numBrands }}</template>
             </CardContent>
             <CardHeader>
               <CardTitle class="font-medium">Marcas</CardTitle>
@@ -66,10 +64,15 @@
           </CardFooter>
         </Card>
 
+        <!-- Productos en inventario Card -->
         <Card class="flex w-sm flex-row items-center justify-between">
           <div class="w-full">
             <CardContent class="text-2xl font-bold">
-              {{ dashboardData?.stock }}
+              <Skeleton v-if="dashboardPending" class="h-8 w-20" />
+              <template v-else>
+                <template v-if="!dashboardData?.stock">0</template>
+                {{ dashboardData?.stock }}
+              </template>
             </CardContent>
             <CardHeader>
               <CardTitle class="font-medium">Productos en inventario</CardTitle>
@@ -79,16 +82,22 @@
             <Warehouse />
           </CardFooter>
         </Card>
+
+        <!-- Valor total Card -->
         <Card class="flex w-sm flex-row items-center justify-between">
           <div class="w-full">
             <CardContent class="text-2xl font-bold">
-              {{
-                dashboardData?.value?.toLocaleString('es-CO', {
-                  style: 'currency',
-                  currency: 'COP',
-                  minimumFractionDigits: 0,
-                })
-              }}
+              <Skeleton v-if="dashboardPending" class="h-8 w-32" />
+              <template v-else>
+                <template v-if="!dashboardData?.value">0</template>
+                {{
+                  dashboardData?.value?.toLocaleString('es-CO', {
+                    style: 'currency',
+                    currency: 'COP',
+                    minimumFractionDigits: 0,
+                  })
+                }}
+              </template>
             </CardContent>
             <CardHeader>
               <CardTitle class="font-medium">Valor total</CardTitle>

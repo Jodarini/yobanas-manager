@@ -1,17 +1,20 @@
 <script setup lang="ts">
   const user = useSupabaseUser();
 
-const { data, pending, error, refresh } = await useFetch('/api/products', {
-  key: 'products',
-  immediate: !!user.value,
-  watch: [user],
-});
+  const { data, pending, error, refresh } = await useFetch('/api/products', {
+    key: 'products',
+    immediate: !!user.value,
+    watch: [user],
+  });
 
-const { data: dashboardData, pending: dashboardPending } = await useFetch('/api/dashboard/stats', {
-  key: 'stats',
-  immediate: !!user.value,
-  watch: [user],
-});
+  const { data: dashboardData, pending: dashboardPending } = await useFetch(
+    '/api/dashboard/stats',
+    {
+      key: 'stats',
+      immediate: !!user.value,
+      watch: [user],
+    }
+  );
 
   const numProducts = computed(() => data.value?.length);
 
@@ -70,7 +73,6 @@ const { data: dashboardData, pending: dashboardPending } = await useFetch('/api/
             <CardContent class="text-2xl font-bold">
               <Skeleton v-if="dashboardPending" class="h-8 w-20" />
               <template v-else>
-                <template v-if="!dashboardData?.stock">0</template>
                 {{ dashboardData?.stock }}
               </template>
             </CardContent>
@@ -89,7 +91,6 @@ const { data: dashboardData, pending: dashboardPending } = await useFetch('/api/
             <CardContent class="text-2xl font-bold">
               <Skeleton v-if="dashboardPending" class="h-8 w-32" />
               <template v-else>
-                <template v-if="!dashboardData?.value">0</template>
                 {{
                   dashboardData?.value?.toLocaleString('es-CO', {
                     style: 'currency',

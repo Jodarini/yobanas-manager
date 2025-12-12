@@ -72,6 +72,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxtjs/supabase',
     'lucide-nuxt',
+    '@nuxt/test-utils'
   ],
   image: {
     dir: 'public',
@@ -87,6 +88,9 @@ export default defineNuxtConfig({
     componentDir: './app/components/ui',
   },
   supabase: {
+    url: process.env.NUXT_PUBLIC_SUPABASE_URL,
+    key: process.env.NUXT_PUBLIC_SUPABASE_KEY,
+    types: false, // Disable if you don't have generated types
     redirectOptions: {
       login: '/login',
       callback: '/',

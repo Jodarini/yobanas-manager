@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { columns } from '@/components/columns';
-const user = useSupabaseUser();
 
-const { data, refresh, error, status } = await useFetch('/api/products', {
+const { data, error, status } = await useFetch('/api/products', {
   key: 'products',
   // getCachedData(key) {
   //   return useNuxtApp().payload.data[key] || useNuxtApp().static.data[key];
@@ -12,34 +11,25 @@ const { data, refresh, error, status } = await useFetch('/api/products', {
 
 <template>
   <div>
-    <template v-if="!user">
-      <h1 class="mb-6 text-2xl">Bienvenido!</h1>
-      <p>Inicia sesión para comenzar a crear productos.</p>
-      <Button as-child>
-        <NuxtLink to="/login">Iniciar sesión</NuxtLink>
-      </Button>
-    </template>
-    <template v-else-if="user">
-      <div class="flex justify-between">
-        <h1 class="mb-6 text-2xl">Sus productos</h1>
-      </div>
+    <div class="flex justify-between">
+      <h1 class="mb-6 text-2xl">Sus productos</h1>
+    </div>
 
-      <div v-if="status === 'pending'" class="flex min-h-[400px] items-center justify-center">
-        <div class="flex flex-col items-center gap-4">
-          <div class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900" />
-          <p class="text-gray-600">Cargando producto...</p>
-        </div>
+    <div v-if="status === 'pending'" class="flex min-h-[400px] items-center justify-center">
+      <div class="flex flex-col items-center gap-4">
+        <div class="h-12 w-12 animate-spin rounded-full border-b-2 border-gray-900" />
+        <p class="text-gray-600">Cargando producto...</p>
       </div>
-      <p v-else-if="error">{{ error }}</p>
+    </div>
+    <p v-else-if="error">{{ error }}</p>
 
-      <template v-else-if="status === 'success' && data && data.length > 0">
-        <Card>
-          <CardContent class="p-0 pt-0">
-            <DataTable :columns="columns" :data="data" />
-          </CardContent>
-        </Card>
-      </template>
-      <div v-else>¡Agrega nuevos items a tu inventario!</div>
+    <template v-else-if="status === 'success' && data && data.length > 0">
+      <Card>
+        <CardContent class="p-0 pt-0">
+          <DataTable :columns :data />
+        </CardContent>
+      </Card>
     </template>
+    <div v-else>¡Agrega nuevos items a tu inventario!</div>
   </div>
 </template>

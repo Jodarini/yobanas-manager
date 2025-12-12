@@ -1,136 +1,136 @@
 <script setup lang="ts">
-  import { useToast } from '~/components/ui/toast';
-  import { CalendarDays } from 'lucide-vue-next';
+import { useToast } from '~/components/ui/toast';
+import { CalendarDays } from 'lucide-vue-next';
 
-  const data = useUserSubscription();
-  const loading = ref(false);
-  const { toast } = useToast();
-  const user = useSupabaseUser();
+const data = useUserSubscription();
+const loading = ref(false);
+const { toast } = useToast();
+const user = useSupabaseUser();
 
-  const { data: subscription } = await useFetch('/api/subscriptions/current', {
-    key: 'subscription',
-  });
+const { data: subscription } = await useFetch('/api/subscriptions/current', {
+  key: 'subscription',
+});
 
-  const plans = [
-    {
-      id: 'emprendedor',
-      name: 'Plan Emprendedor',
-      price: 25000,
-      features: [
-        '500 productos',
-        'Ventas ilimitadas',
-        '90 días de historial',
-        'Analíticas básicas',
-      ],
-    },
-    {
-      id: 'negocio',
-      name: 'Plan Negocio',
-      price: 50000,
-      features: [
-        'Productos ilimitados',
-        'Ventas ilimitadas',
-        'Historial ilimitado',
-        'Analíticas avanzadas',
-        'Alertas de stock',
-        'Exportar a Excel',
-      ],
-    },
-  ];
+const plans = [
+  {
+    id: 'emprendedor',
+    name: 'Plan Emprendedor',
+    price: 25000,
+    features: [
+      '500 productos',
+      'Ventas ilimitadas',
+      '90 días de historial',
+      'Analíticas básicas',
+    ],
+  },
+  {
+    id: 'negocio',
+    name: 'Plan Negocio',
+    price: 50000,
+    features: [
+      'Productos ilimitados',
+      'Ventas ilimitadas',
+      'Historial ilimitado',
+      'Analíticas avanzadas',
+      'Alertas de stock',
+      'Exportar a Excel',
+    ],
+  },
+];
 
-  const cancelSubscription = async (immediately = false) => {
-    const confirmed = confirm(
-      immediately
-        ? '¿Estás seguro? Perderás acceso a las funciones premium inmediatamente.'
-        : '¿Cancelar al final del período? Seguirás teniendo acceso hasta el final del mes actual.'
-    );
+const cancelSubscription = async (immediately = false) => {
+  const confirmed = confirm(
+    immediately
+      ? '¿Estás seguro? Perderás acceso a las funciones premium inmediatamente.'
+      : '¿Cancelar al final del período? Seguirás teniendo acceso hasta el final del mes actual.'
+  );
 
-    if (!confirmed) return;
+  if (!confirmed) return;
 
-    try {
-      const { data, error } = await useFetch('/api/subscriptions/cancel', {
-        method: 'POST',
-        body: { immediately },
-      });
+  try {
+    const { data, error } = await useFetch('/api/subscriptions/cancel', {
+      method: 'POST',
+      body: { immediately },
+    });
 
-      if (error.value) {
-        toast({
-          variant: 'destructive',
-          title: 'Error al cancelar la suscripción',
-          description: `${error.value.data?.message}`,
-        });
-      } else {
-        toast({
-          title: 'Subscipción cancelada exitosamente',
-          description: `${data.value.message}`,
-        });
-        refreshNuxtData('subscription');
-      }
-    } catch (e) {
+    if (error.value) {
       toast({
         variant: 'destructive',
         title: 'Error al cancelar la suscripción',
-        description: `${e.message}`,
+        description: `${error.value.data?.message}`,
       });
-    }
-  };
-
-  const subscribeToPlan = async (planId: string) => {
-    loading.value = true;
-
-    try {
-      const { data, error } = await useFetch(
-        '/api/wompi/subscriptions/create-checkout-link',
-        {
-          method: 'POST',
-          body: { planName: planId },
-        }
-      );
-
-      if (error.value) {
-        alert('Error al crear checkout: ' + error.value.message);
-        return;
-      }
-
-      // Redirect to Wompi checkout
-      window.location.href = data.value.checkoutUrl;
-    } catch (err) {
-      console.error(err);
-      alert('Error inesperado');
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  const reactivateSubscription = async () => {
-    loading.value = true;
-
-    try {
-      const { data, error } = await useFetch(
-        '/api/auth/reactivate-subscription',
-        {
-          method: 'PUT',
-        }
-      );
-
+    } else {
+      toast({
+        title: 'Subscipción cancelada exitosamente',
+        description: `${data.value.message}`,
+      });
       refreshNuxtData('subscription');
-
-      if (error.value) {
-        alert('Error al crear checkout: ' + error.value.message);
-        return;
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      loading.value = false;
     }
-  };
+  } catch (e) {
+    toast({
+      variant: 'destructive',
+      title: 'Error al cancelar la suscripción',
+      description: `${e.message}`,
+    });
+  }
+};
 
-  const formateador = new Intl.DateTimeFormat('es-ES', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+const subscribeToPlan = async (planId: string) => {
+  loading.value = true;
+
+  try {
+    const { data, error } = await useFetch(
+      '/api/wompi/subscriptions/create-checkout-link',
+      {
+        method: 'POST',
+        body: { planName: planId },
+      }
+    );
+
+    if (error.value) {
+      alert('Error al crear checkout: ' + error.value.message);
+      return;
+    }
+
+    // Redirect to Wompi checkout
+    window.location.href = data.value.checkoutUrl;
+  } catch (err) {
+    console.error(err);
+    alert('Error inesperado');
+  } finally {
+    loading.value = false;
+  }
+};
+
+const reactivateSubscription = async () => {
+  loading.value = true;
+
+  try {
+    const { data, error } = await useFetch(
+      '/api/auth/reactivate-subscription',
+      {
+        method: 'PUT',
+      }
+    );
+
+    refreshNuxtData('subscription');
+
+    if (error.value) {
+      alert('Error al crear checkout: ' + error.value.message);
+      return;
+    }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const formateador = new Intl.DateTimeFormat('es-ES', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
 </script>
 
 <template>
@@ -165,10 +165,7 @@
                 <span class="font-bold">Plan {{ subscription.plan }}!</span>
               </p>
               <p v-else>Sin subscripción.</p>
-              <div
-                v-if="subscription.plan !== 'gratis'"
-                class="flex flex-row items-center gap-1"
-              >
+              <div v-if="subscription.plan !== 'gratis'" class="flex flex-row items-center gap-1">
                 <CalendarDays size="1rem" />
                 <p>
                   Tu servicio terminará el
@@ -190,10 +187,7 @@
 
             <div v-if="subscription.plan === 'gratis'" />
 
-            <div
-              v-else-if="subscription.cancel_at_period_end"
-              class="flex flex-col gap-2"
-            >
+            <div v-else-if="subscription.cancel_at_period_end" class="flex flex-col gap-2">
               <Button variant="outline" @click="cancelSubscription(true)">
                 Cancelar inmediatamente
               </Button>
@@ -220,10 +214,7 @@
     <div class="grid gap-6 md:grid-cols-2">
       <Card v-for="plan in plans" :key="plan.id">
         <CardHeader>
-          <Badge
-            v-if="data.planName.value === plan.name"
-            class="bg-foreground/20 mb-2"
-          >
+          <Badge v-if="data.planName.value === plan.name" class="bg-foreground/20 mb-2">
             Tu plan actual
           </Badge>
           <CardTitle>
@@ -237,18 +228,14 @@
           </p>
 
           <ul>
-            <li
-              v-for="feature in plan.features"
-              :key="feature"
-              class="flex items-center"
-            >
+            <li v-for="feature in plan.features" :key="feature" class="flex items-center">
               <span class="mr-2">✓</span>
               {{ feature }}
             </li>
           </ul>
         </CardContent>
         <CardFooter class="mt-auto">
-          <Button class="w-full" @click="subscribeToPlan(plan.id)">
+          <Button class="w-full" disabled @click="subscribeToPlan(plan.id)">
             {{ loading ? 'Cargando...' : 'Suscribirse' }}
           </Button>
         </CardFooter>

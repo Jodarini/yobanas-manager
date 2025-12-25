@@ -1,92 +1,74 @@
-# TODO
+# Stock It (Yobanas Manager)
 
-- Remove variants (stock 0 or add remove icon after selecting variant)
-- Remove text when selecting variants
-- Remove undefined text when showing some popups (i.e updating products)
-- Disable button when updating a product variant before a valid variant is selected
-- Make stock component smaller
-- Bunch of style fixes (spacing, sizes, colors)
-- Close popup and update the page after a product has been updated.
-- Add the ability to upload the product image (maybe optimize image or have a max size?).
-- When user clicks a part of a variant, it should show only the variants available.
-- User should be able to select multiple products to delete them (main view).
-- User should be able to use the 'ordenar' button.
-- User should see a default image in case the image is not showing up or not uploaded.
-- Update favicon.
-- Fix navbar responsiveness.
+**Stock It** (also known as Yobanas Manager) is a mobile-first SaaS solution designed specifically for fashion retailers in Colombia to manage inventory, track sales, and analyze product performance. Built with a modern full-stack architecture, it empowers entrepreneurs to scale from simple inventory tracking to full business analytics with integrated payment processing.
 
-# Nuxt 3 Minimal Starter
+## Tech Stack
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+This project leverages a cutting-edge, type-safe stack for maximum performance and developer productivity:
 
-## Setup
+| Category | Technology |
+| :--- | :--- |
+| **Framework** | **Nuxt 4** & Vue 3 (Composition API)  |
+| **Language** | **TypeScript**  |
+| **Styling & UI** | **Tailwind CSS**, **shadcn-vue**, and Lucide Icons  |
+| **Database** | **PostgreSQL** with **Supabase** (Row-Level Security)  |
+| **ORM** | **Drizzle ORM** |
+| **State/Tables** | **Pinia** and **TanStack Table**  |
+| **Payments** | **Wompi** (for Colombian market) |
+| **Deployment** | **Vercel**  |
 
-Make sure to install the dependencies:
+## Core Features
 
-```bash
-# npm
-npm install
+- **Advanced Inventory Management:** Track stock levels with support for product variants such as size and color.
+- **Sales & Analytics:** Monitor best-sellers and overall revenue through a dedicated analytics dashboard.
+- **Multi-tenant Security:** Utilizes Supabase Row-Level Security (RLS) to ensure data isolation between different retail accounts.
+- **Subscription Tiers:** Integrated business model featuring Free, Entrepreneur, and Company plans with automated payment webhooks.
+- **Soft Deletes:** Maintain data integrity and historical sales records even when products are removed from the active catalog.
+- **Mobile-First Design:** Optimized for high-speed usage on mobile devices, perfect for on-the-floor retail management.
 
-# pnpm
-pnpm install
+## Getting Started
 
-# yarn
-yarn install
+### Prerequisites
+- Node.js (Latest LTS)
+- Supabase CLI
+- Docker (for local Supabase development)
 
-# bun
-bun install
-```
+### Installation
 
-## Development Server
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Jodarini/yobanas-manager.git
+   cd yobanas-manager
+   ```
 
-Start the development server on `http://localhost:3000`:
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-```bash
-# npm
-npm run dev
+3. **Setup environment variables:**
+   Create a `.env` file based on the provided configuration:
+   ```bash
+   NUXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NUXT_PUBLIC_SUPABASE_KEY=your_supabase_anon_key
+   DATABASE_URL=your_postgresql_connection_string
+   ```
 
-# pnpm
-pnpm run dev
+4. **Initialize local database & Drizzle:**
+   ```bash
+   npx supabase start
+   npx drizzle-kit push
+   npm run seed # Runs the custom db/seed.ts script [conversation_history:11]
+   ```
 
-# yarn
-yarn dev
+5. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
 
-# bun
-bun run dev
-```
+## Project Structure
 
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- `db/`: Database schemas defined with Drizzle and seeding scripts.
+- `composables/`: Shared logic for state management and form handling.
+- `components/ui/`: High-quality accessible components built with **shadcn-vue**.
+- `server/api/`: Nitro server routes for handling webhooks (Wompi) and complex DB operations.
